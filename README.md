@@ -1,1 +1,1 @@
-"# Who killed Mr. Momo?" 
+Who killed Mr. Momo?
