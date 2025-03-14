@@ -4,7 +4,7 @@ function preload() {
   cdPlayerImg = loadImage('assets/cd_player.png');
   cigarettesImg = loadImage('assets/cigarettes.png');
   dogFoodImg = loadImage('assets/dog_food.png');
-  condomImg = loadImage('assets/durex_condom.png');
+  condomImg = loadImage('assets/used_condom.png');
   letterImg = loadImage('assets/letter.png');
   mrMomoImg = loadImage('assets/mr.momo.png');
   oldTvImg = loadImage('assets/old_tv.png');
