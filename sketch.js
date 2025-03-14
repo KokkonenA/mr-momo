@@ -14,6 +14,7 @@ function preload() {
   rugImg = loadImage('assets/rug.png');
   tableImg = loadImage('assets/table.png');
   teaMugImg = loadImage('assets/tea_mug.png');
+  portraitImg = loadImage('assets/portrait.png')
 }
 
 function setup() {
@@ -45,11 +46,12 @@ function setup() {
   crimeScene.addChild(mrMomoImg, 1500, 1600, 1);
   crimeScene.addChild(oldTvImg, 900, 500, 1);
   crimeScene.addChild(orangeImg, 500, 1900, 1);
-  crimeScene.addChild(pizzaBoxImg, 3300, 700, 1);
+  crimeScene.addChild(pizzaBoxImg, 3400, 700, 1);
   crimeScene.addChild(letterImg, 2700, 1000, 1);
   crimeScene.addChild(tableImg, 2200, 700, 1);
   crimeScene.addChild(cdPlayerImg, 2300, 800, 1);
   crimeScene.addChild(teaMugImg, 1800, 1000, 1);
+  crimeScene.addChild(portraitImg, 2900, 130, 1)
 }
 
 function draw() {
