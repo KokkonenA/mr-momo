@@ -1,5 +1,4 @@
-// Load assets. By doing this in the preload we can be sure
-// that everything is loaded during the setup.
+// Load assets. By doing this in the preload we can be sure that everything is loaded during the setup.
 function preload() {
   backgroundImg = loadImage('assets/walls.png');
   cakeImg =  loadImage('assets/cake.png');
@@ -42,25 +41,24 @@ function setup() {
   canvas = createCanvas(backgroundScale*backgroundImg.width, backgroundScale*backgroundImg.height);
   canvas.position(canvasX, canvasY);
 
-  // Create a root object (the background)
-  // and add other scene objects as its children.
-  // to do: more sophisticated layering?
+  // Create a root object (the background) and add other scene objects as its children.
+  // The images that should be on top should have a higher layer number.
   crimeScene = new SceneObject(backgroundImg, 0, 0, backgroundScale);
-  crimeScene.addChild(cakeImg, 1500, 1100, 1);
-  crimeScene.addChild(rugImg, 2900, 1000, 1);
-  crimeScene.addChild(cigarettesImg, 3200, 1400, 1);
-  crimeScene.addChild(rUOkImg, 3380, 1600, 1);
-  crimeScene.addChild(dogFoodImg, 3200, 1600, 1);
-  crimeScene.addChild(condomImg, 3300, 2000, 1);
-  crimeScene.addChild(mrMomoImg, 1500, 1600, 1);
-  crimeScene.addChild(oldTvImg, 900, 500, 1);
-  crimeScene.addChild(orangeImg, 500, 1900, 1);
-  crimeScene.addChild(pizzaBoxImg, 3400, 700, 1);
-  crimeScene.addChild(letterImg, 2700, 1000, 1);
-  crimeScene.addChild(tableImg, 2200, 700, 1);
-  crimeScene.addChild(cdPlayerImg, 2300, 800, 1);
-  crimeScene.addChild(teaMugImg, 1800, 1000, 1);
-  crimeScene.addChild(portraitImg, 2900, 130, 1);
+  crimeScene.addChild(cakeImg, 1500, 1100, 1, 0);
+  crimeScene.addChild(rugImg, 2900, 1000, 1, 0);
+  crimeScene.addChild(cigarettesImg, 3200, 1400, 1, 1);
+  crimeScene.addChild(rUOkImg, 3380, 1600, 1, 1);
+  crimeScene.addChild(dogFoodImg, 3200, 1600, 1, 2);
+  crimeScene.addChild(condomImg, 3300, 2000, 1, 0);
+  crimeScene.addChild(mrMomoImg, 1500, 1600, 1, 0);
+  crimeScene.addChild(oldTvImg, 900, 500, 1, 0);
+  crimeScene.addChild(orangeImg, 500, 1900, 1, 0);
+  crimeScene.addChild(pizzaBoxImg, 3400, 700, 1, 1);
+  crimeScene.addChild(letterImg, 2700, 1000, 1, 0);
+  crimeScene.addChild(tableImg, 2200, 700, 1, 1);
+  crimeScene.addChild(cdPlayerImg, 2300, 800, 1, 2);
+  crimeScene.addChild(teaMugImg, 1800, 1000, 1, 0);
+  crimeScene.addChild(portraitImg, 2900, 130, 1, 0);
 }
 
 function draw() {
