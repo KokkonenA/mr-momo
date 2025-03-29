@@ -1,4 +1,4 @@
-// Load assets. By doing this in the preload we can be sure that everything is loaded during the setup.
+// Load assets. By doing this in the preload we can be sure that everything is loaded when the setup starts.
 function preload() {
   backgroundImg = loadImage('assets/walls.png');
   cakeImg =  loadImage('assets/cake.png');
@@ -19,22 +19,21 @@ function preload() {
 }
 
 function setup() {
-  
   // Calculate the canvas size and position based on dimensions of the background image.
   // The background image should fill the whole canvas.
   // The canvas should be centered and fill as much of the window as possible.
-  windowImageWidthRelation = windowWidth / backgroundImg.width;
-  windowImageHeightRelation = windowHeight / backgroundImg.height;
+  const windowImageWidthRelation = windowWidth / backgroundImg.width;
+  const windowImageHeightRelation = windowHeight / backgroundImg.height;
 
   if (windowImageWidthRelation < windowImageHeightRelation) {
-    backgroundScale = windowImageWidthRelation;
-    canvasX = 0;
-    canvasY = (windowHeight - backgroundScale * backgroundImg.height) / 2;
+    var backgroundScale = windowImageWidthRelation;
+    var canvasX = 0;
+    var canvasY = (windowHeight - backgroundScale * backgroundImg.height) / 2;
   }
   else {
-    backgroundScale = windowImageHeightRelation;
-    canvasX = (windowWidth - backgroundScale * backgroundImg.width) / 2;
-    canvasY = 0;
+    var backgroundScale = windowImageHeightRelation;
+    var canvasX = (windowWidth - backgroundScale * backgroundImg.width) / 2;
+    var canvasY = 0;
   }
 
   // Create the canvas and position it based on the calculations earlier.
