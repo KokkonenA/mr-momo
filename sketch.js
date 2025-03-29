@@ -1,3 +1,5 @@
+// Load assets. By doing this in the preload we can be sure
+// that everything is loaded during the setup.
 function preload() {
   backgroundImg = loadImage('assets/walls.png');
   cakeImg =  loadImage('assets/cake.png');
@@ -14,10 +16,14 @@ function preload() {
   rugImg = loadImage('assets/rug.png');
   tableImg = loadImage('assets/table.png');
   teaMugImg = loadImage('assets/tea_mug.png');
-  portraitImg = loadImage('assets/portrait.png')
+  portraitImg = loadImage('assets/portrait.png');
 }
 
 function setup() {
+  
+  // Calculate the canvas size and position based on dimensions of the background image.
+  // The background image should fill the whole canvas.
+  // The canvas should be centered and fill as much of the window as possible.
   windowImageWidthRelation = windowWidth / backgroundImg.width;
   windowImageHeightRelation = windowHeight / backgroundImg.height;
 
@@ -32,9 +38,12 @@ function setup() {
     canvasY = 0;
   }
 
+  // Create the canvas and position it based on the calculations earlier.
   canvas = createCanvas(backgroundScale*backgroundImg.width, backgroundScale*backgroundImg.height);
   canvas.position(canvasX, canvasY);
 
+  // Create a root object (the background)
+  // and add other scene objects as its children.
   // to do: more sophisticated layering?
   crimeScene = new SceneObject(backgroundImg, 0, 0, backgroundScale);
   crimeScene.addChild(cakeImg, 1500, 1100, 1);
@@ -51,9 +60,10 @@ function setup() {
   crimeScene.addChild(tableImg, 2200, 700, 1);
   crimeScene.addChild(cdPlayerImg, 2300, 800, 1);
   crimeScene.addChild(teaMugImg, 1800, 1000, 1);
-  crimeScene.addChild(portraitImg, 2900, 130, 1)
+  crimeScene.addChild(portraitImg, 2900, 130, 1);
 }
 
 function draw() {
+  // Display the crime scene.
   crimeScene.display();
 }
