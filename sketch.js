@@ -1,21 +1,21 @@
 // Load assets. By doing this in the preload we can be sure that everything is loaded when the setup starts.
 function preload() {
-  backgroundImg = loadImage('assets/walls.png');
-  cakeImg =  loadImage('assets/cake.png');
-  cdPlayerImg = loadImage('assets/cd_player.png');
-  cigarettesImg = loadImage('assets/cigarettes.png');
-  dogFoodImg = loadImage('assets/dog_food.png');
-  condomImg = loadImage('assets/used_condom.png');
-  letterImg = loadImage('assets/letter.png');
-  mrMomoImg = loadImage('assets/mr.momo.png');
-  oldTvImg = loadImage('assets/old_tv.png');
-  orangeImg = loadImage('assets/orange.png');
-  pizzaBoxImg = loadImage('assets/pizza_box.png');
-  rUOkImg = loadImage('assets/r_u_ok.png');
-  rugImg = loadImage('assets/rug.png');
-  tableImg = loadImage('assets/table.png');
-  teaMugImg = loadImage('assets/tea_mug.png');
-  portraitImg = loadImage('assets/portrait.png');
+  backgroundImg = loadImage("assets/walls.png");
+  cakeImg =  loadImage("assets/cake.png");
+  cdPlayerImg = loadImage("assets/cd_player.png");
+  cigarettesImg = loadImage("assets/cigarettes.png");
+  dogFoodImg = loadImage("assets/dog_food.png");
+  condomImg = loadImage("assets/used_condom.png");
+  letterImg = loadImage("assets/letter.png");
+  mrMomoImg = loadImage("assets/mr.momo.png");
+  oldTvImg = loadImage("assets/old_tv.png");
+  orangeImg = loadImage("assets/orange.png");
+  pizzaBoxImg = loadImage("assets/pizza_box.png");
+  rUOkImg = loadImage("assets/r_u_ok.png");
+  rugImg = loadImage("assets/rug.png");
+  tableImg = loadImage("assets/table.png");
+  teaMugImg = loadImage("assets/tea_mug.png");
+  portraitImg = loadImage("assets/portrait.png");
 }
 
 function setup() {
@@ -61,7 +61,6 @@ function setup() {
 }
 
 function draw() {
-  // Display the crime scene.
   crimeScene.display();
 }
 
