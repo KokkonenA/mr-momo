@@ -16,6 +16,12 @@ function preload() {
   tableImg = loadImage("assets/table.png");
   teaMugImg = loadImage("assets/tea_mug.png");
   portraitImg = loadImage("assets/portrait.png");
+
+  birthdayImg = loadImage("assets/zoomed_images/birthday.png");
+
+  // Invisible image between the main scene and a pop up image
+  // Use the background image to get the correct size.
+  invisibleLayerImg = loadImage("assets/walls.png");
 }
 
 function setup() {
@@ -43,7 +49,7 @@ function setup() {
   // Create a root object (the background) and add other scene objects as its children.
   // The images that should be on top should have a higher layer number.
   crimeScene = new SceneObject(backgroundImg, 0, 0, backgroundScale, () => console.log("background"));
-  crimeScene.addChild(cakeImg, 1500, 1100, 1, 0, () => console.log("cake"));
+  crimeScene.addChild(cakeImg, 1500, 1100, 1, 0, onClickCake);
   crimeScene.addChild(rugImg, 2900, 1000, 1, 0, () => console.log("rug"));
   crimeScene.addChild(cigarettesImg, 3200, 1400, 1, 1, () => console.log("cigarettes"));
   crimeScene.addChild(rUOkImg, 3380, 1600, 1, 1, () => console.log("rUOk"));
@@ -58,6 +64,24 @@ function setup() {
   crimeScene.addChild(cdPlayerImg, 2300, 800, 1, 2, () => console.log("cdPlayer"));
   crimeScene.addChild(teaMugImg, 1800, 1000, 1, 0, () => console.log("teaMug"));
   crimeScene.addChild(portraitImg, 2900, 130, 1, 0, () => console.log("portrait"));
+
+  // Make invisible image invisible.
+  invisibleLayerImg.loadPixels();
+
+  for (let y = 0; y < invisibleLayerImg.height; y++) {
+    for (let x = 0; x < invisibleLayerImg.width; x++) {
+      const index = (x + y * invisibleLayerImg.width) * 4;
+      invisibleLayerImg.pixels[index + 3] = 0; // Set alpha to 0.
+    }
+  }
+  invisibleLayerImg.updatePixels();
+  invisibleLayer = new SceneObject(invisibleLayerImg, 0, 0, backgroundScale, onClickInvisibleLayer);
+
+  // Birthday drawing
+  const birthdayImgScale = canvas.height / birthdayImg.height;
+  const birthdayImgX = canvas.width / 2 - birthdayImgScale*birthdayImg.width/2;
+  const birthdayImgY = 0;
+  birthdayScene = new SceneObject(birthdayImg, birthdayImgX, birthdayImgY, birthdayImgScale, () => console.log("birthday"));
 }
 
 function draw() {
@@ -66,4 +90,14 @@ function draw() {
 
 function mouseClicked() {
   crimeScene.mouseClicked();
+}
+
+function onClickCake() {
+  crimeScene.addChildObject(invisibleLayer, 101);
+  crimeScene.addChildObject(birthdayScene, 102);
+}
+
+function onClickInvisibleLayer() {
+  crimeScene.removeChild(birthdayScene);
+  crimeScene.removeChild(invisibleLayer);
 }

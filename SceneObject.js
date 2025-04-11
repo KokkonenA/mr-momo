@@ -9,13 +9,31 @@ class SceneObject {
     this.onClick = onClick;
   }
 
-  // Add a child object for the SceneObject.
-  // The position and scale of the child depends on the position and scale of the parent.
-  addChild(img, x, y, scale, layer, onClick) {
+  // Add a child object.
+  addChildObject(child, layer)
+  {
     if (!this.children.has(layer)) {
       this.children.set(layer, []);
     }
-    this.children.get(layer).push(new SceneObject(img, this.scale*x + this.x, this.scale*y + this.y, this.scale*scale, onClick));
+    this.children.get(layer).push(child);
+  }
+
+  // Create a SceneObject and add it as a child
+  // The position and scale of the child depends on the position and scale of the parent.
+  addChild(img, x, y, scale, layer, onClick) {
+    this.addChildObject(new SceneObject(img, this.scale*x + this.x, this.scale*y + this.y, this.scale*scale, onClick), layer);
+  }
+
+  // Remove a child.
+  removeChild(child) {
+    for (let layer of this.children.values()) {
+      const index = layer.indexOf(child);
+
+      if (index > -1) {
+        layer.splice(index, 1);
+        break;
+      }
+    }
   }
   
   // Display the image and display the images of all children in all layers.
@@ -44,7 +62,7 @@ class SceneObject {
         clickHandled = child.mouseClicked();
 
         if (clickHandled) {
-          break loop; // break inner and outer loop
+          break loop; // Break inner and outer loop.
         }
       }
     }
