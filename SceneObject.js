@@ -21,7 +21,9 @@ class SceneObject {
   // Create a SceneObject and add it as a child
   // The position and scale of the child depends on the position and scale of the parent.
   addChild(img, x, y, scale, layer, onClick) {
-    this.addChildObject(new SceneObject(img, this.scale*x + this.x, this.scale*y + this.y, this.scale*scale, onClick), layer);
+    const child = new SceneObject(img, this.scale*x + this.x, this.scale*y + this.y, this.scale*scale, onClick);
+    this.addChildObject(child, layer);
+    return child;
   }
 
   // Remove a child.

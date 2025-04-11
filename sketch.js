@@ -53,14 +53,23 @@ function setup() {
   crimeScene.addChild(rugImg, 2900, 1000, 1, 0, () => console.log("rug"));
   crimeScene.addChild(cigarettesImg, 3200, 1400, 1, 1, () => console.log("cigarettes"));
   crimeScene.addChild(rUOkImg, 3380, 1600, 1, 1, () => console.log("rUOk"));
-  crimeScene.addChild(dogFoodImg, 3200, 1600, 1, 2, () => console.log("dogFood"));
+  
+  const foodBowl = crimeScene.addChild(dogFoodImg, 3200, 1600, 1, 2, () => console.log("dogFood"));
+  foodBowl.isMouseOver = () => {
+    return  mouseX > foodBowl.x && mouseX < foodBowl.x + foodBowl.img.width * 2 / 3 &&
+            mouseY > foodBowl.y && mouseY < foodBowl.y + foodBowl.img.height;
+  }
+
   crimeScene.addChild(condomImg, 3300, 2000, 1, 0, () => console.log("condom"));
   crimeScene.addChild(mrMomoImg, 1500, 1600, 1, 0, () => console.log("mrMomo"));
   crimeScene.addChild(oldTvImg, 900, 500, 1, 0, () => console.log("oldTv"));
   crimeScene.addChild(orangeImg, 500, 1900, 1, 0, () => console.log("orange"));
   crimeScene.addChild(pizzaBoxImg, 3400, 700, 1, 1, () => console.log("pizzaBox"));
   crimeScene.addChild(letterImg, 2700, 1000, 1, 0, () => console.log("letter"));
-  crimeScene.addChild(tableImg, 2200, 700, 1, 1, () => console.log("table"));
+
+  const table = crimeScene.addChild(tableImg, 2200, 700, 1, 1, () => console.log("table"));
+  table.isMouseOver = () => { return false };
+
   crimeScene.addChild(cdPlayerImg, 2300, 800, 1, 2, () => console.log("cdPlayer"));
   crimeScene.addChild(teaMugImg, 1800, 1000, 1, 0, () => console.log("teaMug"));
   crimeScene.addChild(portraitImg, 2900, 130, 1, 0, () => console.log("portrait"));
