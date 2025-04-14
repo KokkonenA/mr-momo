@@ -1,4 +1,4 @@
-class SceneObject {
+export default class SceneObject {
   constructor(img, x, y, scale, onClick) {
     img.resize(scale*img.width, scale*img.height)
     this.img = img;
@@ -39,29 +39,29 @@ class SceneObject {
   }
   
   // Display the image and display the images of all children in all layers.
-  display() {
-    image(this.img, this.x, this.y);
-    this.children.forEach(layer => layer.forEach(child => child.display()));
+  display(p5) {
+    p5.image(this.img, this.x, this.y);
+    this.children.forEach(layer => layer.forEach(child => child.display(p5)));
   }
 
   // Return true if mouse is over the image.
   // Return false otherwise.
   // TO DO: Add the possibility for individual hit boxes. E.g. the letter under the table is very difficult to click atm.
-  isMouseOver() {
-    return  mouseX > this.x && mouseX < this.x + this.img.width &&
-            mouseY > this.y && mouseY < this.y + this.img.height;
+  isMouseOver(x, y) {
+    return  x > this.x && x < this.x + this.img.width &&
+            y > this.y && y < this.y + this.img.height;
   }
 
   // Find the object that is being clicked and call OnClick() of that object.
   // Prioritize child over parent and higher layer over lower.
-  mouseClicked() {
+  mouseClicked(x, y) {
     let clickHandled = false;
     let childrenReversed = Array.from(this.children.entries()).reverse();
 
     loop:
     for (let [_, layer] of childrenReversed) {
       for (let child of layer) {
-        clickHandled = child.mouseClicked();
+        clickHandled = child.mouseClicked(x, y);
 
         if (clickHandled) {
           break loop; // Break inner and outer loop.
@@ -69,7 +69,7 @@ class SceneObject {
       }
     }
 
-    if (!clickHandled && this.isMouseOver()) {
+    if (!clickHandled && this.isMouseOver(x, y)) {
       this.onClick();
       clickHandled = true;
     }
