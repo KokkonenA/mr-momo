@@ -1,11 +1,12 @@
 import SceneObject from "./SceneObject.js";
 
 new p5((p5) => {
-  let room;
-  let invisibleLayer;
-  let birthdayDrawing;
-
   const images = new Map();
+
+  let room;
+  let invisibleLayer; // Invisible image between the main scene and a pop up image
+  let birthdayDrawing;
+  let popupImage;
 
   // Load assets. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
@@ -47,7 +48,7 @@ new p5((p5) => {
     room.addChild(images.get("assets/rug.png"), 2900, 1000, 1, 0, () => console.log("rug"));
     room.addChild(images.get("assets/cigarettes.png"), 3200, 1400, 1, 1, () => console.log("cigarettes"));
     room.addChild(images.get("assets/r_u_ok.png"), 3380, 1600, 1, 1, () => console.log("rUOk"));
-    
+
     const foodBowl = room.addChild(images.get("assets/dog_food.png"), 3200, 1600, 1, 2, () => console.log("dogFood"));
     foodBowl.isMouseOver = (x, y) => {
       return  x > foodBowl.x && x < foodBowl.x + foodBowl.img.width * 2 / 3 &&
@@ -68,14 +69,12 @@ new p5((p5) => {
     room.addChild(images.get("assets/tea_mug.png"), 1800, 1000, 1, 0, () => console.log("teaMug"));
     room.addChild(images.get("assets/portrait.png"), 2900, 130, 1, 0, () => console.log("portrait"));
 
-    // Invisible image between the main scene and a pop up image
-    const invisibleLayerImg = p5.createImage(backgroundImg.width, backgroundImg.height);
+    const invisibleLayerImg = p5.createImage(p5.width, p5.height);
     invisibleLayer = new SceneObject(invisibleLayerImg, 0, 0, 0, onClickInvisibleLayer);
 
-    // Birthday drawing
     const birthdayImg = images.get("assets/zoomed_images/birthday.png")
-    const birthdayImgScale = canvas.height / birthdayImg.height;
-    const birthdayImgX = canvas.width / 2 - birthdayImgScale*birthdayImg.width/2;
+    const birthdayImgScale = p5.height / birthdayImg.height;
+    const birthdayImgX = p5.width / 2 - birthdayImgScale*birthdayImg.width/2;
     const birthdayImgY = 0;
     birthdayDrawing = new SceneObject(birthdayImg, birthdayImgX, birthdayImgY, birthdayImgScale, () => console.log("birthday"));
   }
@@ -89,12 +88,14 @@ new p5((p5) => {
   }
 
   function onClickCake() {
+    popupImage = birthdayDrawing;
+
     room.addChildObject(invisibleLayer, 101);
-    room.addChildObject(birthdayDrawing, 102);
+    room.addChildObject(popupImage, 102);
   }
 
   function onClickInvisibleLayer() {
-    room.removeChild(birthdayDrawing);
+    room.removeChild(popupImage);
     room.removeChild(invisibleLayer);
   }
 });

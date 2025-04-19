@@ -10,18 +10,17 @@ export default class SceneObject {
   }
 
   // Add a child object.
-  addChildObject(child, layer)
-  {
+  addChildObject(child, layer) {
     if (!this.children.has(layer)) {
       this.children.set(layer, []);
     }
     this.children.get(layer).push(child);
   }
 
-  // Create a SceneObject and add it as a child
-  // The position and scale of the child depends on the position and scale of the parent.
-  addChild(img, x, y, scale, layer, onClick) {
-    const child = new SceneObject(img, this.scale*x + this.x, this.scale*y + this.y, this.scale*scale, onClick);
+  // Create a SceneObject and add it as a child.
+  // The position and scale parameters are relative to the parent.
+  addChild(img, relativeX, relativeY, relativeScale, layer, onClick) {
+    const child = new SceneObject(img, this.scale*relativeX + this.x, this.scale*relativeY + this.y, this.scale*relativeScale, onClick);
     this.addChildObject(child, layer);
     return child;
   }
@@ -64,7 +63,7 @@ export default class SceneObject {
         clickHandled = child.mouseClicked(x, y);
 
         if (clickHandled) {
-          break loop; // Break inner and outer loop.
+          break loop; // Break both inner and outer loop.
         }
       }
     }
