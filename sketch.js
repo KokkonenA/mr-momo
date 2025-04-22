@@ -1,9 +1,12 @@
+import Scene from "./Scene.js";
 import SceneObject from "./SceneObject.js";
 
 new p5((p5) => {
   const images = new Map();
 
+  let activeScene;
   let room;
+
   let invisibleLayer; // Invisible image between the main scene and a pop up image
   let birthdayDrawing;
   let popupImage;
@@ -69,6 +72,8 @@ new p5((p5) => {
     room.addChild(images.get("assets/tea_mug.png"), 1800, 1000, 1, 0, () => console.log("teaMug"));
     room.addChild(images.get("assets/portrait.png"), 2900, 130, 1, 0, () => console.log("portrait"));
 
+    activeScene = new Scene(room);
+
     const invisibleLayerImg = p5.createImage(p5.width, p5.height);
     invisibleLayer = new SceneObject(invisibleLayerImg, 0, 0, 0, onClickInvisibleLayer);
 
@@ -80,11 +85,11 @@ new p5((p5) => {
   }
 
   p5.draw = () => {
-    room.display(p5);
+    activeScene.draw(p5);
   }
 
   p5.mouseClicked = () => {
-    room.mouseClicked(p5.mouseX, p5.mouseY);
+    activeScene.mouseClicked(p5.mouseX, p5.mouseY);
   }
 
   function onClickCake() {
