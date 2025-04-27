@@ -1,9 +1,10 @@
 export default class SceneObject {
   constructor(img, x, y, scale, onClick) {
-    img.resize(scale*img.width, scale*img.height)
     this.img = img;
     this.x = x;
     this.y = y;
+    this.width = scale*img.width;
+    this.height = scale*img.height;
     this.scale = scale;
     this.children = new Map();
     this.onClick = onClick;
@@ -39,7 +40,7 @@ export default class SceneObject {
   
   // Display the image and display the images of all children in all layers.
   draw(p5) {
-    p5.image(this.img, this.x, this.y);
+    p5.image(this.img, this.x, this.y, this.width, this.height);
     this.children.forEach(layer => layer.forEach(child => child.draw(p5)));
   }
 
@@ -47,8 +48,8 @@ export default class SceneObject {
   // Return false otherwise.
   // TO DO: Add the possibility for individual hit boxes. E.g. the letter under the table is very difficult to click atm.
   isMouseOver(x, y) {
-    return  x > this.x && x < this.x + this.img.width &&
-            y > this.y && y < this.y + this.img.height;
+    return  x > this.x && x < this.x + this.width &&
+            y > this.y && y < this.y + this.height;
   }
 
   // Find the object that is being clicked and call OnClick() of that object.
@@ -73,5 +74,16 @@ export default class SceneObject {
       clickHandled = true;
     }
     return clickHandled;
+  }
+
+  // Update x, y, width, height and scale values based on the new scale.
+  windowResized(newScale) {
+    this.x = newScale/this.scale*this.x;
+    this.y = newScale/this.scale*this.y;
+    this.width = newScale*this.img.width;
+    this.height = newScale*this.img.height;
+    this.scale = newScale;
+    
+    this.children.forEach(layer => layer.forEach(child => child.windowResized(newScale)));
   }
 }

@@ -12,4 +12,9 @@ export default class Scene {
     mouseClicked(x, y) {
         this.rootObject.mouseClicked(x,y);
     }
+
+    // Handle window resized.
+    windowResized(newScale) {
+        this.rootObject.windowResized(newScale);
+    }
 }

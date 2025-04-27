@@ -4,6 +4,7 @@ import SceneObject from "./SceneObject.js";
 new p5((p5) => {
   const images = new Map();
 
+  let canvas;
   let activeScene;
   let room;
 
@@ -22,26 +23,11 @@ new p5((p5) => {
   }
 
   p5.setup = () => {
-    // Calculate the canvas size and position based on dimensions of the background image.
-    // The background image should fill the whole canvas.
-    // The canvas should be centered and fill as much of the window as possible.
     const backgroundImg = images.get("assets/walls.png");
-    const windowImageWidthRelation = p5.windowWidth / backgroundImg.width;
-    const windowImageHeightRelation = p5.windowHeight / backgroundImg.height;
+    
+    let [canvasX, canvasY, backgroundScale] = calculateCanvasPositionAndBackgroundScale(backgroundImg);
 
-    if (windowImageWidthRelation < windowImageHeightRelation) {
-      var backgroundScale = windowImageWidthRelation;
-      var canvasX = 0;
-      var canvasY = (p5.windowHeight - backgroundScale * backgroundImg.height) / 2;
-    }
-    else {
-      var backgroundScale = windowImageHeightRelation;
-      var canvasX = (p5.windowWidth - backgroundScale * backgroundImg.width) / 2;
-      var canvasY = 0;
-    }
-
-    // Create the canvas and position it based on the calculations earlier.
-    const canvas = p5.createCanvas(backgroundScale*backgroundImg.width, backgroundScale*backgroundImg.height);
+    canvas = p5.createCanvas(backgroundScale*backgroundImg.width, backgroundScale*backgroundImg.height);
     canvas.position(canvasX, canvasY);
 
     // Create a root object (the background) and add other scene objects as its children.
@@ -54,8 +40,8 @@ new p5((p5) => {
 
     const foodBowl = room.addChild(images.get("assets/dog_food.png"), 3200, 1600, 1, 2, () => console.log("dogFood"));
     foodBowl.isMouseOver = (x, y) => {
-      return  x > foodBowl.x && x < foodBowl.x + foodBowl.img.width * 2 / 3 &&
-              y > foodBowl.y && y < foodBowl.y + foodBowl.img.height;
+      return  x > foodBowl.x && x < foodBowl.x + foodBowl.width * 2 / 3 &&
+              y > foodBowl.y && y < foodBowl.y + foodBowl.height;
     }
 
     room.addChild(images.get("assets/used_condom.png"), 3300, 2000, 1, 0, () => console.log("condom"));
@@ -75,7 +61,7 @@ new p5((p5) => {
     activeScene = new Scene(room);
 
     const invisibleLayerImg = p5.createImage(p5.width, p5.height);
-    invisibleLayer = new SceneObject(invisibleLayerImg, 0, 0, 0, onClickInvisibleLayer);
+    invisibleLayer = new SceneObject(invisibleLayerImg, 0, 0, 1, onClickInvisibleLayer);
 
     const birthdayImg = images.get("assets/zoomed_images/birthday.png")
     const birthdayImgScale = p5.height / birthdayImg.height;
@@ -90,6 +76,41 @@ new p5((p5) => {
 
   p5.mouseClicked = () => {
     activeScene.mouseClicked(p5.mouseX, p5.mouseY);
+  }
+
+  p5.windowResized = () => {
+    const backgroundImg = activeScene.rootObject.img;
+    
+    let [canvasX, canvasY, backgroundScale] = calculateCanvasPositionAndBackgroundScale(backgroundImg);
+    
+    p5.resizeCanvas(backgroundScale*backgroundImg.width, backgroundScale*backgroundImg.height);
+    canvas.position(canvasX, canvasY);
+
+    activeScene.windowResized(backgroundScale);
+
+    birthdayDrawing.windowResized(p5.height / birthdayDrawing.img.height);
+    invisibleLayer.windowResized(p5.height / invisibleLayer.img.height);
+  }
+
+  // Calculate the canvas size and position based on dimensions of the background image.
+  // The background image should fill the whole canvas.
+  // The canvas should be centered and fill as much of the window as possible.
+  function calculateCanvasPositionAndBackgroundScale(backgroundImg) {
+    const windowImageWidthRelation = p5.windowWidth / backgroundImg.width;
+    const windowImageHeightRelation = p5.windowHeight / backgroundImg.height;
+
+    if (windowImageWidthRelation < windowImageHeightRelation) {
+      var backgroundScale = windowImageWidthRelation;
+      var canvasX = 0;
+      var canvasY = (p5.windowHeight - backgroundScale * backgroundImg.height) / 2;
+    }
+    else {
+      var backgroundScale = windowImageHeightRelation;
+      var canvasX = (p5.windowWidth - backgroundScale * backgroundImg.width) / 2;
+      var canvasY = 0;
+    }
+    
+    return [canvasX, canvasY, backgroundScale];
   }
 
   function onClickCake() {
