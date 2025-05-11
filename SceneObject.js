@@ -1,5 +1,5 @@
 export default class SceneObject {
-  constructor(img, x, y, scale, onClick) {
+  constructor(img, x, y, scale, onClickMessage) {
     this.img = img;
     this.x = x;
     this.y = y;
@@ -7,7 +7,7 @@ export default class SceneObject {
     this.height = scale*img.height;
     this.scale = scale;
     this.children = new Map();
-    this.onClick = onClick;
+    this.onClickMessage = onClickMessage;
   }
 
   // Add a child object.
@@ -20,8 +20,8 @@ export default class SceneObject {
 
   // Create a SceneObject and add it as a child.
   // The position and scale parameters are relative to the parent.
-  addChild(img, relativeX, relativeY, relativeScale, layer, onClick) {
-    const child = new SceneObject(img, this.scale*relativeX + this.x, this.scale*relativeY + this.y, this.scale*relativeScale, onClick);
+  addChild(img, relativeX, relativeY, relativeScale, layer, onClickMessage) {
+    const child = new SceneObject(img, this.scale*relativeX + this.x, this.scale*relativeY + this.y, this.scale*relativeScale, onClickMessage);
     this.addChildObject(child, layer);
     return child;
   }
@@ -46,34 +46,32 @@ export default class SceneObject {
 
   // Return true if mouse is over the image.
   // Return false otherwise.
-  // TO DO: Add the possibility for individual hit boxes. E.g. the letter under the table is very difficult to click atm.
   isMouseOver(x, y) {
     return  x > this.x && x < this.x + this.width &&
             y > this.y && y < this.y + this.height;
   }
 
-  // Find the object that is being clicked and call OnClick() of that object.
+  // Find the object that is being clicked and return onClickMessage of that object.
   // Prioritize child over parent and higher layer over lower.
   mouseClicked(x, y) {
-    let clickHandled = false;
+    let message = "";
     let childrenReversed = Array.from(this.children.entries()).reverse();
 
     loop:
     for (let [_, layer] of childrenReversed) {
       for (let child of layer) {
-        clickHandled = child.mouseClicked(x, y);
+        message = child.mouseClicked(x, y);
 
-        if (clickHandled) {
+        if (message) {
           break loop; // Break both inner and outer loop.
         }
       }
     }
 
-    if (!clickHandled && this.isMouseOver(x, y)) {
-      this.onClick();
-      clickHandled = true;
+    if (!message && this.isMouseOver(x, y)) {
+      message = this.onClickMessage;
     }
-    return clickHandled;
+    return message;
   }
 
   // Update x, y, width, height and scale values based on the new scale.
@@ -83,7 +81,7 @@ export default class SceneObject {
     this.width = newScale*this.img.width;
     this.height = newScale*this.img.height;
     this.scale = newScale;
-    
+
     this.children.forEach(layer => layer.forEach(child => child.windowResized(newScale)));
   }
 }
