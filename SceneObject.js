@@ -74,14 +74,14 @@ export default class SceneObject {
     return message;
   }
 
-  // Update x, y, width, height and scale values based on the new scale.
-  windowResized(newScale) {
-    this.x = newScale/this.scale*this.x;
-    this.y = newScale/this.scale*this.y;
-    this.width = newScale*this.img.width;
-    this.height = newScale*this.img.height;
-    this.scale = newScale;
+  // Update x, y, width, height and scale values by multiplying them with the coefficient value.
+  windowResized(coefficient) {
+    this.x = coefficient*this.x;
+    this.y = coefficient*this.y;
+    this.width = coefficient*this.width;
+    this.height = coefficient*this.height;
+    this.scale = coefficient*this.scale;
 
-    this.children.forEach(layer => layer.forEach(child => child.windowResized(newScale)));
+    this.children.forEach(layer => layer.forEach(child => child.windowResized(coefficient)));
   }
 }
