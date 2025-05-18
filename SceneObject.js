@@ -5,7 +5,6 @@ export default class SceneObject {
     this.y = y;
     this.width = scale*img.width;
     this.height = scale*img.height;
-    this.scale = scale;
     this.children = new Map();
     this.onClickMessage = onClickMessage;
   }
@@ -21,7 +20,7 @@ export default class SceneObject {
   // Create a SceneObject and add it as a child.
   // The position and scale parameters are relative to the parent.
   addChild(img, relativeX, relativeY, relativeScale, layer, onClickMessage) {
-    const child = new SceneObject(img, this.scale*relativeX + this.x, this.scale*relativeY + this.y, this.scale*relativeScale, onClickMessage);
+    const child = new SceneObject(img, this.x + this.width*relativeX, this.y + this.height*relativeY, this.width/this.img.width*relativeScale, onClickMessage);
     this.addChildObject(child, layer);
     return child;
   }
@@ -74,14 +73,13 @@ export default class SceneObject {
     return message;
   }
 
-  // Update x, y, width, height and scale values by multiplying them with the coefficient value.
-  windowResized(coefficient) {
-    this.x = coefficient*this.x;
-    this.y = coefficient*this.y;
-    this.width = coefficient*this.width;
-    this.height = coefficient*this.height;
-    this.scale = coefficient*this.scale;
+  // Apply new scale.
+  windowResized(scale) {
+    this.x = scale*this.x;
+    this.y = scale*this.y;
+    this.width = scale*this.width;
+    this.height = scale*this.height;
 
-    this.children.forEach(layer => layer.forEach(child => child.windowResized(coefficient)));
+    this.children.forEach(layer => layer.forEach(child => child.windowResized(scale)));
   }
 }
