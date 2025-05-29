@@ -37,10 +37,10 @@ export default class SceneObject {
     }
   }
   
-  // Display the image and display the images of all children in all layers.
-  draw(p5) {
-    p5.image(this.img, this.x, this.y, this.width, this.height);
-    this.children.forEach(layer => layer.forEach(child => child.draw(p5)));
+  // Draw the image and draw the images of all children in all layers.
+  draw(graphicsObject) {
+    graphicsObject.image(this.img, this.x, this.y, this.width, this.height);
+    this.children.forEach(layer => layer.forEach(child => child.draw(graphicsObject)));
   }
 
   // Return true if mouse is over the image.
