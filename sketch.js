@@ -1,20 +1,21 @@
+import Scene from "./Scene.js";
 import SceneObject from "./SceneObject.js";
 
 new p5((p5) => {
   const images = new Map();
 
   let canvas;
-  let rootObject;
+  let activeScene;
 
-  let room;
-  let portraitWall;
+  let roomOverview;
+  let portraitCloseup;
 
-  let invisibleLayer; // Invisible image between the main scene and a pop up image that will catch click events.
+  let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
   let popupImage;
   
   let birthdayDrawing;
 
-  let blurredRoom;
+  let blurLayer; // Image between the main scene and a pop-up video that blurs the background and catches click events.
   let popupVideo;
 
   let teaTime;
@@ -37,7 +38,7 @@ new p5((p5) => {
     canvas = p5.createCanvas(backgroundScale * backgroundImg.width, backgroundScale * backgroundImg.height);
     canvas.position(canvasX, canvasY);
 
-    room = new SceneObject(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING");
+    const room = new SceneObject(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING");
     room.addChild(images.get("assets/cake.png"), 0.35, 0.5, 1, 0, "IMAGE_BIRTHDAY");
     room.addChild(images.get("assets/rug.png"), 0.72, 0.47, 1, 0, "rug");
     room.addChild(images.get("assets/cigarettes.png"), 0.8, 0.65, 1, 1, "cigarettes");
@@ -63,10 +64,11 @@ new p5((p5) => {
     room.addChild(images.get("assets/tea_mug.png"), 0.47, 0.44, 1, 0, "VIDEO_TEATIME");
     room.addChild(images.get("assets/portrait.png"), 0.74, 0.05, 1, 0, "CLOSEUP_PORTRAIT");
 
-    rootObject = room;
+    roomOverview = new Scene(room);
+    activeScene = roomOverview;
 
-    const invisibleLayerImg = p5.createImage(backgroundImg.width, backgroundImg.height);
-    invisibleLayer = new SceneObject(invisibleLayerImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
+    const invisibleImg = p5.createImage(backgroundImg.width, backgroundImg.height);
+    invisibleLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
 
     const birthdayImg = images.get("assets/zoomed_images/birthday.png")
     const birthdayImgScale = 0.9 * p5.height / birthdayImg.height;
@@ -74,10 +76,10 @@ new p5((p5) => {
     const birthdayImgY = (p5.height - birthdayImgScale * birthdayImg.height) / 2;
     birthdayDrawing = new SceneObject(birthdayImg, birthdayImgX, birthdayImgY, birthdayImgScale, "DO_NOTHING");
 
-    const graphicsBuffer = p5.createGraphics(room.width, room.height);
-    room.draw(graphicsBuffer);
-    graphicsBuffer.filter(p5.BLUR, 3);
-    blurredRoom = new SceneObject(graphicsBuffer, 0, 0, 1, "VIDEO_REMOVE");
+    blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
+    blurLayer.draw = (graphicsObject) => {
+      graphicsObject.filter(graphicsObject.BLUR, 3);
+    }
 
     const teaTimeVideo = p5.createVideo("assets/videos/tea_time.mp4");
     teaTimeVideo.hide();
@@ -87,64 +89,69 @@ new p5((p5) => {
     teaTime = new SceneObject(teaTimeVideo, teaTimeX, teaTimeY, teaTimeScale, "DO_NOTHING");
 
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
-    portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
+    const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
     portraitWall.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.04, 0.2, 0, "GO_BACK");
-    portraitWall.addChild(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 0.32, 0.05, 0.5, 1, "DO_NOTHING");
-    portraitWall.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.455, 0.346, 0.08, 0, "DO_NOTHING");
-    const leftEye = portraitWall.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.468, 0.359, 0.03, 1, "DO_NOTHING");
-    leftEye.draw = (graphicsObject) => {
+    const portrait = portraitWall.addChild(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 0.32, 0.05, 0.5, 0, "DO_NOTHING");
+
+    const leftEye = portrait.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.365, 0.335, 0.155, 0, "DO_NOTHING");
+    const leftIris = leftEye.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.25, 0.16, 0.4, 0, "DO_NOTHING");
+    leftIris.draw = (graphicsObject) => {
       const factor = 1000;
       const dx = (graphicsObject.mouseX - graphicsObject.width / 2) / factor;
       const dy = (graphicsObject.mouseY - graphicsObject.height / 2) / factor;
-      graphicsObject.image(leftEye.img, leftEye.x + dx, leftEye.y + dy, leftEye.width, leftEye.height);
+      graphicsObject.image(leftIris.img, leftIris.x + dx, leftIris.y + dy, leftIris.width, leftIris.height);
     }
-    portraitWall.addChild(images.get("assets/zoomed_images/eye_skin_outline.png"), 0.455, 0.35, 0.07, 2, "DO_NOTHING");
-    portraitWall.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.51, 0.346, 0.08, 0, "DO_NOTHING");
-    const rightEye = portraitWall.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.525, 0.355, 0.03, 1, "DO_NOTHING");
-    rightEye.draw = (graphicsObject) => {
+    leftEye.addChild(images.get("assets/zoomed_images/eye_skin_outline.png"), -0.12, -0.07, 1, 1, "DO_NOTHING");
+
+    const rightEye = portrait.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.51, 0.331, 0.155, 0, "DO_NOTHING");
+    const rightIris = rightEye.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.25, 0.16, 0.4, 0, "DO_NOTHING");
+    rightIris.draw = (graphicsObject) => {
       const factor = 1000;
       const dx = (graphicsObject.mouseX - graphicsObject.width / 2) / factor;
       const dy = (graphicsObject.mouseY - graphicsObject.height / 2) / factor;
-      graphicsObject.image(rightEye.img, rightEye.x + dx, rightEye.y + dy, rightEye.width, rightEye.height);
+      graphicsObject.image(rightIris.img, rightIris.x + dx, rightIris.y + dy, rightIris.width, rightIris.height);
     }
-    portraitWall.addChild(images.get("assets/zoomed_images/eye_skin_outline.png"), 0.512, 0.346, 0.07, 2, "DO_NOTHING");
+    rightEye.addChild(images.get("assets/zoomed_images/eye_skin_outline.png"), -0.12, -0.07, 1, 1, "DO_NOTHING");
+
+    portraitCloseup = new Scene(portraitWall);
+    [leftEye, rightEye].forEach(object => portraitCloseup.addObjectToBeRedrawn(object));
   }
 
   p5.draw = () => {
-    rootObject.draw(p5);
+    activeScene.draw(p5);
   }
 
   p5.mouseClicked = () => {
-    const message = rootObject.mouseClicked(p5.mouseX, p5.mouseY);
+    const message = activeScene.mouseClicked(p5.mouseX, p5.mouseY);
     
     switch (message) {
       case "IMAGE_BIRTHDAY":
         invisibleLayer.windowResized(p5.width / invisibleLayer.width);
         birthdayDrawing.windowResized(0.9 * p5.height / birthdayDrawing.height);
         popupImage = birthdayDrawing;
-        room.addChildObject(invisibleLayer, 101);
-        room.addChildObject(popupImage, 102);
+        roomOverview.addObject(invisibleLayer, 101, false);
+        roomOverview.addObject(popupImage, 102, false);
         break;
       case "IMAGE_REMOVE":
-        room.removeChild(popupImage);
-        room.removeChild(invisibleLayer);
+        roomOverview.removeObject(popupImage);
+        roomOverview.removeObject(invisibleLayer);
         break;
       case "VIDEO_TEATIME":
-        blurredRoom.windowResized(p5.width / blurredRoom.width);
+        blurLayer.windowResized(p5.width / blurLayer.width);
         teaTime.windowResized(0.8 * p5.width / teaTime.width);
         popupVideo = teaTime;
-        rootObject = blurredRoom;
-        rootObject.addChildObject(popupVideo, 0);
+        roomOverview.addObject(blurLayer, 101, false);
+        roomOverview.addObject(popupVideo, 102, true);
         popupVideo.img.loop();
         break;
       case "VIDEO_REMOVE":
         popupVideo.img.stop();
-        blurredRoom.removeChild(popupVideo);
-        ReturnToMainScene();
+        roomOverview.removeObject(popupVideo);
+        roomOverview.removeObject(blurLayer);
         break;
       case "CLOSEUP_PORTRAIT":
-        portraitWall.windowResized(p5.width / portraitWall.width);
-        rootObject = portraitWall;
+        portraitCloseup.windowResized(p5.width / portraitCloseup.width);
+        activeScene = portraitCloseup;
         break;
       case "GO_BACK":
         ReturnToMainScene();
@@ -162,7 +169,7 @@ new p5((p5) => {
     p5.resizeCanvas(backgroundScale * p5.width, backgroundScale * p5.height);
     canvas.position(canvasX, canvasY);
 
-    rootObject.windowResized(backgroundScale);
+    activeScene.windowResized(backgroundScale);
   }
 
   // Calculate the canvas size and position based on dimensions of the background image.
@@ -189,7 +196,7 @@ new p5((p5) => {
   // Return to the room overview
   function ReturnToMainScene()
   {
-      room.windowResized(p5.width / room.width)
-      rootObject = room;
+    roomOverview.windowResized(p5.width / roomOverview.width)
+    activeScene = roomOverview;
   }
 });
