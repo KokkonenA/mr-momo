@@ -5,20 +5,25 @@ new p5((p5) => {
   const images = new Map();
 
   let canvas;
+
+  // Scenes
   let activeScene;
 
-  let roomOverview;
+  let roomOverview; 
   let portraitCloseup;
 
+  // Pop-up images
   let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
-  let popupImage;
-  
+  let popupImage; // Active pop-up image
+
   let birthdayDrawing;
 
+  // Pop-up videos
   let blurLayer; // Image between the main scene and a pop-up video that blurs the background and catches click events.
-  let popupVideo;
+  let popupVideo; // Active pop-up image
 
   let teaTime;
+  let balloonBlowing;
 
   // Load images. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
@@ -50,7 +55,7 @@ new p5((p5) => {
               y > foodBowl.y && y < foodBowl.y + foodBowl.height;
     }
 
-    room.addChild(images.get("assets/used_condom.png"), 0.9, 0.87, 1, 0, "condom");
+    room.addChild(images.get("assets/used_condom.png"), 0.9, 0.87, 1, 0, "VIDEO_CONDOM");
     room.addChild(images.get("assets/mr.momo.png"), 0.35, 0.7, 1, 0, "mrMomo");
     room.addChild(images.get("assets/old_tv.png"), 0.18, 0.25, 1, 0, "oldTv");
     room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "orange");
@@ -87,6 +92,13 @@ new p5((p5) => {
     const teaTimeX = (p5.width - teaTimeScale * teaTimeVideo.width) / 2;
     const teaTimeY = (p5.height - teaTimeScale * teaTimeVideo.height) / 2;
     teaTime = new SceneObject(teaTimeVideo, teaTimeX, teaTimeY, teaTimeScale, "DO_NOTHING");
+
+    const condomVideo = p5.createVideo("assets/videos/condom.mp4");
+    condomVideo.hide();
+    const condomScale = 0.8 * p5.width / condomVideo.width;
+    const condomX = (p5.width - teaTimeScale * condomVideo.width) / 2;
+    const condomY = (p5.height - teaTimeScale * condomVideo.height) / 2;
+    balloonBlowing = new SceneObject(condomVideo, condomX, condomY, condomScale, "DO_NOTHING");
 
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
     const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
@@ -136,13 +148,17 @@ new p5((p5) => {
         roomOverview.removeObject(popupImage);
         roomOverview.removeObject(invisibleLayer);
         break;
+      case "VIDEO_CONDOM":
+        blurLayer.windowResized(p5.width / blurLayer.width);
+        balloonBlowing.windowResized(0.8 * p5.width / balloonBlowing.width);
+        popupVideo = balloonBlowing;
+        startPopupVideo();
+        break;
       case "VIDEO_TEATIME":
         blurLayer.windowResized(p5.width / blurLayer.width);
         teaTime.windowResized(0.8 * p5.width / teaTime.width);
         popupVideo = teaTime;
-        roomOverview.addObject(blurLayer, 101, false);
-        roomOverview.addObject(popupVideo, 102, true);
-        popupVideo.img.loop();
+        startPopupVideo();
         break;
       case "VIDEO_REMOVE":
         popupVideo.img.stop();
@@ -154,7 +170,7 @@ new p5((p5) => {
         activeScene = portraitCloseup;
         break;
       case "GO_BACK":
-        ReturnToMainScene();
+        returnToMainScene();
         break;
       case "DO_NOTHING":
         break;
@@ -193,8 +209,15 @@ new p5((p5) => {
     return [canvasX, canvasY, backgroundScale];
   }
 
-  // Return to the room overview
-  function ReturnToMainScene()
+  // Start pop-pup video.
+  function startPopupVideo() {
+    roomOverview.addObject(blurLayer, 101, false);
+    roomOverview.addObject(popupVideo, 102, true);
+    popupVideo.img.loop();
+  }
+
+  // Return to the room overview.
+  function returnToMainScene()
   {
     roomOverview.windowResized(p5.width / roomOverview.width)
     activeScene = roomOverview;
