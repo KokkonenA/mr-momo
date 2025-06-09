@@ -12,6 +12,8 @@ new p5((p5) => {
   let roomOverview; 
   let portraitCloseup;
 
+  let orangeCloseup;
+
   // Pop-up images
   let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
   let popupImage; // Active pop-up image
@@ -58,7 +60,7 @@ new p5((p5) => {
     room.addChild(images.get("assets/used_condom.png"), 0.9, 0.87, 1, 0, "VIDEO_CONDOM");
     room.addChild(images.get("assets/mr.momo.png"), 0.35, 0.7, 1, 0, "mrMomo");
     room.addChild(images.get("assets/old_tv.png"), 0.18, 0.25, 1, 0, "oldTv");
-    room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "orange");
+    room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "ORANGE");
     room.addChild(images.get("assets/pizza_box.png"), 0.83, 0.35, 1, 1, "pizzaBox");
     room.addChild(images.get("assets/letter.png"), 0.68, 0.45, 1, 0, "letter");
 
@@ -100,6 +102,8 @@ new p5((p5) => {
     const condomY = (p5.height - teaTimeScale * condomVideo.height) / 2;
     balloonBlowing = new SceneObject(condomVideo, condomX, condomY, condomScale, "DO_NOTHING");
 
+
+    // PORTRAIT
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
     const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
     portraitWall.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.04, 0.2, 0, "GO_BACK");
@@ -127,6 +131,27 @@ new p5((p5) => {
 
     portraitCloseup = new Scene(portraitWall);
     [leftEye, rightEye].forEach(object => portraitCloseup.addObjectToBeRedrawn(object));
+
+    // ORANGE
+    const orangeFloorImg = images.get("assets/zoomed_images/orange_background.png");
+    const orangeFloor = new SceneObject(orangeFloorImg, 0, 0, room.width / orangeFloorImg.width, "DO_NOTHING");
+    orangeFloor.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.05, 0.2, 0, "GO_BACK");
+    const orange = orangeFloor.addChild(images.get("assets/zoomed_images/orange_orange.png"), -0.01, -0.01, 0.72, 0, "DO_NOTHING");
+
+    const larva1 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva1.png"), 0.7, 0.7, 0.7, 0, "DO_NOTHING");
+    larva1.draw = (graphicsObject) => {
+      const factor = 50;
+      const dx = (graphicsObject.mouseX - graphicsObject.width / 2) / factor;
+      const dy = (graphicsObject.mouseY - graphicsObject.height / 2) / factor;
+      graphicsObject.image(larva1.img, larva1.x + dx, larva1.y + dy, larva1.width, larva1.height);
+      
+    }
+
+    // TO DO: how to not show the trailing images?
+    // TO DO: how to rotate images?
+
+    orangeCloseup = new Scene(orangeFloor);
+    [larva1].forEach(object => orangeCloseup.addObjectToBeRedrawn(object));
   }
 
   p5.draw = () => {
@@ -168,6 +193,10 @@ new p5((p5) => {
       case "CLOSEUP_PORTRAIT":
         portraitCloseup.windowResized(p5.width / portraitCloseup.width);
         activeScene = portraitCloseup;
+        break;
+      case "ORANGE":
+        orangeCloseup.windowResized(p5.width / orangeCloseup.width);
+        activeScene = orangeCloseup;
         break;
       case "GO_BACK":
         returnToMainScene();
