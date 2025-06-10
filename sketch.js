@@ -27,9 +27,8 @@ new p5((p5) => {
   let teaTime;
   let balloonBlowing;
 
-  let larva1Pos = { x: null, y: null };
+  let larvaPositions = Array.from({ length: 4 }, () => ({ x: null, y: null }));
   let larva1Angle = 0; // current rotation angle in radians
-
 
   // Load images. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
@@ -140,47 +139,57 @@ new p5((p5) => {
     const orangeFloorImg = images.get("assets/zoomed_images/orange_background.png");
     const orangeFloor = new SceneObject(orangeFloorImg, 0, 0, room.width / orangeFloorImg.width, "DO_NOTHING");
     orangeFloor.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.05, 0.2, 0, "GO_BACK");
-    const orange = orangeFloor.addChild(images.get("assets/zoomed_images/orange_orange.png"), -0.01, -0.01, 0.72, 0, "DO_NOTHING");
 
-    const larva1 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva1.png"), 0.7, 0.7, 0.7, 0, "DO_NOTHING");
+    const larva1 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva1.png"), 0.65, 0.75, 0.7, 0, "DO_NOTHING");
+    const larva2 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva2.png"), 0.2, 0.7, 0.7, 0, "DO_NOTHING");
+    const larva3 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva3.png"), 0.5, 0.7, 0.7, 0, "DO_NOTHING");
+    const larva4 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva4.png"), 0.7, 0.6, 0.5, 0, "DO_NOTHING");
 
-    larva1.draw = (graphicsObject) => {
-      if (larva1Pos.x === null || larva1Pos.y === null) {
-        larva1Pos.x = larva1.x;
-        larva1Pos.y = larva1.y;
+
+    larvaMovement(larva1, larvaPositions[0]);
+    larvaMovement(larva2, larvaPositions[1]);
+    larvaMovement(larva3, larvaPositions[2]);
+    larvaMovement(larva4, larvaPositions[3]);
+    
+    orangeFloor.addChild(images.get("assets/zoomed_images/orange_orange.png"), -0.01, -0.01, 0.72, 0, "DO_NOTHING");
+
+    orangeCloseup = new Scene(orangeFloor);
+    [orangeFloor].forEach(object => orangeCloseup.addObjectToBeRedrawn(object));
+  }
+
+  function larvaMovement(larva, larvaPos) {
+
+    let x = JSON.stringify(larva)
+    larva.draw = (graphicsObject) => {
+      if (larvaPos.x === null || larvaPos.y === null) {
+        larvaPos.x = larva.x;
+        larvaPos.y = larva.y;
       }
     
       const targetX = graphicsObject.mouseX;
       const targetY = graphicsObject.mouseY;
     
       // Move toward cursor
-      const dx = targetX - larva1Pos.x;
-      const dy = targetY - larva1Pos.y;
-      const speed = 0.0001;
-      larva1Pos.x += dx * speed;
-      larva1Pos.y += dy * speed;
+      const dx = targetX - larvaPos.x;
+      const dy = targetY - larvaPos.y;
+      const speed = 0.00005;
+      larvaPos.x += dx * speed;
+      larvaPos.y += dy * speed;
     
       // Compute target angle
       const targetAngle = Math.atan2(dy, dx);
     
       // Interpolate angle (rotation speed factor controls how fast it turns)
-      const rotationSpeed = 0.001; // smaller = slower turning
+      const rotationSpeed = 0.0002; // smaller = slower turning
       larva1Angle = lerpAngle(larva1Angle, targetAngle, rotationSpeed);
     
       // Draw with smoothed rotation
       graphicsObject.push();
-      graphicsObject.translate(larva1Pos.x + larva1.width / 2, larva1Pos.y + larva1.height / 2);
+      graphicsObject.translate(larvaPos.x + larva.width / 2, larvaPos.y + larva.height / 2);
       graphicsObject.rotate(larva1Angle);
-      graphicsObject.image(larva1.img, -larva1.width / 2, -larva1.height / 2, larva1.width, larva1.height);
+      graphicsObject.image(larva.img, -larva.width / 2, -larva.height / 2, larva.width, larva.height);
       graphicsObject.pop();
     };
-
-
-    orangeCloseup = new Scene(orangeFloor);
-    [orangeFloor].forEach(object => orangeCloseup.addObjectToBeRedrawn(object));
-  }
-
-  function larvaMovement() {
   }
 
   function lerpAngle(a, b, t) {
