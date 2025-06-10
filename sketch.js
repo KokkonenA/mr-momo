@@ -27,6 +27,10 @@ new p5((p5) => {
   let teaTime;
   let balloonBlowing;
 
+  let larva1Pos = { x: null, y: null };
+  let larva1Angle = 0; // current rotation angle in radians
+
+
   // Load images. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
     p5.loadJSON("fileList.json", (imagePaths) => {
@@ -139,19 +143,49 @@ new p5((p5) => {
     const orange = orangeFloor.addChild(images.get("assets/zoomed_images/orange_orange.png"), -0.01, -0.01, 0.72, 0, "DO_NOTHING");
 
     const larva1 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva1.png"), 0.7, 0.7, 0.7, 0, "DO_NOTHING");
-    larva1.draw = (graphicsObject) => {
-      const factor = 50;
-      const dx = (graphicsObject.mouseX - graphicsObject.width / 2) / factor;
-      const dy = (graphicsObject.mouseY - graphicsObject.height / 2) / factor;
-      graphicsObject.image(larva1.img, larva1.x + dx, larva1.y + dy, larva1.width, larva1.height);
-      
-    }
 
-    // TO DO: how to not show the trailing images?
-    // TO DO: how to rotate images?
+    larva1.draw = (graphicsObject) => {
+      if (larva1Pos.x === null || larva1Pos.y === null) {
+        larva1Pos.x = larva1.x;
+        larva1Pos.y = larva1.y;
+      }
+    
+      const targetX = graphicsObject.mouseX;
+      const targetY = graphicsObject.mouseY;
+    
+      // Move toward cursor
+      const dx = targetX - larva1Pos.x;
+      const dy = targetY - larva1Pos.y;
+      const speed = 0.0001;
+      larva1Pos.x += dx * speed;
+      larva1Pos.y += dy * speed;
+    
+      // Compute target angle
+      const targetAngle = Math.atan2(dy, dx);
+    
+      // Interpolate angle (rotation speed factor controls how fast it turns)
+      const rotationSpeed = 0.001; // smaller = slower turning
+      larva1Angle = lerpAngle(larva1Angle, targetAngle, rotationSpeed);
+    
+      // Draw with smoothed rotation
+      graphicsObject.push();
+      graphicsObject.translate(larva1Pos.x + larva1.width / 2, larva1Pos.y + larva1.height / 2);
+      graphicsObject.rotate(larva1Angle);
+      graphicsObject.image(larva1.img, -larva1.width / 2, -larva1.height / 2, larva1.width, larva1.height);
+      graphicsObject.pop();
+    };
+
 
     orangeCloseup = new Scene(orangeFloor);
-    [larva1].forEach(object => orangeCloseup.addObjectToBeRedrawn(object));
+    [orangeFloor].forEach(object => orangeCloseup.addObjectToBeRedrawn(object));
+  }
+
+  function larvaMovement() {
+  }
+
+  function lerpAngle(a, b, t) {
+    const diff = ((b - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+    return a + diff * t;
   }
 
   p5.draw = () => {
