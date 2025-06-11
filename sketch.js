@@ -28,7 +28,7 @@ new p5((p5) => {
   let balloonBlowing;
 
   let larvaPositions = Array.from({ length: 4 }, () => ({ x: null, y: null }));
-  let larva1Angle = 0; // current rotation angle in radians
+  let larvaAngle = 0; // current rotation angle in radians
 
   // Load images. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
@@ -80,6 +80,7 @@ new p5((p5) => {
     const invisibleImg = p5.createImage(backgroundImg.width, backgroundImg.height);
     invisibleLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
 
+    // BIRTHDAY
     const birthdayImg = images.get("assets/zoomed_images/birthday.png")
     const birthdayImgScale = 0.9 * p5.height / birthdayImg.height;
     const birthdayImgX = (p5.width - birthdayImgScale * birthdayImg.width) / 2;
@@ -91,6 +92,7 @@ new p5((p5) => {
       graphicsObject.filter(graphicsObject.BLUR, 3);
     }
 
+    // TEATIME
     const teaTimeVideo = p5.createVideo("assets/videos/tea_time.mp4");
     teaTimeVideo.hide();
     const teaTimeScale = 0.8 * p5.width / teaTimeVideo.width;
@@ -98,6 +100,7 @@ new p5((p5) => {
     const teaTimeY = (p5.height - teaTimeScale * teaTimeVideo.height) / 2;
     teaTime = new SceneObject(teaTimeVideo, teaTimeX, teaTimeY, teaTimeScale, "DO_NOTHING");
 
+    // CONDOM
     const condomVideo = p5.createVideo("assets/videos/condom.mp4");
     condomVideo.hide();
     const condomScale = 0.8 * p5.width / condomVideo.width;
@@ -145,7 +148,6 @@ new p5((p5) => {
     const larva3 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva3.png"), 0.5, 0.7, 0.7, 0, "DO_NOTHING");
     const larva4 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva4.png"), 0.7, 0.6, 0.5, 0, "DO_NOTHING");
 
-
     larvaMovement(larva1, larvaPositions[0]);
     larvaMovement(larva2, larvaPositions[1]);
     larvaMovement(larva3, larvaPositions[2]);
@@ -158,7 +160,6 @@ new p5((p5) => {
   }
 
   function larvaMovement(larva, larvaPos) {
-
     let x = JSON.stringify(larva)
     larva.draw = (graphicsObject) => {
       if (larvaPos.x === null || larvaPos.y === null) {
@@ -172,7 +173,7 @@ new p5((p5) => {
       // Move toward cursor
       const dx = targetX - larvaPos.x;
       const dy = targetY - larvaPos.y;
-      const speed = 0.00005;
+      const speed = 0.00005; // smaller = slower speed
       larvaPos.x += dx * speed;
       larvaPos.y += dy * speed;
     
@@ -181,12 +182,12 @@ new p5((p5) => {
     
       // Interpolate angle (rotation speed factor controls how fast it turns)
       const rotationSpeed = 0.0002; // smaller = slower turning
-      larva1Angle = lerpAngle(larva1Angle, targetAngle, rotationSpeed);
+      larvaAngle = lerpAngle(larvaAngle, targetAngle, rotationSpeed);
     
       // Draw with smoothed rotation
       graphicsObject.push();
       graphicsObject.translate(larvaPos.x + larva.width / 2, larvaPos.y + larva.height / 2);
-      graphicsObject.rotate(larva1Angle);
+      graphicsObject.rotate(larvaAngle);
       graphicsObject.image(larva.img, -larva.width / 2, -larva.height / 2, larva.width, larva.height);
       graphicsObject.pop();
     };
