@@ -15,7 +15,7 @@ export default class Scene {
 
   // Draw an object.
   #drawObject(p5, object) {
-    object.draw(p5)
+    object.draw(p5);
   }
 
   // Add object to be redrawn.
@@ -47,8 +47,7 @@ export default class Scene {
     this.#fullRedrawNeeded = true;
   }
 
-  // Redraw objects if necessary to the buffer
-  // and raw the buffer on canvas.
+  // Redraw either fully or partially.
   draw(p5) {
     if (this.#fullRedrawNeeded) {
       this.#drawObject(p5, this.#rootObject)

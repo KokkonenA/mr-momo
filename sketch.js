@@ -74,6 +74,7 @@ new p5((p5) => {
 
     const invisibleImg = p5.createImage(backgroundImg.width, backgroundImg.height);
     invisibleLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
+    invisibleLayer.draw = () => { return };
 
     const birthdayImg = images.get("assets/zoomed_images/birthday.png")
     const birthdayImgScale = 0.9 * p5.height / birthdayImg.height;
@@ -82,9 +83,7 @@ new p5((p5) => {
     birthdayDrawing = new SceneObject(birthdayImg, birthdayImgX, birthdayImgY, birthdayImgScale, "DO_NOTHING");
 
     blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
-    blurLayer.draw = (graphicsObject) => {
-      graphicsObject.filter(graphicsObject.BLUR, 3);
-    }
+    blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
     const teaTimeVideo = p5.createVideo("assets/videos/tea_time.mp4");
     teaTimeVideo.hide();
@@ -106,22 +105,22 @@ new p5((p5) => {
     const portrait = portraitWall.addChild(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 0.32, 0.05, 0.5, 0, "DO_NOTHING");
 
     const leftEye = portrait.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.365, 0.335, 0.155, 0, "DO_NOTHING");
-    const leftIris = leftEye.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.25, 0.16, 0.4, 0, "DO_NOTHING");
-    leftIris.draw = (graphicsObject) => {
+    const leftIris = leftEye.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.24, 0.16, 0.4, 0, "DO_NOTHING");
+    leftIris.draw = (p5) => {
       const factor = 1000;
-      const dx = (graphicsObject.mouseX - graphicsObject.width / 2) / factor;
-      const dy = (graphicsObject.mouseY - graphicsObject.height / 2) / factor;
-      graphicsObject.image(leftIris.img, leftIris.x + dx, leftIris.y + dy, leftIris.width, leftIris.height);
+      const dx = (p5.mouseX - p5.width / 2) / factor;
+      const dy = (p5.mouseY - p5.height / 2) / factor;
+      p5.image(leftIris.img, leftIris.x + dx, leftIris.y + dy, leftIris.width, leftIris.height);
     }
     leftEye.addChild(images.get("assets/zoomed_images/eye_skin_outline.png"), -0.12, -0.07, 1, 1, "DO_NOTHING");
 
     const rightEye = portrait.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.51, 0.331, 0.155, 0, "DO_NOTHING");
-    const rightIris = rightEye.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.25, 0.16, 0.4, 0, "DO_NOTHING");
-    rightIris.draw = (graphicsObject) => {
+    const rightIris = rightEye.addChild(images.get("assets/zoomed_images/eye_brown_circle.png"), 0.24, 0.16, 0.4, 0, "DO_NOTHING");
+    rightIris.draw = (p5) => {
       const factor = 1000;
-      const dx = (graphicsObject.mouseX - graphicsObject.width / 2) / factor;
-      const dy = (graphicsObject.mouseY - graphicsObject.height / 2) / factor;
-      graphicsObject.image(rightIris.img, rightIris.x + dx, rightIris.y + dy, rightIris.width, rightIris.height);
+      const dx = (p5.mouseX - p5.width / 2) / factor;
+      const dy = (p5.mouseY - p5.height / 2) / factor;
+      p5.image(rightIris.img, rightIris.x + dx, rightIris.y + dy, rightIris.width, rightIris.height);
     }
     rightEye.addChild(images.get("assets/zoomed_images/eye_skin_outline.png"), -0.12, -0.07, 1, 1, "DO_NOTHING");
 
@@ -209,7 +208,7 @@ new p5((p5) => {
     return [canvasX, canvasY, backgroundScale];
   }
 
-  // Start pop-pup video.
+  // Start pop-up video.
   function startPopupVideo() {
     roomOverview.addObject(blurLayer, 101, false);
     roomOverview.addObject(popupVideo, 102, true);
