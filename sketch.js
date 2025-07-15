@@ -12,6 +12,8 @@ new p5((p5) => {
   let roomOverview; 
   let portraitCloseup;
 
+  let orangeCloseup;
+
   // Pop-up images
   let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
   let popupImage; // Active pop-up image
@@ -24,6 +26,9 @@ new p5((p5) => {
 
   let teaTime;
   let balloonBlowing;
+
+  let larvaPositions = Array.from({ length: 4 }, () => ({ x: null, y: null }));
+  let larvaAngle = 0; // current rotation angle in radians
 
   // Load images. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
@@ -58,7 +63,7 @@ new p5((p5) => {
     room.addChild(images.get("assets/used_condom.png"), 0.9, 0.87, 1, 0, "VIDEO_CONDOM");
     room.addChild(images.get("assets/mr.momo.png"), 0.35, 0.7, 1, 0, "mrMomo");
     room.addChild(images.get("assets/old_tv.png"), 0.18, 0.25, 1, 0, "oldTv");
-    room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "orange");
+    room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "ORANGE");
     room.addChild(images.get("assets/pizza_box.png"), 0.83, 0.35, 1, 1, "pizzaBox");
     room.addChild(images.get("assets/letter.png"), 0.68, 0.45, 1, 0, "letter");
 
@@ -76,6 +81,7 @@ new p5((p5) => {
     invisibleLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
     invisibleLayer.draw = () => { return };
 
+    // BIRTHDAY
     const birthdayImg = images.get("assets/zoomed_images/birthday.png")
     const birthdayImgScale = 0.9 * p5.height / birthdayImg.height;
     const birthdayImgX = (p5.width - birthdayImgScale * birthdayImg.width) / 2;
@@ -85,6 +91,7 @@ new p5((p5) => {
     blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
     blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
+    // TEATIME
     const teaTimeVideo = p5.createVideo("assets/videos/tea_time.mp4");
     teaTimeVideo.hide();
     const teaTimeScale = 0.8 * p5.width / teaTimeVideo.width;
@@ -92,6 +99,7 @@ new p5((p5) => {
     const teaTimeY = (p5.height - teaTimeScale * teaTimeVideo.height) / 2;
     teaTime = new SceneObject(teaTimeVideo, teaTimeX, teaTimeY, teaTimeScale, "DO_NOTHING");
 
+    // CONDOM
     const condomVideo = p5.createVideo("assets/videos/condom.mp4");
     condomVideo.hide();
     const condomScale = 0.8 * p5.width / condomVideo.width;
@@ -99,6 +107,8 @@ new p5((p5) => {
     const condomY = (p5.height - teaTimeScale * condomVideo.height) / 2;
     balloonBlowing = new SceneObject(condomVideo, condomX, condomY, condomScale, "DO_NOTHING");
 
+
+    // PORTRAIT
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
     const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
     portraitWall.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.04, 0.2, 0, "GO_BACK");
@@ -126,6 +136,65 @@ new p5((p5) => {
 
     portraitCloseup = new Scene(portraitWall);
     [leftEye, rightEye].forEach(object => portraitCloseup.addObjectToBeRedrawn(object));
+
+    // ORANGE
+    const orangeFloorImg = images.get("assets/zoomed_images/orange_background.png");
+    const orangeFloor = new SceneObject(orangeFloorImg, 0, 0, room.width / orangeFloorImg.width, "DO_NOTHING");
+    orangeFloor.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.05, 0.2, 0, "GO_BACK");
+
+    const larva1 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva1.png"), 0.65, 0.75, 0.7, 0, "DO_NOTHING");
+    const larva2 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva2.png"), 0.2, 0.7, 0.7, 0, "DO_NOTHING");
+    const larva3 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva3.png"), 0.5, 0.7, 0.7, 0, "DO_NOTHING");
+    const larva4 = orangeFloor.addChild(images.get("assets/zoomed_images/orange_larva4.png"), 0.7, 0.6, 0.5, 0, "DO_NOTHING");
+
+    larvaMovement(larva1, larvaPositions[0]);
+    larvaMovement(larva2, larvaPositions[1]);
+    larvaMovement(larva3, larvaPositions[2]);
+    larvaMovement(larva4, larvaPositions[3]);
+    
+    orangeFloor.addChild(images.get("assets/zoomed_images/orange_orange.png"), -0.01, -0.01, 0.72, 0, "DO_NOTHING");
+
+    orangeCloseup = new Scene(orangeFloor);
+    [orangeFloor].forEach(object => orangeCloseup.addObjectToBeRedrawn(object));
+  }
+
+  function larvaMovement(larva, larvaPos) {
+    let x = JSON.stringify(larva)
+    larva.draw = (graphicsObject) => {
+      if (larvaPos.x === null || larvaPos.y === null) {
+        larvaPos.x = larva.x;
+        larvaPos.y = larva.y;
+      }
+    
+      const targetX = graphicsObject.mouseX;
+      const targetY = graphicsObject.mouseY;
+    
+      // Move toward cursor
+      const dx = targetX - larvaPos.x;
+      const dy = targetY - larvaPos.y;
+      const speed = 0.00005; // smaller = slower speed
+      larvaPos.x += dx * speed;
+      larvaPos.y += dy * speed;
+    
+      // Compute target angle
+      const targetAngle = Math.atan2(dy, dx);
+    
+      // Interpolate angle (rotation speed factor controls how fast it turns)
+      const rotationSpeed = 0.0002; // smaller = slower turning
+      larvaAngle = lerpAngle(larvaAngle, targetAngle, rotationSpeed);
+    
+      // Draw with smoothed rotation
+      graphicsObject.push();
+      graphicsObject.translate(larvaPos.x + larva.width / 2, larvaPos.y + larva.height / 2);
+      graphicsObject.rotate(larvaAngle);
+      graphicsObject.image(larva.img, -larva.width / 2, -larva.height / 2, larva.width, larva.height);
+      graphicsObject.pop();
+    };
+  }
+
+  function lerpAngle(a, b, t) {
+    const diff = ((b - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+    return a + diff * t;
   }
 
   p5.draw = () => {
@@ -167,6 +236,10 @@ new p5((p5) => {
       case "CLOSEUP_PORTRAIT":
         portraitCloseup.windowResized(p5.width / portraitCloseup.width);
         activeScene = portraitCloseup;
+        break;
+      case "ORANGE":
+        orangeCloseup.windowResized(p5.width / orangeCloseup.width);
+        activeScene = orangeCloseup;
         break;
       case "GO_BACK":
         returnToMainScene();
