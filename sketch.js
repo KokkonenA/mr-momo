@@ -57,7 +57,7 @@ new p5((p5) => {
 
     room.addChild(images.get("assets/used_condom.png"), 0.9, 0.87, 1, 0, "VIDEO_CONDOM");
     room.addChild(images.get("assets/mr.momo.png"), 0.35, 0.7, 1, 0, "mrMomo");
-    room.addChild(images.get("assets/old_tv.png"), 0.18, 0.25, 1, 0, "oldTv");
+    room.addChild(images.get("assets/old_tv.png"), 0.23, 0.25, 1, 0, "oldTv");
     room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "orange");
     room.addChild(images.get("assets/pizza_box.png"), 0.83, 0.35, 1, 1, "pizzaBox");
     room.addChild(images.get("assets/letter.png"), 0.68, 0.45, 1, 0, "letter");
