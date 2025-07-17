@@ -11,12 +11,14 @@ new p5((p5) => {
 
   let roomOverview; 
   let portraitCloseup;
+  let orangeCloseup;
 
   // Pop-up images
   let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
   let popupImage; // Active pop-up image
 
   let birthdayDrawing;
+  let orangeWithLarvaDrawing;
 
   // Pop-up videos
   let blurLayer; // Image between the main scene and a pop-up video that blurs the background and catches click events.
@@ -57,8 +59,8 @@ new p5((p5) => {
 
     room.addChild(images.get("assets/used_condom.png"), 0.9, 0.87, 1, 0, "VIDEO_CONDOM");
     room.addChild(images.get("assets/mr.momo.png"), 0.35, 0.7, 1, 0, "mrMomo");
-    room.addChild(images.get("assets/old_tv.png"), 0.23, 0.25, 1, 0, "oldTv");
-    room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "orange");
+    room.addChild(images.get("assets/old_tv.png"), 0.18, 0.25, 1, 0, "oldTv");
+    room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "CLOSEUP_ORANGE");
     room.addChild(images.get("assets/pizza_box.png"), 0.83, 0.35, 1, 1, "pizzaBox");
     room.addChild(images.get("assets/letter.png"), 0.68, 0.45, 1, 0, "letter");
 
@@ -99,6 +101,7 @@ new p5((p5) => {
     const condomY = (p5.height - teaTimeScale * condomVideo.height) / 2;
     balloonBlowing = new SceneObject(condomVideo, condomX, condomY, condomScale, "DO_NOTHING");
 
+    // PORTRAIT SCENE
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
     const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
     portraitWall.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.04, 0.2, 0, "GO_BACK");
@@ -126,6 +129,13 @@ new p5((p5) => {
 
     portraitCloseup = new Scene(portraitWall);
     [leftEye, rightEye].forEach(object => portraitCloseup.addObjectToBeRedrawn(object));
+
+    // ORANGE SCENE
+    const orangeWithLarvaImg = images.get("assets/zoomed_images/orange_with_larva.png");
+    const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, room.width / orangeWithLarvaImg.width, "DO_NOTHING");
+    orangeWithLarva.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.04, 0.2, 0, "GO_BACK");
+
+    orangeCloseup = new Scene(orangeWithLarva);
   }
 
   p5.draw = () => {
@@ -167,6 +177,10 @@ new p5((p5) => {
       case "CLOSEUP_PORTRAIT":
         portraitCloseup.windowResized(p5.width / portraitCloseup.width);
         activeScene = portraitCloseup;
+        break;
+      case "CLOSEUP_ORANGE":
+        orangeCloseup.windowResized(p5.width / orangeCloseup.width);
+        activeScene = orangeCloseup;
         break;
       case "GO_BACK":
         returnToMainScene();
