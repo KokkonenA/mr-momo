@@ -9,20 +9,19 @@ new p5((p5) => {
   // Scenes
   let activeScene;
 
-  let roomOverview; 
-  let portraitCloseup;
+  let roomOverview;
   let orangeCloseup;
+  let portraitCloseup;
 
   // Pop-up images
   let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
   let popupImage; // Active pop-up image
 
   let birthdayDrawing;
-  let orangeWithLarvaDrawing;
 
   // Pop-up videos
   let blurLayer; // Image between the main scene and a pop-up video that blurs the background and catches click events.
-  let popupVideo; // Active pop-up image
+  let popupVideo; // Active pop-up video
 
   let teaTime;
   let balloonBlowing;
@@ -38,6 +37,7 @@ new p5((p5) => {
   }
 
   p5.setup = () => {
+    // ROOM OVERVIEW
     const backgroundImg = images.get("assets/walls.png");
 
     const [canvasX, canvasY, backgroundScale] = calculateCanvasPositionAndBackgroundScale(backgroundImg.width, backgroundImg.height);
@@ -74,37 +74,46 @@ new p5((p5) => {
     roomOverview = new Scene(room);
     activeScene = roomOverview;
 
+    // INVISIBLE LAYER
     const invisibleImg = p5.createImage(backgroundImg.width, backgroundImg.height);
     invisibleLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
     invisibleLayer.draw = () => { return };
 
+    // BIRTHDAY IMAGE
     const birthdayImg = images.get("assets/zoomed_images/birthday.png")
     const birthdayImgScale = 0.9 * p5.height / birthdayImg.height;
     const birthdayImgX = (p5.width - birthdayImgScale * birthdayImg.width) / 2;
     const birthdayImgY = (p5.height - birthdayImgScale * birthdayImg.height) / 2;
     birthdayDrawing = new SceneObject(birthdayImg, birthdayImgX, birthdayImgY, birthdayImgScale, "DO_NOTHING");
 
+    // BLUR LAYER
     blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
     blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
-    const teaTimeVideo = p5.createVideo("assets/videos/tea_time.mp4");
-    teaTimeVideo.hide();
-    const teaTimeScale = 0.8 * p5.width / teaTimeVideo.width;
-    const teaTimeX = (p5.width - teaTimeScale * teaTimeVideo.width) / 2;
-    const teaTimeY = (p5.height - teaTimeScale * teaTimeVideo.height) / 2;
-    teaTime = new SceneObject(teaTimeVideo, teaTimeX, teaTimeY, teaTimeScale, "DO_NOTHING");
+    // TEA VIDEO
+    teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
-    const condomVideo = p5.createVideo("assets/videos/condom.mp4");
-    condomVideo.hide();
-    const condomScale = 0.8 * p5.width / condomVideo.width;
-    const condomX = (p5.width - teaTimeScale * condomVideo.width) / 2;
-    const condomY = (p5.height - teaTimeScale * condomVideo.height) / 2;
-    balloonBlowing = new SceneObject(condomVideo, condomX, condomY, condomScale, "DO_NOTHING");
+    // CONDOM VIDEO
+    balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
 
-    // PORTRAIT SCENE
+    // GO BACK BUTTON PROPERTIES
+    const goBackImg = images.get("assets/zoomed_images/back_button.png");
+    const goBackX = backgroundScale * 100;
+    const goBackY = backgroundScale * 100;
+    const goBackScale = backgroundScale * 0.5;
+
+    // ORANGE CLOSEUP
+    const orangeWithLarvaImg = images.get("assets/zoomed_images/orange_with_larva.png");
+    const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, room.width / orangeWithLarvaImg.width, "DO_NOTHING");
+    const orangeGoBack = new SceneObject(goBackImg, goBackX, goBackY, goBackScale, "GO_BACK");
+    orangeWithLarva.addChildObject(orangeGoBack, 0);
+    orangeCloseup = new Scene(orangeWithLarva);
+
+    // PORTRAIT CLOSEUP
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
     const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
-    portraitWall.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.04, 0.2, 0, "GO_BACK");
+    const portraitGoBack = new SceneObject(goBackImg, goBackX, goBackY, goBackScale, "GO_BACK");
+    portraitWall.addChildObject(portraitGoBack, 0);
     const portrait = portraitWall.addChild(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 0.32, 0.05, 0.5, 0, "DO_NOTHING");
 
     const leftEye = portrait.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.365, 0.335, 0.155, 0, "DO_NOTHING");
@@ -129,13 +138,6 @@ new p5((p5) => {
 
     portraitCloseup = new Scene(portraitWall);
     [leftEye, rightEye].forEach(object => portraitCloseup.addObjectToBeRedrawn(object));
-
-    // ORANGE SCENE
-    const orangeWithLarvaImg = images.get("assets/zoomed_images/orange_with_larva.png");
-    const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, room.width / orangeWithLarvaImg.width, "DO_NOTHING");
-    orangeWithLarva.addChild(images.get("assets/zoomed_images/back_button.png"), 0.02, 0.04, 0.2, 0, "GO_BACK");
-
-    orangeCloseup = new Scene(orangeWithLarva);
   }
 
   p5.draw = () => {
@@ -158,32 +160,24 @@ new p5((p5) => {
         roomOverview.removeObject(invisibleLayer);
         break;
       case "VIDEO_CONDOM":
-        blurLayer.windowResized(p5.width / blurLayer.width);
-        balloonBlowing.windowResized(0.8 * p5.width / balloonBlowing.width);
-        popupVideo = balloonBlowing;
-        startPopupVideo();
+        startPopupVideo(balloonBlowing);
         break;
       case "VIDEO_TEATIME":
-        blurLayer.windowResized(p5.width / blurLayer.width);
-        teaTime.windowResized(0.8 * p5.width / teaTime.width);
-        popupVideo = teaTime;
-        startPopupVideo();
+        startPopupVideo(teaTime);
         break;
       case "VIDEO_REMOVE":
         popupVideo.img.stop();
         roomOverview.removeObject(popupVideo);
         roomOverview.removeObject(blurLayer);
         break;
-      case "CLOSEUP_PORTRAIT":
-        portraitCloseup.windowResized(p5.width / portraitCloseup.width);
-        activeScene = portraitCloseup;
-        break;
       case "CLOSEUP_ORANGE":
-        orangeCloseup.windowResized(p5.width / orangeCloseup.width);
-        activeScene = orangeCloseup;
+        startScene(orangeCloseup);
+        break;
+      case "CLOSEUP_PORTRAIT":
+        startScene(portraitCloseup);
         break;
       case "GO_BACK":
-        returnToMainScene();
+        startScene(roomOverview);
         break;
       case "DO_NOTHING":
         break;
@@ -222,17 +216,29 @@ new p5((p5) => {
     return [canvasX, canvasY, backgroundScale];
   }
 
-  // Start pop-up video.
-  function startPopupVideo() {
+  // Creates and returns a popup-video object.
+  function createPopupVideoObject(path) {
+    const video = p5.createVideo(path);
+    video.hide();
+    const scale = 0.8 * p5.width / video.width;
+    const x = (p5.width - scale * video.width) / 2;
+    const y = (p5.height - scale * video.height) / 2;
+    return new SceneObject(video, x, y, scale, "DO_NOTHING");
+  }
+
+  // Starts a pop-up video.
+  function startPopupVideo(video) {
+    blurLayer.windowResized(p5.width / blurLayer.width);
+    video.windowResized(0.8 * p5.width / video.width);
+    popupVideo = video;
     roomOverview.addObject(blurLayer, 101, false);
     roomOverview.addObject(popupVideo, 102, true);
     popupVideo.img.loop();
   }
 
-  // Return to the room overview.
-  function returnToMainScene()
-  {
-    roomOverview.windowResized(p5.width / roomOverview.width)
-    activeScene = roomOverview;
+  // Starts a scene.
+  function startScene(scene) {
+    scene.windowResized(p5.width / scene.width);
+    activeScene = scene;
   }
 });
