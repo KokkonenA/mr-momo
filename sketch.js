@@ -46,12 +46,12 @@ new p5((p5) => {
     canvas.position(canvasX, canvasY);
 
     const room = new SceneObject(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING");
-    room.addChild(images.get("assets/cake.png"), 0.35, 0.5, 1, 0, "IMAGE_BIRTHDAY");
+    room.addChild(images.get("assets/cake.png"), 0.33, 0.5, 0.9, 0, "IMAGE_BIRTHDAY");
     room.addChild(images.get("assets/rug.png"), 0.72, 0.47, 1, 0, "rug");
     room.addChild(images.get("assets/cigarettes.png"), 0.8, 0.65, 1, 1, "cigarettes");
     room.addChild(images.get("assets/r_u_ok.png"), 0.85, 0.75, 1, 1, "rUOk");
 
-    const foodBowl = room.addChild(images.get("assets/dog_food.png"), 0.8, 0.75, 1, 2, "dogFood");
+    const foodBowl = room.addChild(images.get("assets/dog_food.png"), 0.77, 0.72, 0.9, 2, "dogFood");
     foodBowl.isMouseOver = (x, y) => {
       return  x > foodBowl.x && x < foodBowl.x + foodBowl.width * 2 / 3 &&
               y > foodBowl.y && y < foodBowl.y + foodBowl.height;
