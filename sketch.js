@@ -3,6 +3,7 @@ import SceneObject from "./SceneObject.js";
 
 new p5((p5) => {
   const images = new Map();
+  const sounds = new Map();
 
   let canvas;
 
@@ -27,14 +28,18 @@ new p5((p5) => {
   let teaTime;
   let balloonBlowing;
 
-  // Load images. By doing this in the preload we can be sure that everything is loaded when the setup starts.
+  // Load images and sounds. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
-    p5.loadJSON("fileList.json", (imagePaths) => {
-      for (let path of imagePaths)
-      {
+    p5.loadJSON("imageList.json", (imagePaths) => {
+      for (let path of imagePaths) {
         images.set(path, p5.loadImage(path));
       }
     });
+    p5.loadJSON("soundList.json", (soundPaths) => {
+      for (let path of soundPaths) {
+        sounds.set(path, p5.loadSound(path));
+      }
+    })
   }
 
   p5.setup = () => {
@@ -106,7 +111,7 @@ new p5((p5) => {
     // ORANGE CLOSEUP
     const orangeWithLarvaImg = images.get("assets/zoomed_images/orange_with_larva.png");
     const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, room.width / orangeWithLarvaImg.width, "DO_NOTHING");
-    const orangeGoBack = new SceneObject(goBackImg, goBackX, goBackY, goBackScale, "GO_BACK");
+    const orangeGoBack = new SceneObject(goBackImg, goBackX, goBackY, goBackScale, "GO_BACK_ORANGE");
     orangeWithLarva.addChildObject(orangeGoBack, 0);
     orangeCloseup = new Scene(orangeWithLarva);
 
@@ -179,6 +184,7 @@ new p5((p5) => {
         roomOverview.removeObject(blurLayer);
         break;
       case "CLOSEUP_ORANGE":
+        sounds.get("assets/sounds/slimy.wav").loop();
         startScene(orangeCloseup);
         break;
       case "CLOSEUP_PORTRAIT":
@@ -186,6 +192,10 @@ new p5((p5) => {
         break;
       case "CLOSEUP_DOG_FOOD":
         startScene(dogFoodCloseup);
+        break;
+      case "GO_BACK_ORANGE":
+        sounds.get("assets/sounds/slimy.wav").stop();
+        startScene(roomOverview);
         break;
       case "GO_BACK":
         startScene(roomOverview);
@@ -217,8 +227,7 @@ new p5((p5) => {
       var backgroundScale = windowImageWidthRelation;
       var canvasX = 0;
       var canvasY = (p5.windowHeight - backgroundScale * currentHeight) / 2;
-    }
-    else {
+    } else {
       var backgroundScale = windowImageHeightRelation;
       var canvasX = (p5.windowWidth - backgroundScale * currentWidth) / 2;
       var canvasY = 0;
