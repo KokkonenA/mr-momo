@@ -28,6 +28,10 @@ new p5((p5) => {
   let teaTime;
   let balloonBlowing;
 
+  // Sounds
+  let eating;
+  let larva;
+
   // Load images and sounds. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
     p5.loadJSON("imageList.json", (imagePaths) => {
@@ -103,30 +107,30 @@ new p5((p5) => {
     balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
 
     // GO BACK BUTTON PROPERTIES
-    const goBackImg = images.get("assets/zoomed_images/back_button.png");
-    const goBackX = backgroundScale * 100;
-    const goBackY = backgroundScale * 100;
-    const goBackScale = backgroundScale * 0.5;
+    const returnImg = images.get("assets/zoomed_images/back_button.png");
+    const returnX = backgroundScale * 100;
+    const returnY = backgroundScale * 100;
+    const returnScale = backgroundScale * 0.5;
 
     // ORANGE CLOSEUP
     const orangeWithLarvaImg = images.get("assets/zoomed_images/orange_with_larva.png");
     const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, room.width / orangeWithLarvaImg.width, "DO_NOTHING");
-    const orangeGoBack = new SceneObject(goBackImg, goBackX, goBackY, goBackScale, "GO_BACK_ORANGE");
-    orangeWithLarva.addChildObject(orangeGoBack, 0);
+    const orangeReturn = new SceneObject(returnImg, returnX, returnY, returnScale, "RETURN_ORANGE");
+    orangeWithLarva.addChildObject(orangeReturn, 0);
     orangeCloseup = new Scene(orangeWithLarva);
 
     // DOG FOOD CLOSEUP
     const dogFoodImg = images.get("assets/zoomed_images/dog_food.png");
     const dogFood = new SceneObject(dogFoodImg, 0, 0, room.width / dogFoodImg.width, "DO_NOTHING");
-    const dogFoodGoBack = new SceneObject(goBackImg, goBackX, goBackY, goBackScale, "GO_BACK");
-    dogFood.addChildObject(dogFoodGoBack, 0);
+    const dogFoodReturn = new SceneObject(returnImg, returnX, returnY, returnScale, "RETURN_DOG_FOOD");
+    dogFood.addChildObject(dogFoodReturn, 0);
     dogFoodCloseup = new Scene(dogFood);
 
     // PORTRAIT CLOSEUP
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
     const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
-    const portraitGoBack = new SceneObject(goBackImg, goBackX, goBackY, goBackScale, "GO_BACK");
-    portraitWall.addChildObject(portraitGoBack, 0);
+    const portraitReturn = new SceneObject(returnImg, returnX, returnY, returnScale, "RETURN_PORTRAIT");
+    portraitWall.addChildObject(portraitReturn, 0);
     const portrait = portraitWall.addChild(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 0.32, 0.05, 0.5, 0, "DO_NOTHING");
 
     const leftEye = portrait.addChild(images.get("assets/zoomed_images/eye_white_part.png"), 0.365, 0.335, 0.155, 0, "DO_NOTHING");
@@ -151,6 +155,10 @@ new p5((p5) => {
 
     portraitCloseup = new Scene(portraitWall);
     [leftEye, rightEye].forEach(object => portraitCloseup.addObjectToBeRedrawn(object));
+
+    // SOUNDS
+    eating = sounds.get("assets/sounds/eating.wav");
+    larva = sounds.get("assets/sounds/slimy.wav");
   }
 
   p5.draw = () => {
@@ -183,21 +191,26 @@ new p5((p5) => {
         roomOverview.removeObject(popupVideo);
         roomOverview.removeObject(blurLayer);
         break;
+      case "CLOSEUP_DOG_FOOD":
+        eating.loop();
+        startScene(dogFoodCloseup);
+        break;
       case "CLOSEUP_ORANGE":
-        sounds.get("assets/sounds/slimy.wav").loop();
+        larva.loop();
         startScene(orangeCloseup);
         break;
       case "CLOSEUP_PORTRAIT":
         startScene(portraitCloseup);
         break;
-      case "CLOSEUP_DOG_FOOD":
-        startScene(dogFoodCloseup);
-        break;
-      case "GO_BACK_ORANGE":
-        sounds.get("assets/sounds/slimy.wav").stop();
+      case "RETURN_DOG_FOOD":
+        eating.stop();
         startScene(roomOverview);
         break;
-      case "GO_BACK":
+      case "RETURN_ORANGE":
+        larva.stop();
+        startScene(roomOverview);
+        break;
+      case "RETURN_PORTRAIT":
         startScene(roomOverview);
         break;
       case "DO_NOTHING":
