@@ -74,10 +74,10 @@ new p5((p5) => {
     room.addChild(images.get("assets/pizza_box.png"), 0.83, 0.35, 1, 1, "pizzaBox");
     room.addChild(images.get("assets/letter.png"), 0.68, 0.45, 1, 0, "letter");
 
-    const table = room.addChild(images.get("assets/table.png"), 0.56, 0.3, 1, 1, "table");
+    const table = room.addChild(images.get("assets/table.png"), 0.56, 0.31, 1, 1, "table");
     table.isMouseOver = () => { return false };
 
-    room.addChild(images.get("assets/cd_player.png"), 0.61, 0.34, 1, 2, "cdPlayer");
+    room.addChild(images.get("assets/cd_player.png"), 0.63, 0.34, 1, 2, "cdPlayer");
     room.addChild(images.get("assets/tea_mug.png"), 0.47, 0.44, 1, 0, "VIDEO_TEATIME");
     room.addChild(images.get("assets/portrait.png"), 0.74, 0.05, 1, 0, "CLOSEUP_PORTRAIT");
 
