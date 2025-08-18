@@ -27,6 +27,7 @@ new p5((p5) => {
 
   let teaTime;
   let balloonBlowing;
+  let piano;
 
   // Sounds
   let eating;
@@ -77,7 +78,7 @@ new p5((p5) => {
     const table = room.addChild(images.get("assets/table.png"), 0.56, 0.31, 1, 1, "table");
     table.isMouseOver = () => { return false };
 
-    room.addChild(images.get("assets/cd_player.png"), 0.63, 0.34, 1, 2, "cdPlayer");
+    room.addChild(images.get("assets/cd_player.png"), 0.63, 0.34, 1, 2, "VIDEO_PIANO");
     room.addChild(images.get("assets/tea_mug.png"), 0.47, 0.44, 1, 0, "VIDEO_TEATIME");
     room.addChild(images.get("assets/portrait.png"), 0.74, 0.05, 1, 0, "CLOSEUP_PORTRAIT");
 
@@ -100,11 +101,14 @@ new p5((p5) => {
     blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
     blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
-    // TEA VIDEO
-    teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
-
     // CONDOM VIDEO
     balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
+
+    // PIANO VIDEO
+    piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
+
+    // TEA VIDEO
+    teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
     // GO BACK BUTTON PROPERTIES
     const returnImg = images.get("assets/zoomed_images/back_button.png");
@@ -167,7 +171,7 @@ new p5((p5) => {
 
   p5.mouseClicked = () => {
     const message = activeScene.mouseClicked(p5.mouseX, p5.mouseY);
-    
+
     switch (message) {
       case "IMAGE_BIRTHDAY":
         invisibleLayer.windowResized(p5.width / invisibleLayer.width);
@@ -182,6 +186,9 @@ new p5((p5) => {
         break;
       case "VIDEO_CONDOM":
         startPopupVideo(balloonBlowing);
+        break;
+      case "VIDEO_PIANO":
+        startPopupVideo(piano);
         break;
       case "VIDEO_TEATIME":
         startPopupVideo(teaTime);
