@@ -20,6 +20,8 @@ new p5((p5) => {
   let popupImage; // Active pop-up image
 
   let birthdayDrawing;
+  let note;
+  let noteTranslated;
 
   // Pop-up videos
   let blurLayer; // Image between the main scene and a pop-up video that blurs the background and catches click events.
@@ -73,7 +75,7 @@ new p5((p5) => {
     room.addChild(images.get("assets/old_tv.png"), 0.24, 0.25, 1, 0, "oldTv");
     room.addChild(images.get("assets/orange.png"), 0.12, 0.85, 1, 0, "CLOSEUP_ORANGE");
     room.addChild(images.get("assets/pizza_box.png"), 0.83, 0.35, 1, 1, "pizzaBox");
-    room.addChild(images.get("assets/letter.png"), 0.68, 0.45, 1, 0, "letter");
+    room.addChild(images.get("assets/letter.png"), 0.68, 0.45, 1, 0, "IMAGE_NOTE");
 
     const table = room.addChild(images.get("assets/table.png"), 0.56, 0.31, 1, 1, "table");
     table.isMouseOver = () => { return false };
@@ -90,24 +92,18 @@ new p5((p5) => {
     invisibleLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
     invisibleLayer.draw = () => { return };
 
-    // BIRTHDAY IMAGE
-    const birthdayImg = images.get("assets/zoomed_images/birthday.png")
-    const birthdayImgScale = 0.9 * p5.height / birthdayImg.height;
-    const birthdayImgX = (p5.width - birthdayImgScale * birthdayImg.width) / 2;
-    const birthdayImgY = (p5.height - birthdayImgScale * birthdayImg.height) / 2;
-    birthdayDrawing = new SceneObject(birthdayImg, birthdayImgX, birthdayImgY, birthdayImgScale, "DO_NOTHING");
+    // POPUP IMAGES
+    birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.png", 0.9, "DO_NOTHING");
+    note = createPopupImageObject("assets/zoomed_images/note.png", 0.6, "IMAGE_NOTE_TRANSLATED");
+    noteTranslated = createPopupImageObject("assets/zoomed_images/note_translated.png", 0.6, "IMAGE_NOTE_ORIGINAL");
 
     // BLUR LAYER
     blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
     blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
-    // CONDOM VIDEO
+    // POPUP VIDOES
     balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
-
-    // PIANO VIDEO
     piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
-
-    // TEA VIDEO
     teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
     // GO BACK BUTTON PROPERTIES
@@ -174,11 +170,20 @@ new p5((p5) => {
 
     switch (message) {
       case "IMAGE_BIRTHDAY":
-        invisibleLayer.windowResized(p5.width / invisibleLayer.width);
-        birthdayDrawing.windowResized(0.9 * p5.height / birthdayDrawing.height);
-        popupImage = birthdayDrawing;
-        roomOverview.addObject(invisibleLayer, 101, false);
-        roomOverview.addObject(popupImage, 102, false);
+        blurBackground();
+        showPopupImage(birthdayDrawing, 0.9);
+        break;
+      case "IMAGE_NOTE":
+        blurBackground();
+        showPopupImage(note, 0.6);
+        break;
+      case "IMAGE_NOTE_TRANSLATED":
+        roomOverview.removeObject(popupImage);
+        showPopupImage(noteTranslated, 0.6);
+        break;
+      case "IMAGE_NOTE_ORIGINAL":
+        roomOverview.removeObject(popupImage);
+        showPopupImage(note, 0.6);
         break;
       case "IMAGE_REMOVE":
         roomOverview.removeObject(popupImage);
@@ -256,7 +261,16 @@ new p5((p5) => {
     return [canvasX, canvasY, backgroundScale];
   }
 
-  // Creates and returns a popup-video object.
+  // Creates and returns a popup image object.
+  function createPopupImageObject(path, toScreenRatio, message) {
+    const img = images.get(path);
+    const scale = toScreenRatio * p5.height / img.height;
+    const x = (p5.width - scale * img.width) / 2;
+    const y = (p5.height - scale * img.height) / 2;
+    return new SceneObject(img, x, y, scale, message);
+  }
+
+  // Creates and returns a popup video object.
   function createPopupVideoObject(path) {
     const video = p5.createVideo(path);
     video.hide();
@@ -264,6 +278,21 @@ new p5((p5) => {
     const x = (p5.width - scale * video.width) / 2;
     const y = (p5.height - scale * video.height) / 2;
     return new SceneObject(video, x, y, scale, "DO_NOTHING");
+  }
+
+  // Blurs the room overview scene.
+  function blurBackground()
+  {
+    invisibleLayer.windowResized(p5.width / invisibleLayer.width);
+    roomOverview.addObject(invisibleLayer, 101, false);
+  }
+
+  // Shows a pop-up image.
+  function showPopupImage(img, toScreenRatio)
+  {
+    img.windowResized(toScreenRatio * p5.height / img.height);
+    popupImage = img;
+    roomOverview.addObject(popupImage, 102, false);
   }
 
   // Starts a pop-up video.
