@@ -101,35 +101,34 @@ new p5((p5) => {
     blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
     blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
-    // POPUP VIDOES
+    // POPUP VIDEOS
     balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
     piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
     teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
     // GO BACK BUTTON PROPERTIES
     const returnImg = images.get("assets/zoomed_images/back_button.png");
-    const returnX = backgroundScale * 100;
-    const returnY = backgroundScale * 100;
+    const returnMargin = backgroundScale * 100;
     const returnScale = backgroundScale * 0.5;
 
     // ORANGE CLOSEUP
     const orangeWithLarvaImg = images.get("assets/zoomed_images/orange_with_larva.png");
     const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, room.width / orangeWithLarvaImg.width, "DO_NOTHING");
-    const orangeReturn = new SceneObject(returnImg, returnX, returnY, returnScale, "RETURN_ORANGE");
+    const orangeReturn = new SceneObject(returnImg, returnMargin, returnMargin, returnScale, "RETURN_ORANGE");
     orangeWithLarva.addChildObject(orangeReturn, 0);
     orangeCloseup = new Scene(orangeWithLarva);
 
     // DOG FOOD CLOSEUP
     const dogFoodImg = images.get("assets/zoomed_images/dog_food.png");
     const dogFood = new SceneObject(dogFoodImg, 0, 0, room.width / dogFoodImg.width, "DO_NOTHING");
-    const dogFoodReturn = new SceneObject(returnImg, returnX, returnY, returnScale, "RETURN_DOG_FOOD");
+    const dogFoodReturn = new SceneObject(returnImg, returnMargin, returnMargin, returnScale, "RETURN_DOG_FOOD");
     dogFood.addChildObject(dogFoodReturn, 0);
     dogFoodCloseup = new Scene(dogFood);
 
     // PORTRAIT CLOSEUP
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
     const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
-    const portraitReturn = new SceneObject(returnImg, returnX, returnY, returnScale, "RETURN_PORTRAIT");
+    const portraitReturn = new SceneObject(returnImg, returnMargin, returnMargin, returnScale, "RETURN_PORTRAIT");
     portraitWall.addChildObject(portraitReturn, 0);
     const portrait = portraitWall.addChild(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 0.32, 0.05, 0.5, 0, "DO_NOTHING");
 
@@ -170,11 +169,11 @@ new p5((p5) => {
 
     switch (message) {
       case "IMAGE_BIRTHDAY":
-        blurBackground();
+        insertInvisibleLayer();
         showPopupImage(birthdayDrawing, 0.9);
         break;
       case "IMAGE_NOTE":
-        blurBackground();
+        insertInvisibleLayer();
         showPopupImage(note, 0.6);
         break;
       case "IMAGE_NOTE_TRANSLATED":
@@ -261,6 +260,17 @@ new p5((p5) => {
     return [canvasX, canvasY, backgroundScale];
   }
 
+  // Calculate and return background scale so it fills the canvas.
+  function calculateBackgroundScale(currentWidth, currentHeight) {
+    const windowToImageWidthRatio = p5.windowWidth / currentWidth;
+    const windowToImageHeightRatio = p5.windowHeight / currentHeight;
+
+    if (windowToImageWidthRatio > windowToImageHeightRatio) {
+      return windowToImageWidthRatio;
+    }
+    return windowToImageHeightRatio;
+  } 
+
   // Creates and returns a popup image object.
   function createPopupImageObject(path, toScreenRatio, message) {
     const img = images.get(path);
@@ -280,8 +290,8 @@ new p5((p5) => {
     return new SceneObject(video, x, y, scale, "DO_NOTHING");
   }
 
-  // Blurs the room overview scene.
-  function blurBackground()
+  // Inserts the inivisible layer to the main scene.
+  function insertInvisibleLayer()
   {
     invisibleLayer.windowResized(p5.width / invisibleLayer.width);
     roomOverview.addObject(invisibleLayer, 101, false);
