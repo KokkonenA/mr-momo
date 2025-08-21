@@ -13,6 +13,10 @@ export default class Scene {
     return this.#rootObject.width;
   }
 
+  get height() {
+    return this.#rootObject.height;
+  }
+
   // Draw an object.
   #drawObject(p5, object) {
     object.draw(p5);

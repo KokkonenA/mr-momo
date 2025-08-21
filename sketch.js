@@ -53,10 +53,12 @@ new p5((p5) => {
     // ROOM OVERVIEW
     const backgroundImg = images.get("assets/walls.png");
 
-    const [canvasX, canvasY, backgroundScale] = calculateCanvasPositionAndBackgroundScale(backgroundImg.width, backgroundImg.height);
+    const [canvasX, canvasY, canvasWidth, canvasHeight] = calculateCanvasPositionAndSize();
 
-    canvas = p5.createCanvas(backgroundScale * backgroundImg.width, backgroundScale * backgroundImg.height);
+    canvas = p5.createCanvas(canvasWidth, canvasHeight);
     canvas.position(canvasX, canvasY);
+
+    const backgroundScale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
 
     const room = new SceneObject(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING");
     room.addChild(images.get("assets/cake.png"), 0.33, 0.5, 0.9, 0, "IMAGE_BIRTHDAY");
@@ -113,21 +115,24 @@ new p5((p5) => {
 
     // ORANGE CLOSEUP
     const orangeWithLarvaImg = images.get("assets/zoomed_images/orange_with_larva.png");
-    const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, room.width / orangeWithLarvaImg.width, "DO_NOTHING");
+    const orangeScale = calculateBackgroundScale(orangeWithLarvaImg.width, orangeWithLarvaImg.height);
+    const orangeWithLarva = new SceneObject(orangeWithLarvaImg, 0, 0, orangeScale, "DO_NOTHING");
     const orangeReturn = new SceneObject(returnImg, returnMargin, returnMargin, returnScale, "RETURN_ORANGE");
     orangeWithLarva.addChildObject(orangeReturn, 0);
     orangeCloseup = new Scene(orangeWithLarva);
 
     // DOG FOOD CLOSEUP
     const dogFoodImg = images.get("assets/zoomed_images/dog_food.png");
-    const dogFood = new SceneObject(dogFoodImg, 0, 0, room.width / dogFoodImg.width, "DO_NOTHING");
+    const dogFoodScale = calculateBackgroundScale(dogFoodImg.width, dogFoodImg.height);
+    const dogFood = new SceneObject(dogFoodImg, 0, 0, dogFoodScale, "DO_NOTHING");
     const dogFoodReturn = new SceneObject(returnImg, returnMargin, returnMargin, returnScale, "RETURN_DOG_FOOD");
     dogFood.addChildObject(dogFoodReturn, 0);
     dogFoodCloseup = new Scene(dogFood);
 
     // PORTRAIT CLOSEUP
     const portraitWallImg = images.get("assets/zoomed_images/wall_background.png");
-    const portraitWall = new SceneObject(portraitWallImg, 0, 0, room.width / portraitWallImg.width, "DO_NOTHING");
+    const portraitWallScale = calculateBackgroundScale(portraitWallImg.width, portraitWallImg.height);
+    const portraitWall = new SceneObject(portraitWallImg, 0, 0, portraitWallScale, "DO_NOTHING");
     const portraitReturn = new SceneObject(returnImg, returnMargin, returnMargin, returnScale, "RETURN_PORTRAIT");
     portraitWall.addChildObject(portraitReturn, 0);
     const portrait = portraitWall.addChild(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 0.32, 0.05, 0.5, 0, "DO_NOTHING");
@@ -232,38 +237,45 @@ new p5((p5) => {
   }
 
   p5.windowResized = () => {
-    const [canvasX, canvasY, backgroundScale] = calculateCanvasPositionAndBackgroundScale(p5.width, p5.height);
+    const [canvasX, canvasY, canvasWidth, canvasHeight] = calculateCanvasPositionAndSize();
 
-    p5.resizeCanvas(backgroundScale * p5.width, backgroundScale * p5.height);
+    p5.resizeCanvas(canvasWidth, canvasHeight);
     canvas.position(canvasX, canvasY);
+
+    const backgroundScale = calculateBackgroundScale(activeScene.width, activeScene.height);
 
     activeScene.windowResized(backgroundScale);
   }
 
-  // Calculate the canvas size and position based on dimensions of the background image.
-  // The root object image and canvas should have the same size
-  // The canvas should be centered and fill as much of the window as possible.
-  function calculateCanvasPositionAndBackgroundScale(currentWidth, currentHeight) {
-    const windowImageWidthRelation = p5.windowWidth / currentWidth;
-    const windowImageHeightRelation = p5.windowHeight / currentHeight;
+  // Calculate the canvas size and position.
+  // The canvas should be centered and fill as much of the window as possible
+  // while maintaing the aspect ratio.
+  function calculateCanvasPositionAndSize() {
+    const aspectRatioWidth = 16;
+    const aspectRatioHeight = 9;
 
-    if (windowImageWidthRelation < windowImageHeightRelation) {
-      var backgroundScale = windowImageWidthRelation;
-      var canvasX = 0;
-      var canvasY = (p5.windowHeight - backgroundScale * currentHeight) / 2;
+    const widthScalar = p5.windowWidth / aspectRatioWidth;
+    const heightScalar = p5.windowHeight / aspectRatioHeight;
+
+    if (widthScalar < heightScalar) {
+      var sizeScalar = widthScalar;
+      var x = 0;
+      var y = (p5.windowHeight - sizeScalar * aspectRatioHeight) / 2;
     } else {
-      var backgroundScale = windowImageHeightRelation;
-      var canvasX = (p5.windowWidth - backgroundScale * currentWidth) / 2;
-      var canvasY = 0;
+      var sizeScalar = heightScalar;
+      var x = (p5.windowWidth - sizeScalar * aspectRatioWidth) / 2;
+      var y = 0;
     }
+    const width = sizeScalar * aspectRatioWidth;
+    const height = sizeScalar * aspectRatioHeight;
 
-    return [canvasX, canvasY, backgroundScale];
+    return [x, y, width, height];
   }
 
   // Calculate and return background scale so it fills the canvas.
   function calculateBackgroundScale(currentWidth, currentHeight) {
-    const windowToImageWidthRatio = p5.windowWidth / currentWidth;
-    const windowToImageHeightRatio = p5.windowHeight / currentHeight;
+    const windowToImageWidthRatio = p5.width / currentWidth;
+    const windowToImageHeightRatio = p5.height / currentHeight;
 
     if (windowToImageWidthRatio > windowToImageHeightRatio) {
       return windowToImageWidthRatio;
