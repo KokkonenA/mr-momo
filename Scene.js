@@ -1,49 +1,34 @@
 export default class Scene {
-  #rootObject;
+  #objects;
   #objectsToRedraw;
   #fullRedrawNeeded;
 
-  constructor(rootObject) {
-    this.#rootObject = rootObject;
+  constructor() {
+    this.#objects = [];
     this.#objectsToRedraw = [];
     this.#fullRedrawNeeded = true;
   }
 
-  get width() {
-    return this.#rootObject.width;
-  }
-
-  get height() {
-    return this.#rootObject.height;
-  }
-
-  // Draw an object.
-  #drawObject(p5, object) {
-    object.draw(p5);
-  }
-
-  // Add object to be redrawn.
-  addObjectToBeRedrawn(object) {
-    this.#objectsToRedraw.push(object);
-  }
-
-  // Add given object as a child of the root object.
+  // Insert an object to scene.
   // If object is redrawn add it to objects to redraw.
-  addObject(object, layer, isRedrawn) {
-    this.#rootObject.addChildObject(object, layer);
+  addObject(object, isRedrawn = false) {
+    this.#objects.push(object);
 
     if (isRedrawn) {
-        this.addObjectToBeRedrawn(object);
+      this.#objectsToRedraw.push(object);
     }
     this.#fullRedrawNeeded = true;
   }
 
-  // Remove object from root object's children
-  // and objects to redraw.
+  // Remove object from the scene and objects to redraw.
   removeObject(object) {
-    this.#rootObject.removeChild(object);
+    let index = this.#objects.indexOf(object);
 
-    const index = this.#objectsToRedraw.indexOf(object);
+    if (index > -1) {
+      this.#objects.splice(index, 1);
+    }
+
+    index = this.#objectsToRedraw.indexOf(object);
 
     if (index > -1) {
       this.#objectsToRedraw.splice(index, 1);
@@ -51,25 +36,34 @@ export default class Scene {
     this.#fullRedrawNeeded = true;
   }
 
+  // Update objects' position and size on canvas.
+  update(scale) {
+    this.#objects.forEach(object => object.update(scale));
+    this.#fullRedrawNeeded = true;
+  }
+
   // Redraw either fully or partially.
   draw(p5) {
     if (this.#fullRedrawNeeded) {
-      this.#drawObject(p5, this.#rootObject)
+      this.#objects.forEach(object => object.draw(p5));
       this.#fullRedrawNeeded = false;
-    }
-    else {
-      this.#objectsToRedraw.forEach(object => this.#drawObject(p5, object));
+    } else {
+      this.#objectsToRedraw.forEach(object => object.draw(p5));
     }
   }
 
-  // Handle mouse click.
+  // Find the object that is being clicked and return onClickMessage of that object.
   mouseClicked(x, y) {
-    return this.#rootObject.mouseClicked(x, y);
-  }
+    let message = "";
 
-  // Handle window resized.
-  windowResized(scale) {
-    this.#rootObject.windowResized(scale);
-    this.#fullRedrawNeeded = true;
+    for (let i = this.#objects.length - 1; i >= 0; i--) {
+      const object = this.#objects[i];
+      message = object.mouseClicked(x, y);
+
+      if (message) {
+        break;
+      }
+    }
+    return message;
   }
 }

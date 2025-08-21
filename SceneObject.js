@@ -1,19 +1,21 @@
 export default class SceneObject {
   #img;
+  #sceneX;
+  #sceneY;
+  #sceneWidth;
+  #sceneHeight;
   #x;
   #y;
   #width;
   #height;
-  #children;
   #onClickMessage;
 
-  constructor(img, x, y, scale, onClickMessage) {
+  constructor(img, sceneX, sceneY, scale, onClickMessage) {
     this.#img = img;
-    this.#x = x;
-    this.#y = y;
-    this.#width = scale*img.width;
-    this.#height = scale*img.height;
-    this.#children = new Map();
+    this.#sceneX = sceneX;
+    this.#sceneY = sceneY;
+    this.#sceneWidth = scale * img.width;
+    this.#sceneHeight = scale * img.height;
     this.#onClickMessage = onClickMessage;
   }
 
@@ -37,80 +39,33 @@ export default class SceneObject {
     return this.#height;
   }
 
-  // Add a child object.
-  addChildObject(child, layer) {
-    if (!this.#children.has(layer)) {
-      this.#children.set(layer, []);
-    }
-    this.#children.get(layer).push(child);
+  // Update position and size on the canvas.
+  update(scale) {
+    this.#x = scale * this.#sceneX;
+    this.#y = scale * this.#sceneY;
+    this.#width = scale * this.#sceneWidth;
+    this.#height = scale * this.#sceneHeight;
   }
 
-  // Create a SceneObject and add it as a child.
-  // The position and scale parameters are relative to the parent.
-  addChild(img, relativeX, relativeY, relativeScale, layer, onClickMessage) {
-    const x = this.#x + this.#width*relativeX;
-    const y = this.#y + this.#height*relativeY;
-    const scale = this.#width/this.#img.width*relativeScale;
-    const child = new SceneObject(img, x, y, scale, onClickMessage);
-    this.addChildObject(child, layer);
-    return child;
-  }
-
-  // Remove a child.
-  removeChild(child) {
-    for (let layer of this.#children.values()) {
-      const index = layer.indexOf(child);
-
-      if (index > -1) {
-        layer.splice(index, 1);
-        break;
-      }
-    }
-  }
-
-  // Draw the image and draw the images of all children in all layers.
+  // Draw the image.
+  // NOTE: for some objects it's overwritten in the setup.
   draw(p5) {
     p5.image(this.#img, this.#x, this.#y, this.#width, this.#height);
-    this.#children.forEach(layer => layer.forEach(child => child.draw(p5)));
   }
 
   // Return true if mouse is over the image.
   // Return false otherwise.
+  // NOTE: for some objects it's overwritten in the setup.
   isMouseOver(x, y) {
     return  x > this.#x && x < this.#x + this.#width &&
             y > this.#y && y < this.#y + this.#height;
   }
 
-  // Find the object that is being clicked and return onClickMessage of that object.
-  // Prioritize child over parent and higher layer over lower.
+  // Return onClickMessage if mouse is over the image.
   mouseClicked(x, y) {
-    let message = "";
-    let childrenReversed = Array.from(this.#children.entries()).reverse();
-
-    loop:
-    for (let [_, layer] of childrenReversed) {
-      for (let child of layer) {
-        message = child.mouseClicked(x, y);
-
-        if (message) {
-          break loop; // Break both inner and outer loop.
-        }
-      }
+    if (this.isMouseOver(x, y)) {
+      return this.#onClickMessage;
     }
-
-    if (!message && this.isMouseOver(x, y)) {
-      message = this.#onClickMessage;
-    }
-    return message;
-  }
-
-  // Apply new scale.
-  windowResized(scale) {
-    this.#x = scale*this.#x;
-    this.#y = scale*this.#y;
-    this.#width = scale*this.#width;
-    this.#height = scale*this.#height;
-
-    this.#children.forEach(layer => layer.forEach(child => child.windowResized(scale)));
+    return "";
   }
 }
