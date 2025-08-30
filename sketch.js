@@ -65,7 +65,7 @@ new p5((p5) => {
     roomOverview.addObject(new SceneObject(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
     roomOverview.addObject(new SceneObject(images.get("assets/letter.png"), 1050, 450, 0.4, "IMAGE_NOTE"));
 
-    const table = new SceneObject(images.get("assets/table.png"), 850, 300, 0.4, "table");
+    const table = new SceneObject(images.get("assets/table.png"), 800, 300, 0.4, "table");
     table.isMouseOver = () => { return false };
     roomOverview.addObject(table);
 
