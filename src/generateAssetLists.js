@@ -3,7 +3,7 @@ import * as path from "node:path"
 
 // Get all asset paths in the given directory and its subdirectories.
 function getAssetPaths(dir, imageList, soundList) {
-  const files = fs.readdirSync(dir);
+  const files = fs.readdirSync(path.join("src",dir));
 
   files.forEach(file => {
     const fullPath = path.join(dir, file);
@@ -17,10 +17,10 @@ function getAssetPaths(dir, imageList, soundList) {
 
       if (extension == ".png") {
         // Add image file to the image list.
-        imageList.push(fullPath.replace(/\\/g, '/'));
+        imageList.push(fullPath.replace(/\\/g, '/').replace(/^src\//, ''));
       } else if (extension == ".wav") {
         // Add sound file to the sound list.
-        soundList.push(fullPath.replace(/\\/g, '/'));
+        soundList.push(fullPath.replace(/\\/g, '/').replace(/^src\//, ''));
       }
     }
   });

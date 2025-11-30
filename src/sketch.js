@@ -61,7 +61,7 @@ new p5((p5) => {
     roomOverview.addObject(new SceneObject(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
 
     roomOverview.addObject(new SceneObject(images.get("assets/old_tv.png"), 350, 250, 0.4, "oldTv"));
-    roomOverview.addObject(new SceneObject(images.get("assets/cake.png"), 550, 500, 0.3, "IMAGE_BIRTHDAY"));
+    roomOverview.addObject(new SceneObject(images.get("assets/cake.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
     roomOverview.addObject(new SceneObject(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
     roomOverview.addObject(new SceneObject(images.get("assets/letter.png"), 1008, 400, 0.4, "IMAGE_NOTE"));
 
@@ -74,11 +74,9 @@ new p5((p5) => {
     roomOverview.addObject(new SceneObject(images.get("assets/orange.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
     roomOverview.addObject(new SceneObject(images.get("assets/mr.momo.png"), 600, 650, 0.4, "mrMomo"));
     roomOverview.addObject(new SceneObject(images.get("assets/rug.png"), 1150, 430, 0.4, "rug"));
-    roomOverview.addObject(new SceneObject(images.get("assets/pizza_box.png"), 1350, 330, 0.4, "pizzaBox"));
-    roomOverview.addObject(new SceneObject(images.get("assets/cigarettes.png"), 1250, 600, 0.4, "cigarettes"));
-    roomOverview.addObject(new SceneObject(images.get("assets/r_u_ok.png"), 1370, 680, 0.4, "rUOk"));
+    roomOverview.addObject(new SceneObject(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "rUOk"));
 
-    const foodBowl = new SceneObject(images.get("assets/dog_food.png"), 1300, 680, 0.4, "CLOSEUP_DOG_FOOD");
+    const foodBowl = new SceneObject(images.get("assets/dog_food.png"), 1330, 550, 0.4, "CLOSEUP_DOG_FOOD");
     foodBowl.isMouseOver = (x, y) => {
       return  x > foodBowl.x && x < foodBowl.x + foodBowl.width * 2 / 3 &&
               y > foodBowl.y && y < foodBowl.y + foodBowl.height;
