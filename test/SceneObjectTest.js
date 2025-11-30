@@ -31,10 +31,10 @@ describe("SceneObject", function() {
   describe("update", function() {
     it("should scale coordinates and dimensions", function(done) {
       sceneObject.update(2);
-      expect(2, sceneObject.x);
-      expect(2, sceneObject.y);
-      expect(2, sceneObject.width);
-      expect(2, sceneObject.height);
+      expect(2).to.equal(sceneObject.x);
+      expect(2).to.equal(sceneObject.y);
+      expect(2000).to.equal(sceneObject.width);
+      expect(1000).to.equal(sceneObject.height);
       done();
     })
   })
