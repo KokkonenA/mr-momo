@@ -63,7 +63,7 @@ new p5((p5) => {
     roomOverview.addObject(new SceneObject(images.get("assets/old_tv.png"), 350, 250, 0.4, "oldTv"));
     roomOverview.addObject(new SceneObject(images.get("assets/cake.png"), 550, 500, 0.3, "IMAGE_BIRTHDAY"));
     roomOverview.addObject(new SceneObject(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
-    roomOverview.addObject(new SceneObject(images.get("assets/letter.png"), 1050, 450, 0.4, "IMAGE_NOTE"));
+    roomOverview.addObject(new SceneObject(images.get("assets/letter.png"), 1008, 400, 0.4, "IMAGE_NOTE"));
 
     const table = new SceneObject(images.get("assets/table.png"), 800, 300, 0.4, "table");
     table.isMouseOver = () => { return false };
