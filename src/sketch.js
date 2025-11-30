@@ -1,5 +1,5 @@
-import Scene from "./Scene.js";
-import SceneObject from "./SceneObject.js";
+import Scene from './Scene.js';
+import SceneObject from './SceneObject.js';
 
 new p5((p5) => {
   const images = new Map();

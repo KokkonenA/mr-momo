@@ -31,16 +31,16 @@ describe("SceneObject", function() {
   describe("update", function() {
     it("should scale coordinates and dimensions", function(done) {
       sceneObject.update(2);
-      expect(2).to.equal(sceneObject.x);
-      expect(2).to.equal(sceneObject.y);
-      expect(2000).to.equal(sceneObject.width);
-      expect(1000).to.equal(sceneObject.height);
+      expect(sceneObject.x).to.equal(2);
+      expect(sceneObject.y).to.equal(2);
+      expect(sceneObject.width).to.equal(2000);
+      expect(sceneObject.height).to.equal(1000);
       done();
     })
   })
 
   describe("draw", function() {
-    it("should call p5 image function with correct parameters when drawn.", function(done) {
+    it("should call p5 image function with correct parameters.", function(done) {
       const p5 = new MockP5();
       sceneObject.draw(p5);
       expect(p5.img).to.equal(sceneObject.img);
