@@ -39,6 +39,13 @@ export default class SceneObject {
     return this.#height;
   }
 
+  /**
+   * @param {string} value
+   */
+  set message(value) {
+    this.#onClickMessage = value;
+  }
+
   // Update position and size on the canvas.
   update(scale) {
     this.#x = scale * this.#sceneX;
