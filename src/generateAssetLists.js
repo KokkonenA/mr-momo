@@ -17,13 +17,13 @@ function getAssetPaths(dir, imageList, soundList) {
 
       if (extension == ".png") {
         // Add image file to the image list.
-        imageList.push(fullPath.replace(/\\/g, '/').replace(/^docs\//, ''));
+        imageList.push(fullPath.replace(/\\/g, '/').replace(/^src\//, ''));
       } else if (extension == ".wav") {
         // Add sound file to the sound list.
-        soundList.push(fullPath.replace(/\\/g, '/').replace(/^docs\//, ''));
+        soundList.push(fullPath.replace(/\\/g, '/').replace(/^src\//, ''));
       } else if (extension == ".mp4") {
         // Add video file to the video list.
-        videoList.push(fullPath.replace(/\\/g, '/').replace(/^docs\//, ''));
+        videoList.push(fullPath.replace(/\\/g, '/').replace(/^src\//, ''));
       }
     }
   });
@@ -33,7 +33,7 @@ const imageList = [];
 const soundList = [];
 const videoList = [];
 
-getAssetPaths("docs\\assets", imageList, soundList);
-fs.writeFileSync("docs\\imageList.json", JSON.stringify(imageList, null, 2));
-fs.writeFileSync("docs\\soundList.json", JSON.stringify(soundList, null, 2));
-fs.writeFileSync("docs\\videoList.json", JSON.stringify(videoList, null, 2));
+getAssetPaths("src\\assets", imageList, soundList);
+fs.writeFileSync("src\\imageList.json", JSON.stringify(imageList, null, 2));
+fs.writeFileSync("src\\soundList.json", JSON.stringify(soundList, null, 2));
+fs.writeFileSync("src\\videoList.json", JSON.stringify(videoList, null, 2));
