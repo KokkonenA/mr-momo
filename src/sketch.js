@@ -1,5 +1,7 @@
-import Scene from './Scene.js';
-import SceneObject from './SceneObject.js';
+import Image from "./Image.js";
+import Scene from "./Scene.js";
+import SceneObject from "./SceneObject.js";
+import Video from "./Video.js";
 
 new p5((p5) => {
   const images = new Map();
@@ -44,11 +46,7 @@ new p5((p5) => {
   let fastForward;
   let blueHands;
   let playbackSpeed;
-  let fastForwardSlower;
-  let fastForwardFaster;
-  let rewindSlower;
-  let rewindFaster;
-  let playBackIcon;
+  let playbackIndicator;
   let blackBackground; // Sometimes at least on Firefox the video frame is not drawn showing the room overview below.
   let timeSinceLastUpdate;
 
@@ -83,36 +81,35 @@ new p5((p5) => {
 
     const backgroundImg = images.get("assets/walls.png");
     const backgroundScale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
-    roomOverview.addObject(new SceneObject(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
+    roomOverview.addObject(new Image(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
 
-    roomOverview.addObject(new SceneObject(images.get("assets/old_tv.png"), 350, 250, 0.4, "PLAYER_RUN"));
-    roomOverview.addObject(new SceneObject(images.get("assets/cake.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
-    roomOverview.addObject(new SceneObject(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
-    roomOverview.addObject(new SceneObject(images.get("assets/letter.png"), 1050, 430, 0.4, "IMAGE_NOTE"));
+    roomOverview.addObject(new Image(images.get("assets/old_tv.png"), 350, 250, 0.4, "PLAYER_RUN"));
+    roomOverview.addObject(new Image(images.get("assets/cake.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
+    roomOverview.addObject(new Image(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
+    roomOverview.addObject(new Image(images.get("assets/letter.png"), 1050, 430, 0.4, "IMAGE_NOTE"));
 
-    const table = new SceneObject(images.get("assets/table.png"), 800, 300, 0.4, "table");
+    const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "table");
     table.isMouseOver = () => { return false };
     roomOverview.addObject(table);
 
-    roomOverview.addObject(new SceneObject(images.get("assets/cd_player.png"), 950, 330, 0.4, "VIDEO_PIANO"));
-    roomOverview.addObject(new SceneObject(images.get("assets/portrait.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
-    roomOverview.addObject(new SceneObject(images.get("assets/orange.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
-    roomOverview.addObject(new SceneObject(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
-    roomOverview.addObject(new SceneObject(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
-    roomOverview.addObject(new SceneObject(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
+    roomOverview.addObject(new Image(images.get("assets/cd_player.png"), 950, 330, 0.4, "VIDEO_PIANO"));
+    roomOverview.addObject(new Image(images.get("assets/portrait.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
+    roomOverview.addObject(new Image(images.get("assets/orange.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
+    roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
+    roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
+    roomOverview.addObject(new Image(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
 
-    const foodBowl = new SceneObject(images.get("assets/dog_food.png"), 1330, 550, 0.4, "CLOSEUP_DOG_FOOD");
+    const foodBowl = new Image(images.get("assets/dog_food.png"), 1330, 550, 0.4, "CLOSEUP_DOG_FOOD");
     foodBowl.isMouseOver = (x, y) => {
       return  x > foodBowl.x && x < foodBowl.x + foodBowl.width * 2 / 3 &&
               y > foodBowl.y && y < foodBowl.y + foodBowl.height;
     }
     roomOverview.addObject(foodBowl);
 
-    roomOverview.addObject(new SceneObject(images.get("assets/used_condom.png"), 1400, 800, 0.4, "VIDEO_CONDOM"));
+    roomOverview.addObject(new Image(images.get("assets/used_condom.png"), 1400, 800, 0.4, "VIDEO_CONDOM"));
 
     // POPUP IMAGES
-    const invisibleImg = p5.createImage(backgroundImg.width, backgroundImg.height);
-    invisibleLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "IMAGE_REMOVE");
+    invisibleLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "IMAGE_REMOVE");
     invisibleLayer.draw = () => { return };
 
     birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.png", 0.9, "DO_NOTHING");
@@ -121,21 +118,69 @@ new p5((p5) => {
 
     // POPUP VIDEOS
     // Videos are created the first time they are played in p5.mouseClicked().
-    blurLayer = new SceneObject(invisibleImg, 0, 0, backgroundScale, "VIDEO_REMOVE");
+    blurLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "VIDEO_REMOVE");
     blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
     // POPUP PLAYER
     frame = createPopupImageObject("assets/player/frame.png", 0.9, "DO_NOTHING");
-    fastForwardSlower = new SceneObject(images.get("assets/player/fast_forward_slower.png"), frame.x + 65, frame.y + 65, 0.2, "DO_NOTHING");
-    fastForwardFaster = new SceneObject(images.get("assets/player/fast_forward_faster.png"), frame.x + 65, frame.y + 65, 0.2, "DO_NOTHING");
-    rewindSlower = new SceneObject(images.get("assets/player/rewind_slower.png"), frame.x + 65, frame.y + 65, 0.2, "DO_NOTHING");
-    rewindFaster = new SceneObject(images.get("assets/player/rewind_faster.png"), frame.x + 65, frame.y + 65, 0.2, "DO_NOTHING");
+    playbackIndicator = new SceneObject(frame.x + 80, frame.y + 80, 30, 30, "DO_NOTHING");
+    playbackIndicator.draw = (p5) => {
+      switch(playbackSpeed) {
+        case 0:
+          p5.fill(255);
+          p5.rect(playbackIndicator.x, playbackIndicator.y, playbackIndicator.width / 3, playbackIndicator.height);
+          p5.rect(playbackIndicator.x + playbackIndicator.width * 2 / 3, playbackIndicator.y, playbackIndicator.width / 3, playbackIndicator.height);
+          break;
+        case 4:
+          p5.fill(255);
+          p5.triangle(playbackIndicator.x, playbackIndicator.y,
+                      playbackIndicator.x, playbackIndicator.y + playbackIndicator.height,
+                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
+                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+          break;
+        case 8:
+          p5.fill(255);
+          p5.triangle(playbackIndicator.x, playbackIndicator.y,
+                      playbackIndicator.x, playbackIndicator.y + playbackIndicator.height,
+                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
+                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+          p5.triangle(playbackIndicator.x + 2.4 * playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + 2.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
+                      playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+          break;
+        case -4:
+          p5.fill(255);
+          p5.triangle(playbackIndicator.x, playbackIndicator.y + playbackIndicator.height / 2,
+                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
+                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+          break;
+        case -8:
+          p5.fill(255);
+          p5.triangle(playbackIndicator.x, playbackIndicator.y + playbackIndicator.height / 2,
+                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
+                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+          p5.triangle(playbackIndicator.x + 2.4 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
+                      playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y,
+                      playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+          break;
+      }
+    }
 
-    rewind = new SceneObject(images.get("assets/player/rewind_button.png"), 580, 750, 0.2, "PLAYER_REWIND");
-    play = new SceneObject(images.get("assets/player/play_button.png"), 680, 750, 0.2, "PLAYER_PLAY");
-    pause = new SceneObject(images.get("assets/player/pause_button.png"), 780, 750, 0.2, "PLAYER_PAUSE");
-    stop = new SceneObject(images.get("assets/player/stop_button.png"), 880, 750, 0.2, "PLAYER_STOP");
-    fastForward = new SceneObject(images.get("assets/player/fast_forward_button.png"), 980, 750, 0.2, "PLAYER_FASTFORWARD");
+    rewind = new Image(images.get("assets/player/rewind_button.png"), 580, 750, 0.2, "PLAYER_REWIND");
+    play = new Image(images.get("assets/player/play_button.png"), 680, 750, 0.2, "PLAYER_PLAY");
+    pause = new Image(images.get("assets/player/pause_button.png"), 780, 750, 0.2, "PLAYER_PAUSE");
+    stop = new Image(images.get("assets/player/stop_button.png"), 880, 750, 0.2, "PLAYER_STOP");
+    fastForward = new Image(images.get("assets/player/fast_forward_button.png"), 980, 750, 0.2, "PLAYER_FASTFORWARD");
     playbackSpeed = 0;
     timeSinceLastUpdate = 0;
 
@@ -144,11 +189,11 @@ new p5((p5) => {
     dogFoodCloseup = createCloseupScene("assets/zoomed_images/dog_food.png", "RETURN_DOG_FOOD");
 
     portraitCloseup = createCloseupScene("assets/zoomed_images/wall_background.png", "RETURN_PORTRAIT");
-    portraitCloseup.addObject(new SceneObject(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 500, 70, 0.4, "DO_NOTHING"));
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 500, 70, 0.4, "DO_NOTHING"));
 
-    portraitCloseup.addObject(new SceneObject(images.get("assets/zoomed_images/eye_white_part.png"), 713, 331, 0.06, "DO_NOTHING"), true);
-    portraitCloseup.addObject(new SceneObject(images.get("assets/zoomed_images/eye_skin_outline.png"), 708, 328, 0.06, "DO_NOTHING"), true);
-    const leftIris = new SceneObject(images.get("assets/zoomed_images/eye_brown_circle.png"), 730, 336, 0.025, "DO_NOTHING");
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.png"), 713, 331, 0.06, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.png"), 708, 328, 0.06, "DO_NOTHING"), true);
+    const leftIris = new Image(images.get("assets/zoomed_images/eye_brown_circle.png"), 730, 336, 0.025, "DO_NOTHING");
     leftIris.draw = (p5) => {
       const factor = 1000;
       const dx = (p5.mouseX - p5.width / 2) / factor;
@@ -157,9 +202,9 @@ new p5((p5) => {
     }
     portraitCloseup.addObject(leftIris, true);
 
-    portraitCloseup.addObject(new SceneObject(images.get("assets/zoomed_images/eye_white_part.png"), 798, 327, 0.06, "DO_NOTHING"), true);
-    portraitCloseup.addObject(new SceneObject(images.get("assets/zoomed_images/eye_skin_outline.png"), 793, 324, 0.06, "DO_NOTHING"), true);
-    const rightIris = new SceneObject(images.get("assets/zoomed_images/eye_brown_circle.png"), 814, 333, 0.025, "DO_NOTHING");
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.png"), 798, 327, 0.06, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.png"), 793, 324, 0.06, "DO_NOTHING"), true);
+    const rightIris = new Image(images.get("assets/zoomed_images/eye_brown_circle.png"), 814, 333, 0.025, "DO_NOTHING");
     rightIris.draw = (p5) => {
       const factor = 1000;
       const dx = (p5.mouseX - p5.width / 2) / factor;
@@ -229,45 +274,35 @@ new p5((p5) => {
         startPopupVideo(teaTime);
         break;
       case "VIDEO_REMOVE":
-        popupVideo.img.stop();
+        popupVideo.stop();
         roomOverview.removeObject(popupVideo);
         roomOverview.removeObject(blurLayer);
         break;
       case "PLAYER_RUN":
         if (!blueHands)
         {
-          const blueHandsVideo = videos.get("assets/videos/Blue-Hands.mp4");
-          const blueHandScale = 0.59;
-          const blueHandsX = frame.x + 55;
-          const blueHandsY = frame.y + 55;
-          blueHands = new SceneObject(blueHandsVideo, blueHandsX, blueHandsY, blueHandScale, "DO_NOTHING");
+          blueHands = new Video(videos.get("assets/videos/Blue-Hands.mp4"), frame.x + 55, frame.y + 55, 0.59, "DO_NOTHING");
           blueHands.draw = (p5) => {
-            if (playbackSpeed != 0) {
+            if (playbackSpeed != 0 && playbackSpeed != 1) {
               const difSinceLastFrame = playbackSpeed * p5.deltaTime / 1000;
               timeSinceLastUpdate += difSinceLastFrame;
 
-              if (!blueHands.img.elt.seeking) {
-                const newTime = blueHands.img.time() + timeSinceLastUpdate;
-                blueHands.img.time(newTime);
+              if (!blueHands.vid.elt.seeking) {
+                const newTime = blueHands.vid.time() + timeSinceLastUpdate;
+                blueHands.vid.time(newTime);
                 timeSinceLastUpdate = 0;
               }
             }
-            p5.image(blueHands.img, blueHands.x, blueHands.y, blueHands.width, blueHands.height);
+            p5.image(blueHands.vid, blueHands.x, blueHands.y, blueHands.width, blueHands.height);
           }
-          blueHandsVideo.play();
-          blueHandsVideo.pause(); // Playing and pausing so Chrome loads the first frame.
+          blueHands.play();
+          blueHands.pause(); // Playing and pausing so Chrome loads the first frame.
 
-          const blackBackgroundImg = p5.createImage(blueHands.width, blueHands.height);
-          blackBackgroundImg.loadPixels();
-          for (let i = 0; i < blackBackgroundImg.pixels.length; i += 4)
-          {
-            blackBackgroundImg.pixels[i] = 0;
-            blackBackgroundImg.pixels[i + 1] = 0;
-            blackBackgroundImg.pixels[i + 2] = 0;
-            blackBackgroundImg.pixels[i + 3] = 255;
-          }
-          blackBackgroundImg.updatePixels();
-          blackBackground = new SceneObject(blackBackgroundImg, blueHands.x, blueHands.y, 1, "DO_NOTHING");
+          blackBackground = new SceneObject(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
+          blackBackground.draw = (p5) => { 
+            p5.fill(0);
+            p5.rect(blackBackground.x, blackBackground.y, blackBackground.width, blackBackground.height);
+          };
         }
         playbackSpeed = 0;
         blurLayer.message = "PLAYER_CLOSE";
@@ -275,68 +310,54 @@ new p5((p5) => {
         roomOverview.addObject(blurLayer);
         blackBackground.update(p5.width / sceneWidth);
         roomOverview.addObject(blackBackground);
-        [blueHands, frame, rewind, play, pause, stop, fastForward].forEach(obj => {
+        [blueHands, frame, playbackIndicator, rewind, play, pause, stop, fastForward].forEach(obj => {
           obj.update(p5.width / sceneWidth);
           roomOverview.addObject(obj, true);
         });
         break;
       case "PLAYER_CLOSE":
-        blueHands.img.elt.onseeked = null;
-        roomOverview.removeObject(playBackIcon);
-        blueHands.img.pause();
-        [blackBackground, blurLayer, blueHands, frame, rewind, play, pause, stop, fastForward].forEach(obj => {
+        blueHands.vid.elt.onseeked = null;
+        blueHands.pause();
+        [blackBackground, blurLayer, blueHands, frame, playbackIndicator, rewind, play, pause, stop, fastForward].forEach(obj => {
           roomOverview.removeObject(obj);
         });
         blurLayer.message = "VIDEO_REMOVE";
         break;
       case "PLAYER_REWIND":
-        blueHands.img.pause();
-        roomOverview.removeObject(playBackIcon);
+        blueHands.pause();
         if (playbackSpeed == -4) {
-          playBackIcon = rewindFaster;
           playbackSpeed = -8;
         } else {
-          playBackIcon = rewindSlower;
           playbackSpeed = -4;
         }
-        playBackIcon.update(p5.width / sceneWidth);
-        roomOverview.addObject(playBackIcon, true);
         break;
       case "PLAYER_FASTFORWARD":
-        blueHands.img.pause();
-        roomOverview.removeObject(playBackIcon);
+        blueHands.pause();
         if (playbackSpeed == 4) {
-          playBackIcon = fastForwardFaster;
           playbackSpeed = 8;
         } else {
-          playBackIcon = fastForwardSlower;
           playbackSpeed = 4;
         }
-        playBackIcon.update(p5.width / sceneWidth);
-        roomOverview.addObject(playBackIcon, true);
         break;
       case "PLAYER_PLAY":
-        roomOverview.removeObject(playBackIcon);
-        playbackSpeed = 0;
-        if (blueHands.img.elt.seeking)
+        playbackSpeed = 1;
+        if (blueHands.vid.elt.seeking)
         {
-          blueHands.img.elt.onseeked = () => {
-            blueHands.img.play();
-            blueHands.img.elt.onseeked = null;
+          blueHands.vid.elt.onseeked = () => {
+            blueHands.play();
+            blueHands.vid.elt.onseeked = null;
           };
         } else {
-          blueHands.img.play();
+          blueHands.play();
         }
         break;
       case "PLAYER_PAUSE":
-        roomOverview.removeObject(playBackIcon);
         playbackSpeed = 0;
-        blueHands.img.pause();
+        blueHands.pause();
         break;
       case "PLAYER_STOP":
-        roomOverview.removeObject(playBackIcon);
         playbackSpeed = 0;
-        blueHands.img.stop();
+        blueHands.stop();
         break;
       case "CLOSEUP_DOG_FOOD":
         eating.loop();
@@ -414,25 +435,25 @@ new p5((p5) => {
     const scale = imageToSceneHeightRatio * sceneHeight / img.height;
     const x = (sceneWidth - scale * img.width) / 2;
     const y = (sceneHeight - scale * img.height) / 2;
-    return new SceneObject(img, x, y, scale, message);
+    return new Image(img, x, y, scale, message);
   }
 
   // Create and return a popup video object.
   function createPopupVideoObject(path) {
-    const video = videos.get(path);
-    const scale = 0.8 * sceneWidth / video.width;
-    const x = (sceneWidth - scale * video.width) / 2;
-    const y = (sceneHeight - scale * video.height) / 2;
-    return new SceneObject(video, x, y, scale, "DO_NOTHING");
+    const vid = videos.get(path);
+    const scale = 0.8 * sceneWidth / vid.width;
+    const x = (sceneWidth - scale * vid.width) / 2;
+    const y = (sceneHeight - scale * vid.height) / 2;
+    return new Video(vid, x, y, scale, "DO_NOTHING");
   }
 
   // Create and return a closeup scene with a background and return button.
   function createCloseupScene(path, message) {
     const scene = new Scene();
-    const img = images.get(path);
-    const scale = calculateBackgroundScale(img.width, img.height);
-    scene.addObject(new SceneObject(img, 0, 0, scale, "DO_NOTHING"));
-    scene.addObject(new SceneObject(images.get("assets/zoomed_images/back_button.png"), 50, 50, 0.22, message));
+    const backgroundImg = images.get(path);
+    const scale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
+    scene.addObject(new Image(backgroundImg, 0, 0, scale, "DO_NOTHING"));
+    scene.addObject(new Image(images.get("assets/zoomed_images/back_button.png"), 50, 50, 0.22, message));
     return scene;
   }
 
@@ -462,6 +483,6 @@ new p5((p5) => {
     popupVideo = video;
     roomOverview.addObject(blurLayer);
     roomOverview.addObject(popupVideo, true);
-    popupVideo.img.loop();
+    popupVideo.loop();
   }
 });

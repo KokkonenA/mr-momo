@@ -1,5 +1,4 @@
 export default class SceneObject {
-  #img;
   #sceneX;
   #sceneY;
   #sceneWidth;
@@ -10,17 +9,12 @@ export default class SceneObject {
   #height;
   #onClickMessage;
 
-  constructor(img, sceneX, sceneY, scale, onClickMessage) {
-    this.#img = img;
+  constructor(sceneX, sceneY, sceneWidth, sceneHeight, onClickMessage) {
     this.#x = this.#sceneX = sceneX;
     this.#y = this.#sceneY = sceneY;
-    this.#width = this.#sceneWidth = scale * img.width;
-    this.#height = this.#sceneHeight = scale * img.height;
+    this.#width = this.#sceneWidth = sceneWidth;
+    this.#height = this.#sceneHeight = sceneHeight;
     this.#onClickMessage = onClickMessage;
-  }
-
-  get img() {
-    return this.#img;
   }
 
   get x() {
@@ -54,10 +48,9 @@ export default class SceneObject {
     this.#height = scale * this.#sceneHeight;
   }
 
-  // Draw the image.
-  // NOTE: for some objects it's overwritten in the setup.
-  draw(p5) {
-    p5.image(this.#img, this.#x, this.#y, this.#width, this.#height);
+  // Draw the object.
+  draw() {
+    throw new Error("Method 'draw' must be implemented.");
   }
 
   // Return true if mouse is over the image.
