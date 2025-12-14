@@ -11,11 +11,13 @@ describe("Video", () => {
       const vid = new MockP5MediaElement(1000, 500);
       const video = new Video(vid, 1, 1, 1, "object clicked");
       video.draw(p5);
-      expect(p5.img).to.equal(vid);
-      expect(p5.x).to.equal(video.x);
-      expect(p5.y).to.equal(video.y);
-      expect(p5.width).to.equal(video.width);
-      expect(p5.height).to.equal(video.height);
+      expect(p5.imageCalls.length).to.equal(1);
+      const imageCall = p5.imageCalls[0];
+      expect(imageCall.img).to.equal(vid);
+      expect(imageCall.x).to.equal(video.x);
+      expect(imageCall.y).to.equal(video.y);
+      expect(imageCall.width).to.equal(video.width);
+      expect(imageCall.height).to.equal(video.height);
       done();
     });
   });

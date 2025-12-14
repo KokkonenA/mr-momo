@@ -1,21 +1,21 @@
 export default class Scene {
   #objects;
-  #objectsToRedraw;
+  #objectsToAlwaysRedraw;
   #fullRedrawNeeded;
 
   constructor() {
     this.#objects = [];
-    this.#objectsToRedraw = [];
+    this.#objectsToAlwaysRedraw = [];
     this.#fullRedrawNeeded = true;
   }
 
   // Insert an object to scene.
-  // If object is redrawn add it to objects to redraw.
-  addObject(object, isRedrawn = false) {
+  // If object is always redrawn add it to objects to always redraw.
+  addObject(object, isAlwaysRedrawn = false) {
     this.#objects.push(object);
 
-    if (isRedrawn) {
-      this.#objectsToRedraw.push(object);
+    if (isAlwaysRedrawn) {
+      this.#objectsToAlwaysRedraw.push(object);
     }
     this.#fullRedrawNeeded = true;
   }
@@ -28,10 +28,10 @@ export default class Scene {
       this.#objects.splice(index, 1);
     }
 
-    index = this.#objectsToRedraw.indexOf(object);
+    index = this.#objectsToAlwaysRedraw.indexOf(object);
 
     if (index > -1) {
-      this.#objectsToRedraw.splice(index, 1);
+      this.#objectsToAlwaysRedraw.splice(index, 1);
     }
     this.#fullRedrawNeeded = true;
   }
@@ -42,13 +42,13 @@ export default class Scene {
     this.#fullRedrawNeeded = true;
   }
 
-  // Redraw either fully or partially.
+  // Draw either fully or partially.
   draw(p5) {
     if (this.#fullRedrawNeeded) {
       this.#objects.forEach(object => object.draw(p5));
       this.#fullRedrawNeeded = false;
     } else {
-      this.#objectsToRedraw.forEach(object => object.draw(p5));
+      this.#objectsToAlwaysRedraw.forEach(object => object.draw(p5));
     }
   }
 

@@ -11,11 +11,13 @@ describe("Image", () => {
       const img = new MockP5Image(1000, 500);
       const image = new Image(img, 1, 1, 1, "object clicked");
       image.draw(p5);
-      expect(p5.img).to.equal(img);
-      expect(p5.x).to.equal(image.x);
-      expect(p5.y).to.equal(image.y);
-      expect(p5.width).to.equal(image.width);
-      expect(p5.height).to.equal(image.height);
+      expect(p5.imageCalls.length).to.equal(1);
+      const imageCall = p5.imageCalls[0];
+      expect(imageCall.img).to.equal(img);
+      expect(imageCall.x).to.equal(image.x);
+      expect(imageCall.y).to.equal(image.y);
+      expect(imageCall.width).to.equal(image.width);
+      expect(imageCall.height).to.equal(image.height);
       done();
     });
   });

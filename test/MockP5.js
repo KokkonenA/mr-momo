@@ -1,10 +1,16 @@
 class MockP5 {
+  #imageCalls;
+
+  constructor() {
+    this.#imageCalls = [];
+  }
+
+  get imageCalls() {
+    return this.#imageCalls;
+  }
+
   image(img, x, y, width, height) {
-    this.img = img;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+    this.#imageCalls.push({img: img, x: x, y: y, width: width, height: height});
   }
 }
 
