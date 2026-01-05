@@ -1,8 +1,8 @@
 "use strict";
 
 import { expect } from "chai";
-import SceneObject from "../src/SceneObject.js";
-import Scene from "../src/Scene.js";
+import SceneObject from "../../src/SceneObject.js";
+import Scene from "../../src/Scene.js";
 
 describe("Scene", () => {
   let scene;
