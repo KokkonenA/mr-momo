@@ -1,7 +1,7 @@
-import Image from "./Image.js";
-import Scene from "./Scene.js";
-import SceneObject from "./SceneObject.js";
-import Video from "./Video.js";
+import Image from "./classes/Image.js";
+import Scene from "./classes/Scene.js";
+import SceneObject from "./classes/SceneObject.js";
+import Video from "./classes/Video.js";
 
 new p5((p5) => {
   const images = new Map();
@@ -92,7 +92,7 @@ new p5((p5) => {
     table.isMouseOver = () => { return false };
     roomOverview.addObject(table);
 
-    roomOverview.addObject(new Image(images.get("assets/cd_player.png"), 950, 330, 0.4, "VIDEO_PIANO"));
+    roomOverview.addObject(new Image(images.get("assets/cd_player.png"), 950, 330, 0.4, "VIDEO_PIANO", images.get("assets/cd_player__outlined.png")));
     roomOverview.addObject(new Image(images.get("assets/portrait.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
     roomOverview.addObject(new Image(images.get("assets/orange.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
     roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
@@ -226,6 +226,10 @@ new p5((p5) => {
 
   p5.draw = () => {
     activeScene.draw(p5);
+  }
+
+  p5.mouseMoved = () => {
+    activeScene.mouseMoved(p5.mouseX, p5.mouseY);
   }
 
   p5.mouseClicked = () => {

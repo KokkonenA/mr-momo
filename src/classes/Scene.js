@@ -1,7 +1,10 @@
+import Image from "./Image.js";
+
 export default class Scene {
   #objects;
   #objectsToAlwaysRedraw;
   #fullRedrawNeeded;
+  #preSelectedObject;
 
   constructor() {
     this.#objects = [];
@@ -49,6 +52,28 @@ export default class Scene {
       this.#fullRedrawNeeded = false;
     } else {
       this.#objectsToAlwaysRedraw.forEach(object => object.draw(p5));
+    }
+  }
+
+  // Find the object that the mouse is over.
+  mouseMoved(x, y) {
+    for (let i = this.#objects.length - 1; i >= 0; i--) {
+      const object = this.#objects[i];
+
+      if (object.isMouseOver(x, y)) {
+        if (object != this.#preSelectedObject) {
+          if (object instanceof Image) {
+            object.mouseEntered();
+          }
+
+          if (this.#preSelectedObject instanceof Image) {
+            this.#preSelectedObject.mouseExited();
+          }
+          this.#fullRedrawNeeded = true;
+          this.#preSelectedObject = object;
+        }
+        break;
+      }
     }
   }
 

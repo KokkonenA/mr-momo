@@ -1,7 +1,7 @@
 "use strict";
 
 import { expect } from "chai";
-import Image from "../../src/Image.js";
+import Image from "../../src/classes/Image.js";
 import { MockP5, MockP5Image } from "./MockP5.js";
 
 describe("Image", () => {
