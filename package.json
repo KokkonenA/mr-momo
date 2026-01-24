@@ -7,7 +7,9 @@
     "@playwright/test": "^1.57.0",
     "@types/node": "^25.0.3",
     "chai": "^6.2.2",
+    "fs": "^0.0.1-security",
     "mocha": "^11.7.5",
+    "path": "^0.12.7",
     "serve": "^14.2.5"
   }
 }
