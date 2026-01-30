@@ -84,8 +84,8 @@ new p5((p5) => {
     roomOverview.addObject(new Image(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
 
     roomOverview.addObject(new Image(images.get("assets/old_tv.png"), 350, 250, 0.4, "PLAYER_RUN"));
-    roomOverview.addObject(new Image(images.get("assets/cake.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
-    roomOverview.addObject(new Image(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
+    roomOverview.addObject(new Image(images.get("assets/cake.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY", images.get("assets/cake__outlined.png")));
+    roomOverview.addObject(new Image(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME", images.get("assets/tea_mug__outlined.png")));
     roomOverview.addObject(new Image(images.get("assets/letter.png"), 1050, 400, 0.4, "IMAGE_NOTE", images.get("assets/letter__outlined.png")));
 
     const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "table");
@@ -93,7 +93,7 @@ new p5((p5) => {
     roomOverview.addObject(table);
 
     roomOverview.addObject(new Image(images.get("assets/cd_player.png"), 950, 320, 0.4, "VIDEO_PIANO", images.get("assets/cd_player__outlined.png")));
-    roomOverview.addObject(new Image(images.get("assets/portrait.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
+    roomOverview.addObject(new Image(images.get("assets/portrait.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT", images.get("assets/portrait__outlined.png")));
     roomOverview.addObject(new Image(images.get("assets/orange.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
     roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
     roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
