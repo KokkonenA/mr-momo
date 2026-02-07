@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha test/mocha/*.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
