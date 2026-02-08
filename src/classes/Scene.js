@@ -1,4 +1,4 @@
-import Image from "./Image.js";
+import Button from "./Button.js";
 
 export default class Scene {
   #objects;
@@ -62,14 +62,15 @@ export default class Scene {
 
       if (object.isMouseOver(x, y)) {
         if (object != this.#preSelectedObject) {
-          if (object instanceof Image) {
+          if (object instanceof Button) {
             object.mouseEntered();
+            this.#fullRedrawNeeded = true;
           }
 
-          if (this.#preSelectedObject instanceof Image) {
+          if (this.#preSelectedObject instanceof Button) {
             this.#preSelectedObject.mouseExited();
+            this.#fullRedrawNeeded = true;
           }
-          this.#fullRedrawNeeded = true;
           this.#preSelectedObject = object;
         }
         break;

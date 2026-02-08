@@ -1,3 +1,4 @@
+import Button from "./classes/Button.js"
 import Image from "./classes/Image.js";
 import Scene from "./classes/Scene.js";
 import SceneObject from "./classes/SceneObject.js";
@@ -83,18 +84,18 @@ new p5((p5) => {
     const backgroundScale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
     roomOverview.addObject(new Image(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
 
-    roomOverview.addObject(new Image(images.get("assets/old_tv.png"), 350, 250, 0.4, "PLAYER_RUN", images.get("assets/old_tv__outlined.png")));
-    roomOverview.addObject(new Image(images.get("assets/cake.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY", images.get("assets/cake__outlined.png")));
-    roomOverview.addObject(new Image(images.get("assets/tea_mug.png"), 700, 400, 0.4, "VIDEO_TEATIME", images.get("assets/tea_mug__outlined.png")));
-    roomOverview.addObject(new Image(images.get("assets/letter.png"), 1050, 400, 0.4, "IMAGE_NOTE", images.get("assets/letter__outlined.png")));
+    roomOverview.addObject(new Image(images.get("assets/old_tv.png"), 350, 250, 0.4, "PLAYER_RUN"));
+    roomOverview.addObject(new Button(images.get("assets/cake.png"), images.get("assets/cake__outlined.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
+    roomOverview.addObject(new Button(images.get("assets/tea_mug.png"), images.get("assets/tea_mug__outlined.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
+    roomOverview.addObject(new Button(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "IMAGE_NOTE"));
 
     const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "table");
     table.isMouseOver = () => { return false };
     roomOverview.addObject(table);
 
-    roomOverview.addObject(new Image(images.get("assets/cd_player.png"), 950, 320, 0.4, "VIDEO_PIANO", images.get("assets/cd_player__outlined.png")));
-    roomOverview.addObject(new Image(images.get("assets/portrait.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT", images.get("assets/portrait__outlined.png")));
-    roomOverview.addObject(new Image(images.get("assets/orange.png"), 200, 750, 0.4, "CLOSEUP_ORANGE", images.get("assets/orange__outlined.png")));
+    roomOverview.addObject(new Button(images.get("assets/cd_player.png"), images.get("assets/cd_player__outlined.png"), 950, 320, 0.4, "VIDEO_PIANO"));
+    roomOverview.addObject(new Button(images.get("assets/portrait.png"), images.get("assets/portrait__outlined.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
+    roomOverview.addObject(new Image(images.get("assets/orange.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
     roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
     roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
     roomOverview.addObject(new Image(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
@@ -229,10 +230,16 @@ new p5((p5) => {
   }
 
   p5.mouseMoved = () => {
+    if (!activeScene) {
+      return;
+    }
     activeScene.mouseMoved(p5.mouseX, p5.mouseY);
   }
 
   p5.mouseClicked = () => {
+    if (!activeScene) {
+      return;
+    }
     const message = activeScene.mouseClicked(p5.mouseX, p5.mouseY);
 
     switch (message) {
