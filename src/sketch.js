@@ -105,7 +105,7 @@ new p5((p5) => {
     roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
     roomOverview.addObject(new Image(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
 
-    const foodBowl = new Image(images.get("assets/dog_food.png"), 1330, 550, 0.4, "CLOSEUP_DOG_FOOD");
+    const foodBowl = new Button(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1330, 550, 0.4, "CLOSEUP_DOG_FOOD");
     foodBowl.isMouseOver = (x, y) => {
       return  x > foodBowl.x && x < foodBowl.x + foodBowl.width * 2 / 3 &&
               y > foodBowl.y && y < foodBowl.y + foodBowl.height;
