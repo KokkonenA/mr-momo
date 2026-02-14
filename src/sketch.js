@@ -22,16 +22,19 @@ new p5((p5) => {
   let dogFoodCloseup;
   let portraitCloseup;
 
-  // Pop-up images
   let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
+  let blurLayer; // Image between the main scene and a pop-up that blurs the background and catches click events.
+
+  // Pop-up images
   let popupImage; // Active pop-up image
 
   let birthdayDrawing;
   let note;
   let noteTranslated;
+  let intro;
+  let start;
 
   // Pop-up videos
-  let blurLayer; // Image between the main scene and a pop-up video that blurs the background and catches click events.
   let popupVideo; // Active pop-up video
 
   let teaTime;
@@ -52,8 +55,10 @@ new p5((p5) => {
   let timeSinceLastUpdate;
 
   // Sounds
+  let fridge;
   let eating;
   let larva;
+  let blow;
 
   // Load images and sounds. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
@@ -94,7 +99,7 @@ new p5((p5) => {
     roomOverview.addObject(table);
 
     roomOverview.addObject(new Button(images.get("assets/cd_player.png"), images.get("assets/cd_player__outlined.png"), 950, 320, 0.4, "VIDEO_PIANO"));
-    roomOverview.addObject(new Button(images.get("assets/portrait.png"), images.get("assets/portrait__outlined.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));    
+    roomOverview.addObject(new Button(images.get("assets/portrait.png"), images.get("assets/portrait__outlined.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
     roomOverview.addObject(new Button(images.get("assets/orange.png"), images.get("assets/orange__outlined.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
     roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
     roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
@@ -107,20 +112,22 @@ new p5((p5) => {
     }
     roomOverview.addObject(foodBowl);
 
-    roomOverview.addObject(new Button(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM", images.get("assets/used_condom__outlined.png")));
+    roomOverview.addObject(new Button(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM"));
 
-    // POPUP IMAGES
     invisibleLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "IMAGE_REMOVE");
     invisibleLayer.draw = () => { return };
+    blurLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "VIDEO_REMOVE");
+    blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
+    // POPUP IMAGES
     birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.png", 0.9, "DO_NOTHING");
     note = createPopupImageObject("assets/zoomed_images/note.png", 0.6, "IMAGE_NOTE_TRANSLATED");
     noteTranslated = createPopupImageObject("assets/zoomed_images/note_translated.png", 0.6, "IMAGE_NOTE_ORIGINAL");
+    intro = createPopupImageObject("assets/startscreen.png", 1, "DO_NOTHING");
+    start = new Image(images.get("assets/player/play_button.png"), 750, 600, 0.25, "START");
 
     // POPUP VIDEOS
     // Videos are created the first time they are played in p5.mouseClicked().
-    blurLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "VIDEO_REMOVE");
-    blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
     // POPUP PLAYER
     frame = createPopupImageObject("assets/player/frame.png", 0.9, "DO_NOTHING");
@@ -215,8 +222,15 @@ new p5((p5) => {
     portraitCloseup.addObject(rightIris, true);
 
     // SOUNDS
+    fridge = sounds.get("assets/sounds/fridge.wav");
     eating = sounds.get("assets/sounds/eating.wav");
     larva = sounds.get("assets/sounds/slimy.wav");
+    blow = sounds.get("assets/sounds/blow.wav");
+
+    // Insert start screen to main scene
+    insertBlurLayer();
+    roomOverview.addObject(intro);
+    roomOverview.addObject(start);
 
     // Create canvas and start the main scene.
     const [canvasX, canvasY, canvasWidth, canvasHeight] = calculateCanvasPositionAndSize();
@@ -243,9 +257,16 @@ new p5((p5) => {
     const message = activeScene.mouseClicked(p5.mouseX, p5.mouseY);
 
     switch (message) {
+      case "START":
+        roomOverview.removeObject(start);
+        roomOverview.removeObject(intro);
+        roomOverview.removeObject(blurLayer);
+        fridge.loop();
+        break;
       case "IMAGE_BIRTHDAY":
         insertInvisibleLayer();
         showPopupImage(birthdayDrawing);
+        blow.play();
         break;
       case "IMAGE_NOTE":
         insertInvisibleLayer();
@@ -393,6 +414,7 @@ new p5((p5) => {
         startScene(roomOverview);
         break;
       case "DO_NOTHING":
+      case "":
         break;
       default:
         console.log(message);
@@ -480,6 +502,12 @@ new p5((p5) => {
     roomOverview.addObject(invisibleLayer);
   }
 
+  // Insert the inivisible layer to the main scene.
+  function insertBlurLayer() {
+    blurLayer.update(p5.width / sceneWidth);
+    roomOverview.addObject(blurLayer);
+  }
+
   // Show a pop-up image.
   function showPopupImage(img) {
     img.update(p5.width / sceneWidth);
@@ -489,10 +517,9 @@ new p5((p5) => {
 
   // Start a pop-up video.
   function startPopupVideo(video) {
-    blurLayer.update(p5.width / sceneWidth);
+    insertBlurLayer();
     video.update(p5.width / sceneWidth);
     popupVideo = video;
-    roomOverview.addObject(blurLayer);
     roomOverview.addObject(popupVideo, true);
     popupVideo.loop();
   }
