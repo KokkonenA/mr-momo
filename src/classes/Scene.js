@@ -48,6 +48,7 @@ export default class Scene {
   // Draw either fully or partially.
   draw(p5) {
     if (this.#fullRedrawNeeded) {
+      this.preSelect(p5.mouseX, p5.mouseY);
       this.#objects.forEach(object => object.draw(p5));
       this.#fullRedrawNeeded = false;
     } else {
@@ -56,7 +57,7 @@ export default class Scene {
   }
 
   // Find the object that the mouse is over.
-  mouseMoved(x, y) {
+  preSelect(x, y) {
     for (let i = this.#objects.length - 1; i >= 0; i--) {
       const object = this.#objects[i];
 

@@ -248,7 +248,7 @@ new p5((p5) => {
     if (!activeScene) {
       return;
     }
-    activeScene.mouseMoved(p5.mouseX, p5.mouseY);
+    activeScene.preSelect(p5.mouseX, p5.mouseY);
   }
 
   p5.mouseClicked = () => {

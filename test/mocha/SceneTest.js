@@ -90,9 +90,12 @@ describe("Scene", () => {
   })
 
   describe("mouseClicked", () => {
-    it("should return the onClickMessage of the topmost object.", (done) => {
-      expect(scene.mouseClicked(100, 100)).to.equal("object 1 clicked");
-      expect(scene.mouseClicked(300, 300)).to.equal("object 2 clicked");
+    it("should return the onClickMessage of the topmost object after mouse has moved.", (done) => {
+      expect(scene.mouseClicked()).to.equal("")
+      scene.preSelect(100, 100);
+      expect(scene.mouseClicked()).to.equal("object 1 clicked");
+      scene.preSelect(300, 300);
+      expect(scene.mouseClicked()).to.equal("object 2 clicked");
       done();
     })
   })
