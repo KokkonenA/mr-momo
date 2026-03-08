@@ -1,6 +1,7 @@
 import SceneObject from "./SceneObject.js";
 
-export default class Button extends SceneObject {
+// Image that changes when hovered over.
+export default class HImage extends SceneObject {
   #img;
   #onHoverImg;
   #isHighlighted;

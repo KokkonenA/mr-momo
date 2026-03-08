@@ -33,10 +33,13 @@ export default class SceneObject {
     return this.#height;
   }
 
+  get onClickMessage() {
+    return this.#onClickMessage;
+  }
   /**
    * @param {string} value
    */
-  set message(value) {
+  set onClickMessage(value) {
     this.#onClickMessage = value;
   }
 
@@ -59,13 +62,5 @@ export default class SceneObject {
   isMouseOver(x, y) {
     return  x > this.#x && x < this.#x + this.#width &&
             y > this.#y && y < this.#y + this.#height;
-  }
-
-  // Return onClickMessage if mouse is over the image.
-  mouseClicked(x, y) {
-    if (this.isMouseOver(x, y)) {
-      return this.#onClickMessage;
-    }
-    return "";
   }
 }

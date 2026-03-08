@@ -1,4 +1,4 @@
-import Button from "./Button.js";
+import HImage from "./HImage.js";
 
 export default class Scene {
   #objects;
@@ -62,12 +62,12 @@ export default class Scene {
 
       if (object.isMouseOver(x, y)) {
         if (object != this.#preSelectedObject) {
-          if (object instanceof Button) {
+          if (object instanceof HImage) {
             object.mouseEntered();
             this.#fullRedrawNeeded = true;
           }
 
-          if (this.#preSelectedObject instanceof Button) {
+          if (this.#preSelectedObject instanceof HImage) {
             this.#preSelectedObject.mouseExited();
             this.#fullRedrawNeeded = true;
           }
@@ -78,18 +78,11 @@ export default class Scene {
     }
   }
 
-  // Find the object that is being clicked and return onClickMessage of that object.
-  mouseClicked(x, y) {
-    let message = "";
-
-    for (let i = this.#objects.length - 1; i >= 0; i--) {
-      const object = this.#objects[i];
-      message = object.mouseClicked(x, y);
-
-      if (message) {
-        break;
-      }
+  // Return the pre-selected object's on click message.
+  mouseClicked() {
+    if (this.#preSelectedObject) {
+      return this.#preSelectedObject.onClickMessage;
     }
-    return message;
+    return "";
   }
 }

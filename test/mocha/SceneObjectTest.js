@@ -33,15 +33,4 @@ describe("SceneObject", () => {
       done();
     });
   });
-
-  describe("mouseClicked", () => {
-    it("should return onClickMessage when given coordinates inside the object", (done) => {
-      expect(sceneObject.mouseClicked(10, 10)).to.equal("object clicked");
-      done();
-    });
-    it("should return empty string when given coordinates outside the object", (done) => {
-      expect(sceneObject.mouseClicked(0, 0)).to.equal("");
-      done();
-    });
-  });
 });

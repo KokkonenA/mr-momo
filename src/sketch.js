@@ -1,4 +1,4 @@
-import Button from "./classes/Button.js"
+import HImage from "./classes/HImage.js"
 import Image from "./classes/Image.js";
 import Scene from "./classes/Scene.js";
 import SceneObject from "./classes/SceneObject.js";
@@ -89,30 +89,30 @@ new p5((p5) => {
     const backgroundScale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
     roomOverview.addObject(new Image(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
 
-    roomOverview.addObject(new Button(images.get("assets/old_tv.png"), images.get("assets/old_tv__outlined.png"), 350, 250, 0.4, "PLAYER_RUN"));
-    roomOverview.addObject(new Button(images.get("assets/cake.png"), images.get("assets/cake__outlined.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
-    roomOverview.addObject(new Button(images.get("assets/tea_mug.png"), images.get("assets/tea_mug__outlined.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
-    roomOverview.addObject(new Button(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "IMAGE_NOTE"));
+    roomOverview.addObject(new HImage(images.get("assets/old_tv.png"), images.get("assets/old_tv__outlined.png"), 350, 250, 0.4, "PLAYER_RUN"));
+    roomOverview.addObject(new HImage(images.get("assets/cake.png"), images.get("assets/cake__outlined.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
+    roomOverview.addObject(new HImage(images.get("assets/tea_mug.png"), images.get("assets/tea_mug__outlined.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
+    roomOverview.addObject(new HImage(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "IMAGE_NOTE"));
 
     const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "table");
     table.isMouseOver = () => { return false };
     roomOverview.addObject(table);
 
-    roomOverview.addObject(new Button(images.get("assets/cd_player.png"), images.get("assets/cd_player__outlined.png"), 950, 320, 0.4, "VIDEO_PIANO"));
-    roomOverview.addObject(new Button(images.get("assets/portrait.png"), images.get("assets/portrait__outlined.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
-    roomOverview.addObject(new Button(images.get("assets/orange.png"), images.get("assets/orange__outlined.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
+    roomOverview.addObject(new HImage(images.get("assets/cd_player.png"), images.get("assets/cd_player__outlined.png"), 950, 320, 0.4, "VIDEO_PIANO"));
+    roomOverview.addObject(new HImage(images.get("assets/portrait.png"), images.get("assets/portrait__outlined.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
+    roomOverview.addObject(new HImage(images.get("assets/orange.png"), images.get("assets/orange__outlined.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
     roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
     roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
     roomOverview.addObject(new Image(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
 
-    const foodBowl = new Button(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1330, 550, 0.4, "CLOSEUP_DOG_FOOD");
+    const foodBowl = new HImage(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1320, 550, 0.4, "CLOSEUP_DOG_FOOD");
     foodBowl.isMouseOver = (x, y) => {
       return  x > foodBowl.x && x < foodBowl.x + foodBowl.width * 2 / 3 &&
               y > foodBowl.y && y < foodBowl.y + foodBowl.height;
     }
     roomOverview.addObject(foodBowl);
 
-    roomOverview.addObject(new Button(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM"));
+    roomOverview.addObject(new HImage(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM"));
 
     invisibleLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "IMAGE_REMOVE");
     invisibleLayer.draw = () => { return };
@@ -128,6 +128,7 @@ new p5((p5) => {
 
     // POPUP VIDEOS
     // Videos are created the first time they are played in p5.mouseClicked().
+    teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
     // POPUP PLAYER
     frame = createPopupImageObject("assets/player/frame.png", 0.9, "DO_NOTHING");
@@ -254,19 +255,23 @@ new p5((p5) => {
     if (!activeScene) {
       return;
     }
-    const message = activeScene.mouseClicked(p5.mouseX, p5.mouseY);
+    const message = activeScene.mouseClicked();
 
     switch (message) {
       case "START":
         roomOverview.removeObject(start);
         roomOverview.removeObject(intro);
         roomOverview.removeObject(blurLayer);
+        fridge.setVolume(0);
         fridge.loop();
+        fridge.setVolume(1, 1);
         break;
       case "IMAGE_BIRTHDAY":
         insertInvisibleLayer();
         showPopupImage(birthdayDrawing);
-        blow.play();
+        fridge.setVolume(0);
+        fridge.setVolume(1, 0, 0.5);
+        blow.play(0.1);
         break;
       case "IMAGE_NOTE":
         insertInvisibleLayer();
@@ -285,6 +290,7 @@ new p5((p5) => {
         roomOverview.removeObject(invisibleLayer);
         break;
       case "VIDEO_CONDOM":
+        fridge.setVolume(0, 1);
         if (!balloonBlowing)
         {
           balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
@@ -292,6 +298,7 @@ new p5((p5) => {
         startPopupVideo(balloonBlowing);
         break;
       case "VIDEO_PIANO":
+        fridge.setVolume(0, 1);
         if (!piano)
         {
           piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
@@ -299,6 +306,7 @@ new p5((p5) => {
         startPopupVideo(piano);
         break;
       case "VIDEO_TEATIME":
+        fridge.setVolume(0, 1);
         if (!teaTime)
         {
           teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
@@ -306,6 +314,7 @@ new p5((p5) => {
         startPopupVideo(teaTime);
         break;
       case "VIDEO_REMOVE":
+        fridge.setVolume(1, 1);
         popupVideo.stop();
         roomOverview.removeObject(popupVideo);
         roomOverview.removeObject(blurLayer);
@@ -337,7 +346,7 @@ new p5((p5) => {
           };
         }
         playbackSpeed = 0;
-        blurLayer.message = "PLAYER_CLOSE";
+        blurLayer.onClickMessage = "PLAYER_CLOSE";
         blurLayer.update(p5.width / sceneWidth);
         roomOverview.addObject(blurLayer);
         blackBackground.update(p5.width / sceneWidth);
@@ -346,6 +355,7 @@ new p5((p5) => {
           obj.update(p5.width / sceneWidth);
           roomOverview.addObject(obj, true);
         });
+        fridge.setVolume(0, 1);
         break;
       case "PLAYER_CLOSE":
         blueHands.vid.elt.onseeked = null;
@@ -353,7 +363,8 @@ new p5((p5) => {
         [blackBackground, blurLayer, blueHands, frame, playbackIndicator, rewind, play, pause, stop, fastForward].forEach(obj => {
           roomOverview.removeObject(obj);
         });
-        blurLayer.message = "VIDEO_REMOVE";
+        blurLayer.onClickMessage = "VIDEO_REMOVE";
+        fridge.setVolume(1, 1);
         break;
       case "PLAYER_REWIND":
         blueHands.pause();
@@ -392,25 +403,31 @@ new p5((p5) => {
         blueHands.stop();
         break;
       case "CLOSEUP_DOG_FOOD":
+        fridge.setVolume(0, 1);
         eating.loop();
         startScene(dogFoodCloseup);
         break;
       case "CLOSEUP_ORANGE":
+        fridge.setVolume(0, 1);
         larva.loop();
         startScene(orangeCloseup);
         break;
       case "CLOSEUP_PORTRAIT":
+        fridge.setVolume(0);
         startScene(portraitCloseup);
         break;
       case "RETURN_DOG_FOOD":
+        fridge.setVolume(1, 1);
         eating.stop();
         startScene(roomOverview);
         break;
       case "RETURN_ORANGE":
+        fridge.setVolume(1, 1);
         larva.stop();
         startScene(roomOverview);
         break;
       case "RETURN_PORTRAIT":
+        fridge.setVolume(1);
         startScene(roomOverview);
         break;
       case "DO_NOTHING":
