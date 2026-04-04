@@ -1,3 +1,4 @@
+*.asd
 *.DS_Store
 .vscode/
 node_modules/
@@ -8,4 +9,3 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-*.asd

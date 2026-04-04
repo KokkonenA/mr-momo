@@ -1,19 +1,29 @@
 import HImage from "./HImage.js";
 
+/**
+ * Scene class
+ */
 export default class Scene {
   #objects;
   #objectsToAlwaysRedraw;
   #fullRedrawNeeded;
   #preSelectedObject;
 
+  /**
+   * The constructor
+   */
   constructor() {
     this.#objects = [];
     this.#objectsToAlwaysRedraw = [];
     this.#fullRedrawNeeded = true;
   }
 
-  // Insert an object to scene.
-  // If object is always redrawn add it to objects to always redraw.
+  /**
+   * Inserts an object to scene
+   * If object is always redrawn, adds it to the objects to always redraw
+   * @param {SceneObject} object 
+   * @param {boolean} isAlwaysRedrawn 
+   */
   addObject(object, isAlwaysRedrawn = false) {
     this.#objects.push(object);
 
@@ -23,7 +33,10 @@ export default class Scene {
     this.#fullRedrawNeeded = true;
   }
 
-  // Remove object from the scene and objects to redraw.
+  /**
+   * Removes an object from the scene and the objects to redraw.
+   * @param {SceneObject} object 
+   */
   removeObject(object) {
     let index = this.#objects.indexOf(object);
 
@@ -39,13 +52,19 @@ export default class Scene {
     this.#fullRedrawNeeded = true;
   }
 
-  // Update objects' position and size on canvas.
+  /**
+   * Updates the objects' position and size on canvas.
+   * @param {number} scale 
+   */
   update(scale) {
     this.#objects.forEach(object => object.update(scale));
     this.#fullRedrawNeeded = true;
   }
 
-  // Draw either fully or partially.
+  /**
+   * Draws the scene either fully or partially.
+   * @param {p5} p5 
+   */
   draw(p5) {
     if (this.#fullRedrawNeeded) {
       this.preSelect(p5.mouseX, p5.mouseY);
@@ -56,12 +75,19 @@ export default class Scene {
     }
   }
 
-  // Find the object that the mouse is over.
+  /**
+   * Find the object that the mouse is on top of and preselects it.
+   * @param {number} x 
+   * @param {number} y 
+   */
   preSelect(x, y) {
+    let objectFound = false;
+
     for (let i = this.#objects.length - 1; i >= 0; i--) {
       const object = this.#objects[i];
+      objectFound = object.isMouseOver(x, y);
 
-      if (object.isMouseOver(x, y)) {
+      if (objectFound) {
         if (object != this.#preSelectedObject) {
           if (object instanceof HImage) {
             object.mouseEntered();
@@ -77,9 +103,19 @@ export default class Scene {
         break;
       }
     }
-  }
 
-  // Return the pre-selected object's on click message.
+    if (!objectFound && this.#preSelectedObject) {
+      if (this.#preSelectedObject instanceof HImage) {
+        this.#preSelectedObject.mouseExited();
+        this.#fullRedrawNeeded = true;
+      }
+      this.#preSelectedObject = null;
+    }
+  }
+  
+  /**
+   * @returns the pre-selected object's on click message.
+   */
   mouseClicked() {
     if (this.#preSelectedObject) {
       return this.#preSelectedObject.onClickMessage;

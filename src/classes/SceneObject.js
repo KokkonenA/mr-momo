@@ -1,3 +1,6 @@
+/**
+ * Scene object class
+ */
 export default class SceneObject {
   #sceneX;
   #sceneY;
@@ -9,6 +12,14 @@ export default class SceneObject {
   #height;
   #onClickMessage;
 
+  /**
+   * The constructor
+   * @param {number} sceneX
+   * @param {number} sceneY 
+   * @param {number} sceneWidth 
+   * @param {number} sceneHeight 
+   * @param {string} onClickMessage 
+   */
   constructor(sceneX, sceneY, sceneWidth, sceneHeight, onClickMessage) {
     this.#x = this.#sceneX = sceneX;
     this.#y = this.#sceneY = sceneY;
@@ -36,6 +47,7 @@ export default class SceneObject {
   get onClickMessage() {
     return this.#onClickMessage;
   }
+
   /**
    * @param {string} value
    */
@@ -43,7 +55,10 @@ export default class SceneObject {
     this.#onClickMessage = value;
   }
 
-  // Update position and size on the canvas.
+  /**
+   * Updates position and size on the canvas
+   * @param {number} scale 
+   */
   update(scale) {
     this.#x = scale * this.#sceneX;
     this.#y = scale * this.#sceneY;
@@ -51,14 +66,19 @@ export default class SceneObject {
     this.#height = scale * this.#sceneHeight;
   }
 
-  // Draw the object.
+  /**
+   * Abstract - Draws the object
+   */
   draw() {
     throw new Error("Method 'draw' must be implemented.");
   }
 
-  // Return true if mouse is over the image.
-  // Return false otherwise.
-  // NOTE: for some objects it's overwritten in the setup.
+  /**
+   * NOTE: for some objects this is overwritten in the setup
+   * @param {number} x 
+   * @param {number} y 
+   * @returns true if mouse is over the image, false otherwise
+   */
   isMouseOver(x, y) {
     return  x > this.#x && x < this.#x + this.#width &&
             y > this.#y && y < this.#y + this.#height;
