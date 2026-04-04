@@ -2,7 +2,7 @@ import HImage from "./classes/HImage.js"
 import Image from "./classes/Image.js";
 import Scene from "./classes/Scene.js";
 import SceneObject from "./classes/SceneObject.js";
-import Video from "./classes/Video.js";
+import { videoWidth, videoHeight, Video } from "./classes/Video.js";
 
 new p5((p5) => {
   const images = new Map();
@@ -97,7 +97,7 @@ new p5((p5) => {
     roomOverview.addObject(new HImage(images.get("assets/tea_mug.png"), images.get("assets/tea_mug__outlined.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
     roomOverview.addObject(new HImage(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "IMAGE_NOTE"));
 
-    const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "table");
+    const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "DO_NOTHING");
     table.isMouseOver = () => { return false };
     roomOverview.addObject(table);
 
@@ -130,7 +130,9 @@ new p5((p5) => {
     start = new Image(images.get("assets/player/play_button.png"), 750, 600, 0.25, "START");
 
     // POPUP VIDEOS
-    // Videos are created the first time they are played in p5.mouseClicked().
+    balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
+    piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
+    teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
     // POPUP PLAYER
     frame = createPopupImageObject("assets/player/frame.png", 0.9, "DO_NOTHING");
@@ -144,6 +146,29 @@ new p5((p5) => {
     fastForward = new Image(images.get("assets/player/fast_forward_button.png"), 980, 750, 0.2, "PLAYER_FASTFORWARD");
     playbackSpeed = 0;
     timeSinceLastUpdate = 0;
+
+    blueHands = new Video(videos.get("assets/videos/Blue-Hands.mp4"), frame.x + 55, frame.y + 55, 0.59, "DO_NOTHING");
+    blueHands.draw = (p5) => {
+      if (playbackSpeed != 0 && playbackSpeed != 1) {
+        const difSinceLastFrame = playbackSpeed * p5.deltaTime / 1000;
+        timeSinceLastUpdate += difSinceLastFrame;
+
+        if (!blueHands.vid.elt.seeking) {
+          const newTime = blueHands.vid.time() + timeSinceLastUpdate;
+          blueHands.vid.time(newTime);
+          timeSinceLastUpdate = 0;
+        }
+      }
+      p5.image(blueHands.vid, blueHands.x, blueHands.y, blueHands.width, blueHands.height);
+    }
+    blueHands.play();
+    blueHands.pause(); // Playing and pausing so Chrome loads the first frame.
+
+    blackBackground = new SceneObject(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
+    blackBackground.draw = (p5) => { 
+      p5.fill(0);
+      p5.rect(blackBackground.x, blackBackground.y, blackBackground.width, blackBackground.height);
+    };
 
     // CLOSEUP SCENES
     orangeCloseup = createCloseupScene("assets/zoomed_images/orange_with_larva.png", "RETURN_ORANGE");
@@ -246,26 +271,14 @@ new p5((p5) => {
         break;
       case "VIDEO_CONDOM":
         fridge.setVolume(0, audioFadeDuration);
-        if (!balloonBlowing)
-        {
-          balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
-        }
         startPopupVideo(balloonBlowing);
         break;
       case "VIDEO_PIANO":
         fridge.setVolume(0, audioFadeDuration);
-        if (!piano)
-        {
-          piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
-        }
         startPopupVideo(piano);
         break;
       case "VIDEO_TEATIME":
         fridge.setVolume(0, audioFadeDuration);
-        if (!teaTime)
-        {
-          teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
-        }
         startPopupVideo(teaTime);
         break;
       case "VIDEO_REMOVE":
@@ -275,31 +288,6 @@ new p5((p5) => {
         roomOverview.removeObject(blurLayer);
         break;
       case "PLAYER_RUN":
-        if (!blueHands)
-        {
-          blueHands = new Video(videos.get("assets/videos/Blue-Hands.mp4"), frame.x + 55, frame.y + 55, 0.59, "DO_NOTHING");
-          blueHands.draw = (p5) => {
-            if (playbackSpeed != 0 && playbackSpeed != 1) {
-              const difSinceLastFrame = playbackSpeed * p5.deltaTime / 1000;
-              timeSinceLastUpdate += difSinceLastFrame;
-
-              if (!blueHands.vid.elt.seeking) {
-                const newTime = blueHands.vid.time() + timeSinceLastUpdate;
-                blueHands.vid.time(newTime);
-                timeSinceLastUpdate = 0;
-              }
-            }
-            p5.image(blueHands.vid, blueHands.x, blueHands.y, blueHands.width, blueHands.height);
-          }
-          blueHands.play();
-          blueHands.pause(); // Playing and pausing so Chrome loads the first frame.
-
-          blackBackground = new SceneObject(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
-          blackBackground.draw = (p5) => { 
-            p5.fill(0);
-            p5.rect(blackBackground.x, blackBackground.y, blackBackground.width, blackBackground.height);
-          };
-        }
         playbackSpeed = 0;
         blurLayer.onClickMessage = "PLAYER_CLOSE";
         blurLayer.update(p5.width / sceneWidth);
@@ -465,9 +453,9 @@ new p5((p5) => {
    */
   function createPopupVideoObject(path) {
     const vid = videos.get(path);
-    const scale = 0.8 * sceneWidth / vid.width;
-    const x = (sceneWidth - scale * vid.width) / 2;
-    const y = (sceneHeight - scale * vid.height) / 2;
+    const scale = 0.8 * sceneWidth / videoWidth;
+    const x = (sceneWidth - scale * videoWidth) / 2;
+    const y = (sceneHeight - scale * videoHeight) / 2;
     return new Video(vid, x, y, scale, "DO_NOTHING");
   }
 

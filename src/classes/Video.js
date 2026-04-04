@@ -1,9 +1,12 @@
 import SceneObject from "./SceneObject.js";
 
+const videoWidth = 1920;
+const videoHeight = 1080;
+
 /**
  * Video scene object class
  */
-export default class Video extends SceneObject {
+class Video extends SceneObject {
   #vid
 
   /**
@@ -15,7 +18,7 @@ export default class Video extends SceneObject {
    * @param {string} onClickMessage 
    */
   constructor(vid, sceneX, sceneY, scale, onClickMessage) {
-    super(sceneX, sceneY, scale*vid.width, scale*vid.height, onClickMessage);
+    super(sceneX, sceneY, scale*videoWidth, scale*videoHeight, onClickMessage);
     this.#vid = vid;
   }
 
@@ -59,3 +62,5 @@ export default class Video extends SceneObject {
     p5.image(this.#vid, this.x, this.y, this.width, this.height);
   }
 }
+
+export { videoWidth, videoHeight, Video };
