@@ -12,6 +12,8 @@ new p5((p5) => {
   const sceneWidth = 1600;
   const sceneHeight = 900;
 
+  const audioFadeDuration = 3;
+
   let canvas;
 
   // Scenes
@@ -59,6 +61,7 @@ new p5((p5) => {
   let eating;
   let larva;
   let blow;
+  let paper;
 
   // Load images and sounds. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
@@ -227,6 +230,7 @@ new p5((p5) => {
     eating = sounds.get("assets/sounds/eating.wav");
     larva = sounds.get("assets/sounds/slimy.wav");
     blow = sounds.get("assets/sounds/blow.wav");
+    paper = sounds.get("assets/sounds/paper.wav");
 
     // Insert start screen to main scene
     insertBlurLayer();
@@ -264,17 +268,18 @@ new p5((p5) => {
         roomOverview.removeObject(blurLayer);
         fridge.setVolume(0);
         fridge.loop();
-        fridge.setVolume(1, 1);
+        fridge.setVolume(1, audioFadeDuration);
         break;
       case "IMAGE_BIRTHDAY":
         insertInvisibleLayer();
         showPopupImage(birthdayDrawing);
         fridge.setVolume(0);
-        fridge.setVolume(1, 0, 0.5);
-        blow.play(0.1);
+        blow.play();
         break;
       case "IMAGE_NOTE":
         insertInvisibleLayer();
+        fridge.setVolume(0);
+        paper.play();
         showPopupImage(note);
         break;
       case "IMAGE_NOTE_TRANSLATED":
@@ -288,9 +293,10 @@ new p5((p5) => {
       case "IMAGE_REMOVE":
         roomOverview.removeObject(popupImage);
         roomOverview.removeObject(invisibleLayer);
+        fridge.setVolume(1, audioFadeDuration);
         break;
       case "VIDEO_CONDOM":
-        fridge.setVolume(0, 1);
+        fridge.setVolume(0, audioFadeDuration);
         if (!balloonBlowing)
         {
           balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
@@ -298,7 +304,7 @@ new p5((p5) => {
         startPopupVideo(balloonBlowing);
         break;
       case "VIDEO_PIANO":
-        fridge.setVolume(0, 1);
+        fridge.setVolume(0, audioFadeDuration);
         if (!piano)
         {
           piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
@@ -306,7 +312,7 @@ new p5((p5) => {
         startPopupVideo(piano);
         break;
       case "VIDEO_TEATIME":
-        fridge.setVolume(0, 1);
+        fridge.setVolume(0, audioFadeDuration);
         if (!teaTime)
         {
           teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
@@ -314,7 +320,7 @@ new p5((p5) => {
         startPopupVideo(teaTime);
         break;
       case "VIDEO_REMOVE":
-        fridge.setVolume(1, 1);
+        fridge.setVolume(1, audioFadeDuration);
         popupVideo.stop();
         roomOverview.removeObject(popupVideo);
         roomOverview.removeObject(blurLayer);
@@ -355,7 +361,7 @@ new p5((p5) => {
           obj.update(p5.width / sceneWidth);
           roomOverview.addObject(obj, true);
         });
-        fridge.setVolume(0, 1);
+        fridge.setVolume(0, audioFadeDuration);
         break;
       case "PLAYER_CLOSE":
         blueHands.vid.elt.onseeked = null;
@@ -364,7 +370,7 @@ new p5((p5) => {
           roomOverview.removeObject(obj);
         });
         blurLayer.onClickMessage = "VIDEO_REMOVE";
-        fridge.setVolume(1, 1);
+        fridge.setVolume(1, audioFadeDuration);
         break;
       case "PLAYER_REWIND":
         blueHands.pause();
@@ -403,12 +409,12 @@ new p5((p5) => {
         blueHands.stop();
         break;
       case "CLOSEUP_DOG_FOOD":
-        fridge.setVolume(0, 1);
+        fridge.setVolume(0, audioFadeDuration);
         eating.loop();
         startScene(dogFoodCloseup);
         break;
       case "CLOSEUP_ORANGE":
-        fridge.setVolume(0, 1);
+        fridge.setVolume(0, audioFadeDuration);
         larva.loop();
         startScene(orangeCloseup);
         break;
@@ -417,12 +423,12 @@ new p5((p5) => {
         startScene(portraitCloseup);
         break;
       case "RETURN_DOG_FOOD":
-        fridge.setVolume(1, 1);
+        fridge.setVolume(1, audioFadeDuration);
         eating.stop();
         startScene(roomOverview);
         break;
       case "RETURN_ORANGE":
-        fridge.setVolume(1, 1);
+        fridge.setVolume(1, audioFadeDuration);
         larva.stop();
         startScene(roomOverview);
         break;
