@@ -131,62 +131,11 @@ new p5((p5) => {
 
     // POPUP VIDEOS
     // Videos are created the first time they are played in p5.mouseClicked().
-    teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
     // POPUP PLAYER
     frame = createPopupImageObject("assets/player/frame.png", 0.9, "DO_NOTHING");
     playbackIndicator = new SceneObject(frame.x + 80, frame.y + 80, 30, 30, "DO_NOTHING");
-    playbackIndicator.draw = (p5) => {
-      switch(playbackSpeed) {
-        case 0:
-          p5.fill(255);
-          p5.rect(playbackIndicator.x, playbackIndicator.y, playbackIndicator.width / 3, playbackIndicator.height);
-          p5.rect(playbackIndicator.x + playbackIndicator.width * 2 / 3, playbackIndicator.y, playbackIndicator.width / 3, playbackIndicator.height);
-          break;
-        case 4:
-          p5.fill(255);
-          p5.triangle(playbackIndicator.x, playbackIndicator.y,
-                      playbackIndicator.x, playbackIndicator.y + playbackIndicator.height,
-                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
-          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
-                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
-          break;
-        case 8:
-          p5.fill(255);
-          p5.triangle(playbackIndicator.x, playbackIndicator.y,
-                      playbackIndicator.x, playbackIndicator.y + playbackIndicator.height,
-                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
-          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
-                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
-          p5.triangle(playbackIndicator.x + 2.4 * playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + 2.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
-                      playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
-          break;
-        case -4:
-          p5.fill(255);
-          p5.triangle(playbackIndicator.x, playbackIndicator.y + playbackIndicator.height / 2,
-                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
-          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
-                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
-          break;
-        case -8:
-          p5.fill(255);
-          p5.triangle(playbackIndicator.x, playbackIndicator.y + playbackIndicator.height / 2,
-                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
-          p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
-                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
-          p5.triangle(playbackIndicator.x + 2.4 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
-                      playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y,
-                      playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
-          break;
-      }
-    }
+    playbackIndicator.draw = drawPlayBackIndicator;
 
     rewind = new Image(images.get("assets/player/rewind_button.png"), 580, 750, 0.2, "PLAYER_REWIND");
     play = new Image(images.get("assets/player/play_button.png"), 680, 750, 0.2, "PLAYER_PLAY");
@@ -293,7 +242,7 @@ new p5((p5) => {
       case "IMAGE_REMOVE":
         roomOverview.removeObject(popupImage);
         roomOverview.removeObject(invisibleLayer);
-        fridge.setVolume(1, audioFadeDuration);
+        fridge.setVolume(1);
         break;
       case "VIDEO_CONDOM":
         fridge.setVolume(0, audioFadeDuration);
@@ -452,9 +401,12 @@ new p5((p5) => {
     activeScene.update(canvasWidth / sceneWidth);
   }
 
-  // Calculate and return the canvas size and position.
-  // The canvas should be centered and fill as much of the window as possible
-  // while maintaing the aspect ratio.
+  /**
+   * Calculates the canvas size and position
+   * The canvas should be centered and fill as much of the window as possible
+   * while maintaing the aspect ratio.
+   * @returns the canvas size and position.
+   */
   function calculateCanvasPositionAndSize() {
     const windowToSceneWidthRatio = p5.windowWidth / sceneWidth;
     const windowToSceneHeightRatio = p5.windowHeight / sceneHeight;
@@ -474,7 +426,13 @@ new p5((p5) => {
     return [x, y, width, height];
   }
 
-  // Calculate and return scale for background so it fills the scene.
+  // 
+  /**
+   * Calculates scale for background so it fills the scene
+   * @param {number} currentWidth 
+   * @param {number} currentHeight 
+   * @returns the background scale
+   */
   function calculateBackgroundScale(currentWidth, currentHeight) {
     const sceneToImageWidthRatio = sceneWidth / currentWidth;
     const sceneToImageHeightRatio = sceneHeight / currentHeight;
@@ -485,7 +443,13 @@ new p5((p5) => {
     return sceneToImageHeightRatio;
   }
 
-  // Create and return a popup image object.
+  /**
+   * Creates a popup image object
+   * @param {string} path 
+   * @param {number} imageToSceneHeightRatio 
+   * @param {string} message 
+   * @returns the popup image object
+   */
   function createPopupImageObject(path, imageToSceneHeightRatio, message) {
     const img = images.get(path);
     const scale = imageToSceneHeightRatio * sceneHeight / img.height;
@@ -494,7 +458,11 @@ new p5((p5) => {
     return new Image(img, x, y, scale, message);
   }
 
-  // Create and return a popup video object.
+  /**
+   * Creates a popup video object
+   * @param {string} path 
+   * @returns the popup video object
+   */
   function createPopupVideoObject(path) {
     const vid = videos.get(path);
     const scale = 0.8 * sceneWidth / vid.width;
@@ -503,7 +471,12 @@ new p5((p5) => {
     return new Video(vid, x, y, scale, "DO_NOTHING");
   }
 
-  // Create and return a closeup scene with a background and return button.
+  /**
+   * Creates a closeup scene with a background and a return button.
+   * @param {string} path 
+   * @param {string} message 
+   * @returns the scene
+   */
   function createCloseupScene(path, message) {
     const scene = new Scene();
     const backgroundImg = images.get(path);
@@ -513,37 +486,106 @@ new p5((p5) => {
     return scene;
   }
 
-  // Start a scene.
+  /**
+   * Starts a scene.
+   * @param {Scene} scene 
+   */
   function startScene(scene) {
     scene.update(p5.width / sceneWidth);
     activeScene = scene;
   }
 
-  // Insert the inivisible layer to the main scene.
+  /**
+   * Inserts the inivisible layer to the main scene.
+   */
   function insertInvisibleLayer() {
     invisibleLayer.update(p5.width / sceneWidth);
     roomOverview.addObject(invisibleLayer);
   }
 
-  // Insert the inivisible layer to the main scene.
+  /**
+   * Inserts the inivisible layer to the main scene
+   */
   function insertBlurLayer() {
     blurLayer.update(p5.width / sceneWidth);
     roomOverview.addObject(blurLayer);
   }
 
-  // Show a pop-up image.
+  /**
+   * Shows a pop-up image.
+   * @param {Image} img 
+   */
   function showPopupImage(img) {
     img.update(p5.width / sceneWidth);
     popupImage = img;
     roomOverview.addObject(popupImage);
   }
 
-  // Start a pop-up video.
+  /**
+   * Starts a pop-up video
+   * @param {Video} video 
+   */
   function startPopupVideo(video) {
     insertBlurLayer();
     video.update(p5.width / sceneWidth);
     popupVideo = video;
     roomOverview.addObject(popupVideo, true);
     popupVideo.loop();
+  }
+
+  /**
+   * Draws the playback indicator
+   */
+  function drawPlayBackIndicator()
+  {
+    switch(playbackSpeed) {
+      case 0:
+        p5.fill(255);
+        p5.rect(playbackIndicator.x, playbackIndicator.y, playbackIndicator.width / 3, playbackIndicator.height);
+        p5.rect(playbackIndicator.x + playbackIndicator.width * 2 / 3, playbackIndicator.y, playbackIndicator.width / 3, playbackIndicator.height);
+        break;
+      case 4:
+        p5.fill(255);
+        p5.triangle(playbackIndicator.x, playbackIndicator.y,
+                    playbackIndicator.x, playbackIndicator.y + playbackIndicator.height,
+                    playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+        p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
+                    playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+        break;
+      case 8:
+        p5.fill(255);
+        p5.triangle(playbackIndicator.x, playbackIndicator.y,
+                    playbackIndicator.x, playbackIndicator.y + playbackIndicator.height,
+                    playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+        p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + 1.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
+                    playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+        p5.triangle(playbackIndicator.x + 2.4 * playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + 2.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height,
+                    playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height / 2);
+        break;
+      case -4:
+        p5.fill(255);
+        p5.triangle(playbackIndicator.x, playbackIndicator.y + playbackIndicator.height / 2,
+                    playbackIndicator.x + playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+        p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
+                    playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+        break;
+      case -8:
+        p5.fill(255);
+        p5.triangle(playbackIndicator.x, playbackIndicator.y + playbackIndicator.height / 2,
+                    playbackIndicator.x + playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+        p5.triangle(playbackIndicator.x + 1.2 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
+                    playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + 2.2 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+        p5.triangle(playbackIndicator.x + 2.4 * playbackIndicator.width,playbackIndicator.y + playbackIndicator.height / 2,
+                    playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y,
+                    playbackIndicator.x + 3.4 * playbackIndicator.width, playbackIndicator.y + playbackIndicator.height);
+        break;
+    }
   }
 });
