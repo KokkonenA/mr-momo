@@ -2,7 +2,7 @@
 
 import { expect } from "chai";
 import { MockP5, MockP5MediaElement } from "./MockP5.js";
-import Video from "../../src/classes/Video.js";
+import { Video } from "../../src/classes/Video.js";
 
 describe("Video", () => {
   describe("draw", () => {

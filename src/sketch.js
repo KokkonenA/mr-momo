@@ -63,7 +63,6 @@ new p5((p5) => {
   let blow;
   let paper;
 
-  // Load images and sounds. By doing this in the preload we can be sure that everything is loaded when the setup starts.
   p5.preload = () => {
     p5.loadJSON("imageList.json", (imagePaths) => {
       for (let path of imagePaths) {
@@ -161,8 +160,6 @@ new p5((p5) => {
       }
       p5.image(blueHands.vid, blueHands.x, blueHands.y, blueHands.width, blueHands.height);
     }
-    blueHands.play();
-    blueHands.pause(); // Playing and pausing so Chrome loads the first frame.
 
     blackBackground = new SceneObject(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
     blackBackground.draw = (p5) => { 
@@ -252,9 +249,9 @@ new p5((p5) => {
         break;
       case "IMAGE_NOTE":
         insertInvisibleLayer();
+        showPopupImage(note);
         fridge.setVolume(0);
         paper.play();
-        showPopupImage(note);
         break;
       case "IMAGE_NOTE_TRANSLATED":
         roomOverview.removeObject(popupImage);
