@@ -6,7 +6,7 @@ import HImage from "./HImage.js";
 export default class Scene {
   #objects;
   #objectsToAlwaysRedraw;
-  #fullRedrawNeeded;
+  #drawMode; // 0 = partial draw, 1 = full draw with preselection, 2 = full draw without preselection
   #preSelectedObject;
 
   /**
@@ -15,7 +15,7 @@ export default class Scene {
   constructor() {
     this.#objects = [];
     this.#objectsToAlwaysRedraw = [];
-    this.#fullRedrawNeeded = true;
+    this.#drawMode = 1;
   }
 
   /**
@@ -30,7 +30,7 @@ export default class Scene {
     if (isAlwaysRedrawn) {
       this.#objectsToAlwaysRedraw.push(object);
     }
-    this.#fullRedrawNeeded = true;
+    this.#drawMode = 1;
   }
 
   /**
@@ -49,7 +49,7 @@ export default class Scene {
     if (index > -1) {
       this.#objectsToAlwaysRedraw.splice(index, 1);
     }
-    this.#fullRedrawNeeded = true;
+    this.#drawMode = 1;
   }
 
   /**
@@ -58,25 +58,29 @@ export default class Scene {
    */
   update(scale) {
     this.#objects.forEach(object => object.update(scale));
-    this.#fullRedrawNeeded = true;
+    this.#drawMode = 1;
   }
 
   /**
-   * Draws the scene either fully or partially.
+   * Draws the scene.
    * @param {p5} p5 
    */
   draw(p5) {
-    if (this.#fullRedrawNeeded) {
-      this.preSelect(p5.mouseX, p5.mouseY);
-      this.#objects.forEach(object => object.draw(p5));
-      this.#fullRedrawNeeded = false;
-    } else {
-      this.#objectsToAlwaysRedraw.forEach(object => object.draw(p5));
+    switch (this.#drawMode) {
+      case 0:
+        this.#objectsToAlwaysRedraw.forEach(object => object.draw(p5));
+        break;
+      case 1:
+        this.preSelect(p5.mouseX, p5.mouseY);
+        // FALL-THROUGH
+      default:
+        this.#objects.forEach(object => object.draw(p5));
+        this.#drawMode = 0;
     }
   }
 
   /**
-   * Find the object that the mouse is on top of and preselects it.
+   * Finds the object that the mouse is on top of and preselects it.
    * @param {number} x 
    * @param {number} y 
    */
@@ -91,12 +95,12 @@ export default class Scene {
         if (object != this.#preSelectedObject) {
           if (object instanceof HImage) {
             object.mouseEntered();
-            this.#fullRedrawNeeded = true;
+            this.#drawMode = 2;
           }
 
           if (this.#preSelectedObject instanceof HImage) {
             this.#preSelectedObject.mouseExited();
-            this.#fullRedrawNeeded = true;
+            this.#drawMode = 2;
           }
           this.#preSelectedObject = object;
         }
@@ -107,7 +111,7 @@ export default class Scene {
     if (!objectFound && this.#preSelectedObject) {
       if (this.#preSelectedObject instanceof HImage) {
         this.#preSelectedObject.mouseExited();
-        this.#fullRedrawNeeded = true;
+        this.#drawMode = 2;
       }
       this.#preSelectedObject = null;
     }

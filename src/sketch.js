@@ -53,11 +53,12 @@ new p5((p5) => {
   let blueHands;
   let playbackSpeed;
   let playbackIndicator;
-  let blackBackground; // Sometimes at least on Firefox the video frame is not drawn showing the room overview below.
+  let blackBackground; // Sometimes the video frame is not drawn showing the room overview below.
   let timeSinceLastUpdate;
 
   // Sounds
   let fridge;
+  let fridgeLower;
   let eating;
   let larva;
   let blow;
@@ -106,14 +107,7 @@ new p5((p5) => {
     roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
     roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
     roomOverview.addObject(new Image(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
-
-    const foodBowl = new HImage(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1320, 550, 0.4, "CLOSEUP_DOG_FOOD");
-    foodBowl.isMouseOver = (x, y) => {
-      return  x > foodBowl.x && x < foodBowl.x + foodBowl.width * 2 / 3 &&
-              y > foodBowl.y && y < foodBowl.y + foodBowl.height;
-    }
-    roomOverview.addObject(foodBowl);
-
+    roomOverview.addObject(new HImage(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1320, 550, 0.4, "CLOSEUP_DOG_FOOD"));
     roomOverview.addObject(new HImage(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM"));
 
     invisibleLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "IMAGE_REMOVE");
@@ -198,6 +192,7 @@ new p5((p5) => {
 
     // SOUNDS
     fridge = sounds.get("assets/sounds/fridge.wav");
+    fridgeLower = sounds.get("assets/sounds/fridge_lower.wav");
     eating = sounds.get("assets/sounds/eating.wav");
     larva = sounds.get("assets/sounds/slimy.wav");
     blow = sounds.get("assets/sounds/blow.wav");
@@ -246,12 +241,14 @@ new p5((p5) => {
         showPopupImage(birthdayDrawing);
         fridge.setVolume(0);
         blow.play();
+        fridge.setVolume(1, audioFadeDuration, 1);
         break;
       case "IMAGE_NOTE":
         insertInvisibleLayer();
         showPopupImage(note);
         fridge.setVolume(0);
         paper.play();
+        fridge.setVolume(1, audioFadeDuration, 1);
         break;
       case "IMAGE_NOTE_TRANSLATED":
         roomOverview.removeObject(popupImage);
@@ -264,7 +261,7 @@ new p5((p5) => {
       case "IMAGE_REMOVE":
         roomOverview.removeObject(popupImage);
         roomOverview.removeObject(invisibleLayer);
-        fridge.setVolume(1);
+        //fridge.setVolume(1);
         break;
       case "VIDEO_CONDOM":
         fridge.setVolume(0, audioFadeDuration);
@@ -354,6 +351,7 @@ new p5((p5) => {
         break;
       case "CLOSEUP_PORTRAIT":
         fridge.setVolume(0);
+        fridgeLower.loop();
         startScene(portraitCloseup);
         break;
       case "RETURN_DOG_FOOD":
@@ -367,6 +365,7 @@ new p5((p5) => {
         startScene(roomOverview);
         break;
       case "RETURN_PORTRAIT":
+        fridgeLower.stop();
         fridge.setVolume(1);
         startScene(roomOverview);
         break;
