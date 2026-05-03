@@ -24,15 +24,18 @@ new p5((p5) => {
   let dogFoodCloseup;
   let portraitCloseup;
 
-  let invisibleLayer; // Invisible image between the main scene and a pop-up image that catches click events.
-  let blurLayer; // Image between the main scene and a pop-up that blurs the background and catches click events.
+  let blurLayer; // Layer between the main scene and a pop-up that blurs the background and catches click events.
 
   // Pop-up images
   let popupImage; // Active pop-up image
 
   let birthdayDrawing;
   let note;
-  let noteTranslated;
+  let noteEnglish;
+  let noteKorean;
+  let noteCounter;
+  let translate;
+  let info;
   let intro;
   let start;
 
@@ -93,9 +96,9 @@ new p5((p5) => {
     roomOverview.addObject(new Image(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
 
     roomOverview.addObject(new HImage(images.get("assets/old_tv.png"), images.get("assets/old_tv__outlined.png"), 350, 250, 0.4, "PLAYER_RUN"));
-    roomOverview.addObject(new HImage(images.get("assets/cake.png"), images.get("assets/cake__outlined.png"), 530, 500, 0.25, "IMAGE_BIRTHDAY"));
+    roomOverview.addObject(new HImage(images.get("assets/cake.png"), images.get("assets/cake__outlined.png"), 530, 500, 0.25, "DRAWING_SHOW"));
     roomOverview.addObject(new HImage(images.get("assets/tea_mug.png"), images.get("assets/tea_mug__outlined.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
-    roomOverview.addObject(new HImage(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "IMAGE_NOTE"));
+    roomOverview.addObject(new HImage(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "NOTE_SHOW"));
 
     const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "DO_NOTHING");
     table.isMouseOver = () => { return false };
@@ -110,17 +113,23 @@ new p5((p5) => {
     roomOverview.addObject(new HImage(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1320, 550, 0.4, "CLOSEUP_DOG_FOOD"));
     roomOverview.addObject(new HImage(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM"));
 
-    invisibleLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "IMAGE_REMOVE");
-    invisibleLayer.draw = () => { return };
+    roomOverview.addObject(new Image(images.get("assets/zoomed_images/question_button.png"), 1520, 20, 0.12, "INFO_SHOW"));
+
     blurLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "VIDEO_REMOVE");
     blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
 
     // POPUP IMAGES
-    birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.png", 0.9, "DO_NOTHING");
-    note = createPopupImageObject("assets/zoomed_images/note.png", 0.6, "IMAGE_NOTE_TRANSLATED");
-    noteTranslated = createPopupImageObject("assets/zoomed_images/note_translated.png", 0.6, "IMAGE_NOTE_ORIGINAL");
+    birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.png", 0.9);
+
+    note = createPopupImageObject("assets/zoomed_images/note.png", 0.6);
+    noteEnglish = createPopupImageObject("assets/zoomed_images/note_english.png", 0.6);
+    noteKorean = createPopupImageObject("assets/zoomed_images/note_korean.png", 0.6);
+    translate = new Image(images.get("assets/zoomed_images/translate_button.png"), 1300, 200, 0.17, "NOTE_TRANSLATE");
+
+    info = createPopupImageObject("assets/zoomed_images/info.png", 0.8);
+
     intro = createPopupImageObject("assets/startscreen.png", 1, "DO_NOTHING");
-    start = new Image(images.get("assets/player/play_button.png"), 750, 600, 0.25, "START");
+    start = new Image(images.get("assets/player/play_button.png"), 750, 550, 0.24, "START");
 
     // POPUP VIDEOS
     balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
@@ -199,7 +208,7 @@ new p5((p5) => {
     paper = sounds.get("assets/sounds/paper.wav");
 
     // Insert start screen to main scene
-    insertBlurLayer();
+    insertBlurLayer("DO_NOTHING");
     roomOverview.addObject(intro);
     roomOverview.addObject(start);
 
@@ -225,6 +234,7 @@ new p5((p5) => {
     if (!activeScene) {
       return;
     }
+
     const message = activeScene.mouseClicked();
 
     switch (message) {
@@ -236,43 +246,62 @@ new p5((p5) => {
         fridge.loop();
         fridge.setVolume(1, audioFadeDuration);
         break;
-      case "IMAGE_BIRTHDAY":
-        insertInvisibleLayer();
+      case "DRAWING_SHOW":
+        insertBlurLayer("DRAWING_HIDE");
         showPopupImage(birthdayDrawing);
         fridge.setVolume(0);
         blow.play();
-        fridge.setVolume(1, audioFadeDuration, 1);
         break;
-      case "IMAGE_NOTE":
-        insertInvisibleLayer();
+      case "DRAWING_HIDE":
+        hidePopupImage();
+        break;
+      case "NOTE_SHOW":
+        insertBlurLayer("NOTE_HIDE");
+        noteCounter = 0;
         showPopupImage(note);
+        translate.update(p5.width / sceneWidth);
+        roomOverview.addObject(translate);
         fridge.setVolume(0);
         paper.play();
-        fridge.setVolume(1, audioFadeDuration, 1);
         break;
-      case "IMAGE_NOTE_TRANSLATED":
-        roomOverview.removeObject(popupImage);
-        showPopupImage(noteTranslated);
+      case "NOTE_HIDE":
+        roomOverview.removeObject(translate);
+        hidePopupImage();
         break;
-      case "IMAGE_NOTE_ORIGINAL":
+      case "NOTE_TRANSLATE":
+        roomOverview.removeObject(translate);
         roomOverview.removeObject(popupImage);
-        showPopupImage(note);
+        noteCounter = (noteCounter + 1) % 3;
+
+        switch (noteCounter) {
+          case 0:
+            showPopupImage(note);
+            break;
+          case 1:
+            showPopupImage(noteEnglish);
+            break;
+          case 2:
+            showPopupImage(noteKorean);
+            break;
+          default:
+        }
+        roomOverview.addObject(translate);
         break;
-      case "IMAGE_REMOVE":
-        roomOverview.removeObject(popupImage);
-        roomOverview.removeObject(invisibleLayer);
-        //fridge.setVolume(1);
+      case "INFO_SHOW":
+        insertBlurLayer("INFO_HIDE");
+        showPopupImage(info);
+        fridge.setVolume(0);
+        break;
+      case "INFO_HIDE":
+        hidePopupImage();
         break;
       case "VIDEO_CONDOM":
-        fridge.setVolume(0, audioFadeDuration);
         startPopupVideo(balloonBlowing);
         break;
       case "VIDEO_PIANO":
-        fridge.setVolume(0, audioFadeDuration);
         startPopupVideo(piano);
         break;
       case "VIDEO_TEATIME":
-        fridge.setVolume(0, audioFadeDuration);
         startPopupVideo(teaTime);
         break;
       case "VIDEO_REMOVE":
@@ -355,13 +384,13 @@ new p5((p5) => {
         startScene(portraitCloseup);
         break;
       case "RETURN_DOG_FOOD":
-        fridge.setVolume(1, audioFadeDuration);
         eating.stop();
+        fridge.setVolume(1, audioFadeDuration);
         startScene(roomOverview);
         break;
       case "RETURN_ORANGE":
-        fridge.setVolume(1, audioFadeDuration);
         larva.stop();
+        fridge.setVolume(1, audioFadeDuration);
         startScene(roomOverview);
         break;
       case "RETURN_PORTRAIT":
@@ -430,16 +459,15 @@ new p5((p5) => {
   /**
    * Creates a popup image object
    * @param {string} path 
-   * @param {number} imageToSceneHeightRatio 
-   * @param {string} message 
+   * @param {number} imageToSceneHeightRatio
    * @returns the popup image object
    */
-  function createPopupImageObject(path, imageToSceneHeightRatio, message) {
+  function createPopupImageObject(path, imageToSceneHeightRatio) {
     const img = images.get(path);
     const scale = imageToSceneHeightRatio * sceneHeight / img.height;
     const x = (sceneWidth - scale * img.width) / 2;
     const y = (sceneHeight - scale * img.height) / 2;
-    return new Image(img, x, y, scale, message);
+    return new Image(img, x, y, scale, "DO_NOTHING");
   }
 
   /**
@@ -466,7 +494,7 @@ new p5((p5) => {
     const backgroundImg = images.get(path);
     const scale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
     scene.addObject(new Image(backgroundImg, 0, 0, scale, "DO_NOTHING"));
-    scene.addObject(new Image(images.get("assets/zoomed_images/back_button.png"), 50, 50, 0.22, message));
+    scene.addObject(new Image(images.get("assets/zoomed_images/back_button.png"), 50, 50, 0.2, message));
     return scene;
   }
 
@@ -480,17 +508,10 @@ new p5((p5) => {
   }
 
   /**
-   * Inserts the inivisible layer to the main scene.
-   */
-  function insertInvisibleLayer() {
-    invisibleLayer.update(p5.width / sceneWidth);
-    roomOverview.addObject(invisibleLayer);
-  }
-
-  /**
    * Inserts the inivisible layer to the main scene
    */
-  function insertBlurLayer() {
+  function insertBlurLayer(message) {
+    blurLayer.onClickMessage = message;
     blurLayer.update(p5.width / sceneWidth);
     roomOverview.addObject(blurLayer);
   }
@@ -506,11 +527,21 @@ new p5((p5) => {
   }
 
   /**
+   * Hides the current pop-up image.
+   */
+  function hidePopupImage() {
+    roomOverview.removeObject(popupImage);
+    roomOverview.removeObject(blurLayer);
+    fridge.setVolume(1);
+  }
+
+  /**
    * Starts a pop-up video
    * @param {Video} video 
    */
   function startPopupVideo(video) {
-    insertBlurLayer();
+    fridge.setVolume(0, audioFadeDuration);
+    insertBlurLayer("VIDEO_REMOVE");
     video.update(p5.width / sceneWidth);
     popupVideo = video;
     roomOverview.addObject(popupVideo, true);
