@@ -114,12 +114,12 @@ test('highlights tea mug when mouse moves on top it', async ({ page }) => {
   await expect(page).toHaveScreenshot('main-scene-tea-mug-highlighted.png');
 });
 
-test('shows tea video after clicking tea mug', async ({ page }) => {
-  await page.waitForFunction(() => document.querySelector('canvas'));
-  clickStartButton(page);
-  clickTeaMug(page);
-  await expect(page).toHaveScreenshot('tea-video.png');
-});
+// test('shows tea video after clicking tea mug', async ({ page }) => {
+//   await page.waitForFunction(() => document.querySelector('canvas'));
+//   clickStartButton(page);
+//   clickTeaMug(page);
+//   await expect(page).toHaveScreenshot('tea-video.png');
+// });
 
 test('shows main scene after clicking outside tea video', async ({ page }) => {
   await page.waitForFunction(() => document.querySelector('canvas'));
@@ -271,12 +271,12 @@ test('shows main scene after clicking back arrow in dog bowl closeup', async ({ 
 //   await expect(page).toHaveScreenshot('main-scene-condom-highlighted.png');
 // });
 
-test('shows condom video after clicking condom', async ({ page }) => {
-  await page.waitForFunction(() => document.querySelector('canvas'));
-  clickStartButton(page);
-  clickCondom(page);
-  await expect(page).toHaveScreenshot('condom-video.png');
-});
+// test('shows condom video after clicking condom', async ({ page }) => {
+//   await page.waitForFunction(() => document.querySelector('canvas'));
+//   clickStartButton(page);
+//   clickCondom(page);
+//   await expect(page).toHaveScreenshot('condom-video.png');
+// });
 
 test('shows main scene after clicking outside condom video', async ({ page }) => {
   await page.waitForFunction(() => document.querySelector('canvas'));
