@@ -70,6 +70,10 @@ new p5((p5) => {
   let blow;
   let paper;
 
+  //Links
+  let heya
+  let antti
+
   p5.preload = () => {
     p5.loadJSON("imageList.json", (imagePaths) => {
       for (let path of imagePaths) {
@@ -131,7 +135,19 @@ new p5((p5) => {
     noteKorean = createPopupImageObject("assets/zoomed_images/note_korean.png", 0.6);
     translate = new Image(images.get("assets/zoomed_images/translate_button.png"), 1300, 200, 0.17, "NOTE_TRANSLATE");
 
-    info = createPopupImageObject("assets/zoomed_images/info.png", 0.8);
+    const img = images.get("assets/zoomed_images/info.png");
+    const scale = 0.8 * sceneHeight / img.height;
+    const x = (sceneWidth - scale * img.width) / 2;
+    const y = (sceneHeight - scale * img.height) / 2;
+    info = new (class extends Image {
+      update(scale) {
+        super.update(scale);
+        heya.position(canvas.x + info.x + 0.09 * info.width, canvas.y + info.y + 0.74 * info.height);
+        heya.size(0.22 * info.width, 0.04 * info.height);
+        antti.position(canvas.x + info.x + 0.09 * info.width, canvas.y + info.y + 0.78 * info.height);
+        antti.size(0.35 * info.width, 0.04 * info.height);
+      }
+    })(img, x, y, scale, "DO_NOTHING");
 
     intro = createPopupImageObject("assets/startscreen.png", 1, "DO_NOTHING");
     start = new Image(images.get("assets/player/play_button.png"), 750, 550, 0.24, "START");
@@ -209,6 +225,15 @@ new p5((p5) => {
     canvas = p5.createCanvas(canvasWidth, canvasHeight);
     canvas.position(canvasX, canvasY);
     startScene(roomOverview);
+
+    // LINKS
+    heya = p5.createA("https://heya.world/", "", "_blank");
+    //heya.style('background', 'rgba(0,0,0,0.5)');
+    heya.hide();
+
+    antti = p5.createA("https://github.com/KokkonenA/mr-momo", "", "_blank");
+    //antti.style('background', 'rgba(0,0,0,0.5)');
+    antti.hide();
   }
 
   p5.draw = () => {
@@ -282,9 +307,13 @@ new p5((p5) => {
       case "INFO_SHOW":
         insertBlurLayer("INFO_HIDE");
         showPopupImage(info);
+        heya.show();
+        antti.show();
         fridge.setVolume(0);
         break;
       case "INFO_HIDE":
+        heya.hide();
+        antti.hide();
         hidePopupImage();
         break;
       case "VIDEO_CONDOM":
