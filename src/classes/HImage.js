@@ -1,3 +1,5 @@
+"use strict";
+
 import SceneObject from "./SceneObject.js";
 
 /**

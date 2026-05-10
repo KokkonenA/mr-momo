@@ -1,3 +1,5 @@
+"use strict";
+
 import HImage from "./HImage.js";
 
 /**

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Scene object class
  */
@@ -74,7 +76,6 @@ export default class SceneObject {
   }
 
   /**
-   * NOTE: for some objects this is overwritten in the setup
    * @param {number} x 
    * @param {number} y 
    * @returns true if mouse is over the image, false otherwise

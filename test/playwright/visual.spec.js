@@ -1,3 +1,5 @@
+"use strict";
+
 import { test, expect } from '@playwright/test';
 
 class Coordinate {

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Mock p5 class
  */

@@ -1,3 +1,5 @@
+"use strict";
+
 import HImage from "./classes/HImage.js"
 import Image from "./classes/Image.js";
 import Scene from "./classes/Scene.js";
