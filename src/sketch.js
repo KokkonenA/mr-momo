@@ -2,6 +2,7 @@
 
 import HImage from "./classes/HImage.js"
 import Image from "./classes/Image.js";
+import Iris from "./classes/Iris.js";
 import Scene from "./classes/Scene.js";
 import SceneObject from "./classes/SceneObject.js";
 import { videoWidth, videoHeight, Video } from "./classes/Video.js";
@@ -101,11 +102,11 @@ new p5((p5) => {
     roomOverview.addObject(new HImage(images.get("assets/cake.png"), images.get("assets/cake__outlined.png"), 530, 500, 0.25, "DRAWING_SHOW"));
     roomOverview.addObject(new HImage(images.get("assets/tea_mug.png"), images.get("assets/tea_mug__outlined.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
     roomOverview.addObject(new HImage(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "NOTE_SHOW"));
-
-    const table = new Image(images.get("assets/table.png"), 800, 300, 0.4, "DO_NOTHING");
-    table.isMouseOver = () => { return false };
-    roomOverview.addObject(table);
-
+    roomOverview.addObject(new (class extends Image {
+      isMouseOver() {
+        return false;
+      }
+    })(images.get("assets/table.png"), 800, 300, 0.4, "DO_NOTHING"));
     roomOverview.addObject(new HImage(images.get("assets/cd_player.png"), images.get("assets/cd_player__outlined.png"), 950, 320, 0.4, "VIDEO_PIANO"));
     roomOverview.addObject(new HImage(images.get("assets/portrait.png"), images.get("assets/portrait__outlined.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
     roomOverview.addObject(new HImage(images.get("assets/orange.png"), images.get("assets/orange__outlined.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
@@ -114,11 +115,13 @@ new p5((p5) => {
     roomOverview.addObject(new Image(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
     roomOverview.addObject(new HImage(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1320, 550, 0.4, "CLOSEUP_DOG_FOOD"));
     roomOverview.addObject(new HImage(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM"));
-
     roomOverview.addObject(new Image(images.get("assets/zoomed_images/question_button.png"), 1520, 20, 0.12, "INFO_SHOW"));
 
-    blurLayer = new SceneObject(0, 0, sceneWidth, sceneHeight, "VIDEO_REMOVE");
-    blurLayer.draw = (p5) => { p5.filter(p5.BLUR, 3); }
+    blurLayer = new (class extends SceneObject {
+      draw(p5) {
+        p5.filter(p5.BLUR, 3);
+      }
+    })(0, 0, sceneWidth, sceneHeight, "VIDEO_REMOVE");
 
     // POPUP IMAGES
     birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.png", 0.9);
@@ -151,26 +154,28 @@ new p5((p5) => {
     playbackSpeed = 0;
     timeSinceLastUpdate = 0;
 
-    blueHands = new Video(videos.get("assets/videos/Blue-Hands.mp4"), frame.x + 55, frame.y + 55, 0.59, "DO_NOTHING");
-    blueHands.draw = (p5) => {
-      if (playbackSpeed != 0 && playbackSpeed != 1) {
-        const difSinceLastFrame = playbackSpeed * p5.deltaTime / 1000;
-        timeSinceLastUpdate += difSinceLastFrame;
+    blueHands = new (class extends Video {
+      draw(p5) {
+          if (playbackSpeed != 0 && playbackSpeed != 1) {
+          const difSinceLastFrame = playbackSpeed * p5.deltaTime / 1000;
+          timeSinceLastUpdate += difSinceLastFrame;
 
-        if (!blueHands.vid.elt.seeking) {
-          const newTime = blueHands.vid.time() + timeSinceLastUpdate;
-          blueHands.vid.time(newTime);
-          timeSinceLastUpdate = 0;
+          if (!this.vid.elt.seeking) {
+            const newTime = this.vid.time() + timeSinceLastUpdate;
+            this.vid.time(newTime);
+            timeSinceLastUpdate = 0;
+          }
         }
+        p5.image(this.vid, this.x, this.y, this.width, this.height);
       }
-      p5.image(blueHands.vid, blueHands.x, blueHands.y, blueHands.width, blueHands.height);
-    }
+    })(videos.get("assets/videos/Blue-Hands.mp4"), frame.x + 55, frame.y + 55, 0.59, "DO_NOTHING");
 
-    blackBackground = new SceneObject(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
-    blackBackground.draw = (p5) => { 
-      p5.fill(0);
-      p5.rect(blackBackground.x, blackBackground.y, blackBackground.width, blackBackground.height);
-    };
+    blackBackground = new (class extends SceneObject {
+      draw(p5) {
+        p5.fill(0);
+        p5.rect(blackBackground.x, blackBackground.y, blackBackground.width, blackBackground.height);
+      }
+    })(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
 
     // CLOSEUP SCENES
     orangeCloseup = createCloseupScene("assets/zoomed_images/orange_with_larva.png", "RETURN_ORANGE");
@@ -181,25 +186,10 @@ new p5((p5) => {
 
     portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.png"), 713, 331, 0.06, "DO_NOTHING"), true);
     portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.png"), 708, 328, 0.06, "DO_NOTHING"), true);
-    const leftIris = new Image(images.get("assets/zoomed_images/eye_brown_circle.png"), 730, 336, 0.025, "DO_NOTHING");
-    leftIris.draw = (p5) => {
-      const factor = 1000;
-      const dx = (p5.mouseX - p5.width / 2) / factor;
-      const dy = (p5.mouseY - p5.height / 2) / factor;
-      p5.image(leftIris.img, leftIris.x + dx, leftIris.y + dy, leftIris.width, leftIris.height);
-    }
-    portraitCloseup.addObject(leftIris, true);
-
+    portraitCloseup.addObject(new Iris(images.get("assets/zoomed_images/eye_brown_circle.png"), 730, 336, 0.025, "DO_NOTHING"), true);
     portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.png"), 798, 327, 0.06, "DO_NOTHING"), true);
     portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.png"), 793, 324, 0.06, "DO_NOTHING"), true);
-    const rightIris = new Image(images.get("assets/zoomed_images/eye_brown_circle.png"), 814, 333, 0.025, "DO_NOTHING");
-    rightIris.draw = (p5) => {
-      const factor = 1000;
-      const dx = (p5.mouseX - p5.width / 2) / factor;
-      const dy = (p5.mouseY - p5.height / 2) / factor;
-      p5.image(rightIris.img, rightIris.x + dx, rightIris.y + dy, rightIris.width, rightIris.height);
-    }
-    portraitCloseup.addObject(rightIris, true);
+    portraitCloseup.addObject(new Iris(images.get("assets/zoomed_images/eye_brown_circle.png"), 814, 333, 0.025, "DO_NOTHING"), true);
 
     // SOUNDS
     fridge = sounds.get("assets/sounds/fridge.wav");
