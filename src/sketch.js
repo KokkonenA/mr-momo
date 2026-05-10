@@ -142,10 +142,10 @@ new p5((p5) => {
     info = new (class extends Image {
       update(scale) {
         super.update(scale);
-        heya.position(canvas.x + info.x + 0.09 * info.width, canvas.y + info.y + 0.74 * info.height);
-        heya.size(0.22 * info.width, 0.04 * info.height);
-        antti.position(canvas.x + info.x + 0.09 * info.width, canvas.y + info.y + 0.78 * info.height);
-        antti.size(0.35 * info.width, 0.04 * info.height);
+        heya.position(canvas.x + this.x + 0.09 * this.width, canvas.y + this.y + 0.74 * this.height);
+        heya.size(0.22 * this.width, 0.04 * this.height);
+        antti.position(canvas.x + this.x + 0.09 * this.width, canvas.y + this.y + 0.78 * this.height);
+        antti.size(0.35 * this.width, 0.04 * this.height);
       }
     })(img, x, y, scale, "DO_NOTHING");
 
@@ -159,8 +159,11 @@ new p5((p5) => {
 
     // POPUP PLAYER
     frame = createPopupImageObject("assets/player/frame.png", 0.9, "DO_NOTHING");
-    playbackIndicator = new SceneObject(frame.x + 80, frame.y + 80, 30, 30, "DO_NOTHING");
-    playbackIndicator.draw = drawPlayBackIndicator;
+    playbackIndicator = new (class extends SceneObject{
+      draw(p5) {
+        drawPlayBackIndicator(p5);
+      }
+    })(frame.x + 80, frame.y + 80, 30, 30, "DO_NOTHING");
 
     rewind = new Image(images.get("assets/player/rewind_button.png"), 580, 750, 0.2, "PLAYER_REWIND");
     play = new Image(images.get("assets/player/play_button.png"), 680, 750, 0.2, "PLAYER_PLAY");
@@ -572,7 +575,7 @@ new p5((p5) => {
   /**
    * Draws the playback indicator
    */
-  function drawPlayBackIndicator()
+  function drawPlayBackIndicator(p5)
   {
     switch(playbackSpeed) {
       case 0:
