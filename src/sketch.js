@@ -149,9 +149,6 @@ new p5((p5) => {
       }
     })(img, x, y, scale, "DO_NOTHING");
 
-    intro = createPopupImageObject("assets/startscreen.png", 1, "DO_NOTHING");
-    start = new Image(images.get("assets/player/play_button.png"), 750, 550, 0.24, "START");
-
     // POPUP VIDEOS
     balloonBlowing = createPopupVideoObject("assets/videos/condom.mp4");
     piano = createPopupVideoObject("assets/videos/olenyksin.mp4");
@@ -218,7 +215,19 @@ new p5((p5) => {
     blow = sounds.get("assets/sounds/blow.wav");
     paper = sounds.get("assets/sounds/paper.wav");
 
+    // LINKS
+    heya = p5.createA("https://heya.world/", "", "_blank");
+    //heya.style('background', 'rgba(0,0,0,0.5)');
+    heya.hide();
+
+    antti = p5.createA("https://github.com/KokkonenA/mr-momo", "", "_blank");
+    //antti.style('background', 'rgba(0,0,0,0.5)');
+    antti.hide();
+
     // Insert start screen to main scene
+    intro = new Image(images.get("assets/zoomed_images/intro.png"), 490, 280, 0.4, "DO_NOTHING");
+    start = new Image(images.get("assets/player/play_button.png"), 760, 550, 0.2, "START");
+
     insertBlurLayer("DO_NOTHING");
     roomOverview.addObject(intro);
     roomOverview.addObject(start);
@@ -228,15 +237,6 @@ new p5((p5) => {
     canvas = p5.createCanvas(canvasWidth, canvasHeight);
     canvas.position(canvasX, canvasY);
     startScene(roomOverview);
-
-    // LINKS
-    heya = p5.createA("https://heya.world/", "", "_blank");
-    //heya.style('background', 'rgba(0,0,0,0.5)');
-    heya.hide();
-
-    antti = p5.createA("https://github.com/KokkonenA/mr-momo", "", "_blank");
-    //antti.style('background', 'rgba(0,0,0,0.5)');
-    antti.hide();
   }
 
   p5.draw = () => {
