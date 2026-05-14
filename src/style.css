@@ -6,3 +6,13 @@ html, body {
 canvas {
   display: block;
 }
+
+#p5_loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 40px;
+  font-weight: bold;
+}
