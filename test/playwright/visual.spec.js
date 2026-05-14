@@ -298,31 +298,31 @@ test("shows info after clicking question mark", async ({ page }) => {
 test("opens Heya's web page after clicking Heya Kwon", async ({ page, context }) => {
   await page.waitForFunction(() => document.querySelector("canvas"));
 
-  const pagePromise = context.waitForEvent("page");
+  const popupPromise = page.waitForEvent('popup');
 
   clickStartButton(page);
   clickQuestionMark(page);
   clickCanvas(page, 502, 512);
 
-  const newTab = await pagePromise;
+  const popup = await popupPromise;
+  await popup.waitForURL(url => url.href !== 'about:blank');
 
-  await newTab.waitForLoadState();
-  await expect(newTab).toHaveURL("https://heya.world/");
+  expect(popup.url()).toBe("https://heya.world/");
 })
 
 test("opens the GitHub repository page after clicking Antti Kokkonen", async ({ page, context }) => {
   await page.waitForFunction(() => document.querySelector("canvas"));
   
-  const pagePromise = context.waitForEvent("page");
+  const popupPromise = page.waitForEvent('popup');
 
   clickStartButton(page);
   clickQuestionMark(page);
-  clickCanvas(page, 502, 531);
+  clickCanvas(page, 513, 531);
 
-  const newTab = await pagePromise;
+  const popup = await popupPromise;
+  await popup.waitForURL(url => url.href !== 'about:blank');
 
-  await newTab.waitForLoadState();
-  await expect(newTab).toHaveURL("https://github.com/KokkonenA/mr-momo");
+  expect(popup.url()).toBe("https://github.com/KokkonenA/mr-momo");
 })
 
 test("shows main scene after clicking outside info", async ({ page }) => {
