@@ -85,16 +85,13 @@ new p5((p5) => {
         sounds.set(path, p5.loadSound(path));
       }
     })
-
-    for (let path of [
-      "assets/videos/condom.mp4",
-      "assets/videos/olenyksin.mp4",
-      "assets/videos/tea_time.mp4"
-    ]) {
-      const video = p5.createVideo(path);
-      video.hide();
-      videos.set(path, video);
-    }
+    p5.loadJSON("videoList.json", (videoPaths) => {
+      for (let path of videoPaths) {
+        const video = p5.createVideo(path);
+        video.hide();
+        videos.set(path, video);
+      }
+    })
   }
 
   p5.setup = () => {
@@ -172,6 +169,29 @@ new p5((p5) => {
     fastForward = new Image(images.get("assets/player/fast_forward_button.png"), 980, 750, 0.2, "PLAYER_FASTFORWARD");
     playbackSpeed = 0;
     timeSinceLastUpdate = 0;
+
+    blueHands = new (class extends Video {
+      draw(p5) {
+          if (playbackSpeed != 0 && playbackSpeed != 1) {
+          const difSinceLastFrame = playbackSpeed * p5.deltaTime / 1000;
+          timeSinceLastUpdate += difSinceLastFrame;
+
+          if (!this.vid.elt.seeking) {
+            const newTime = this.vid.time() + timeSinceLastUpdate;
+            this.vid.time(newTime);
+            timeSinceLastUpdate = 0;
+          }
+        }
+        p5.image(this.vid, this.x, this.y, this.width, this.height);
+      }
+    })(videos.get("assets/videos/Blue-Hands.mp4"), frame.x + 55, frame.y + 55, 0.59, "DO_NOTHING");
+
+    blackBackground = new (class extends SceneObject {
+      draw(p5) {
+        p5.fill(0);
+        p5.rect(blackBackground.x, blackBackground.y, blackBackground.width, blackBackground.height);
+      }
+    })(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
 
     // CLOSEUP SCENES
     orangeCloseup = createCloseupScene("assets/zoomed_images/orange_with_larva.png", "RETURN_ORANGE");
@@ -315,33 +335,6 @@ new p5((p5) => {
         roomOverview.removeObject(blurLayer);
         break;
       case "PLAYER_RUN":
-        if (!blueHands) {
-          const video = p5.createVideo("assets/videos/Blue-Hands.mp4");
-          video.hide();
-          
-          blueHands = new (class extends Video {
-            draw(p5) {
-                if (playbackSpeed != 0 && playbackSpeed != 1) {
-                const difSinceLastFrame = playbackSpeed * p5.deltaTime / 1000;
-                timeSinceLastUpdate += difSinceLastFrame;
-
-                if (!this.vid.elt.seeking) {
-                  const newTime = this.vid.time() + timeSinceLastUpdate;
-                  this.vid.time(newTime);
-                  timeSinceLastUpdate = 0;
-                }
-              }
-              p5.image(this.vid, this.x, this.y, this.width, this.height);
-            }
-          })(video, frame.x + 55, frame.y + 55, 0.59, "DO_NOTHING");
-
-          blackBackground = new (class extends SceneObject {
-            draw(p5) {
-              p5.fill(0);
-              p5.rect(blackBackground.x, blackBackground.y, blackBackground.width, blackBackground.height);
-            }
-          })(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
-        }
         playbackSpeed = 0;
         blurLayer.onClickMessage = "PLAYER_CLOSE";
         blurLayer.update(p5.width / sceneWidth);
