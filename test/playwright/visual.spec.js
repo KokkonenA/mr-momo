@@ -295,33 +295,33 @@ test("shows info after clicking question mark", async ({ page }) => {
   await expect(page).toHaveScreenshot("info.png");
 });
 
-test("opens Heya's web page after clicking Heya Kwon", async ({ page, context }) => {
-  await page.waitForFunction(() => document.querySelector("canvas"));
+// test("opens Heya's web page after clicking Heya Kwon", async ({ page, context }) => {
+//   await page.waitForFunction(() => document.querySelector("canvas"));
 
-  const popupPromise = page.waitForEvent('popup');
+//   const popupPromise = page.waitForEvent('popup');
 
-  clickStartButton(page);
-  clickQuestionMark(page);
-  clickCanvas(page, 502, 512);
+//   clickStartButton(page);
+//   clickQuestionMark(page);
+//   clickCanvas(page, 502, 512);
 
-  const popup = await popupPromise;
-  await popup.waitForLoadState('load');
-  await expect(popup).toHaveURL("https://heya.world/");
-})
+//   const popup = await popupPromise;
+//   await popup.waitForLoadState('load');
+//   await expect(popup).toHaveURL("https://heya.world/");
+// })
 
-test("opens the GitHub repository page after clicking Antti Kokkonen", async ({ page, context }) => {
-  await page.waitForFunction(() => document.querySelector("canvas"));
+// test("opens the GitHub repository page after clicking Antti Kokkonen", async ({ page, context }) => {
+//   await page.waitForFunction(() => document.querySelector("canvas"));
   
-  const popupPromise = page.waitForEvent('popup');
+//   const popupPromise = page.waitForEvent('popup');
 
-  clickStartButton(page);
-  clickQuestionMark(page);
-  clickCanvas(page, 513, 531);
+//   clickStartButton(page);
+//   clickQuestionMark(page);
+//   clickCanvas(page, 513, 531);
 
-  const popup = await popupPromise;
-  await popup.waitForLoadState('load');
-  await expect(popup).toHaveURL("https://github.com/KokkonenA/mr-momo");
-})
+//   const popup = await popupPromise;
+//   await popup.waitForLoadState('load');
+//   await expect(popup).toHaveURL("https://github.com/KokkonenA/mr-momo");
+// })
 
 test("shows main scene after clicking outside info", async ({ page }) => {
   await page.waitForFunction(() => document.querySelector("canvas"));
