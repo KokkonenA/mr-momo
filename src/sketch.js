@@ -75,18 +75,14 @@ new p5((p5) => {
   let antti
 
   p5.preload = () => {
-    p5.loadJSON("imageList.json", (imagePaths) => {
-      for (let path of imagePaths) {
+    p5.loadJSON("assetLists.json", (assetLists) => {
+      for (let path of assetLists.images) {
         images.set(path, p5.loadImage(path));
       }
-    });
-    p5.loadJSON("soundList.json", (soundPaths) => {
-      for (let path of soundPaths) {
+      for (let path of assetLists.sounds) {
         sounds.set(path, p5.loadSound(path));
       }
-    })
-    p5.loadJSON("videoList.json", (videoPaths) => {
-      for (let path of videoPaths) {
+      for (let path of assetLists.videos) {
         const video = p5.createVideo(path);
         video.hide();
         videos.set(path, video);
@@ -98,28 +94,28 @@ new p5((p5) => {
     // ROOM OVERVIEW
     roomOverview = new Scene();
 
-    const backgroundImg = images.get("assets/walls.png");
+    const backgroundImg = images.get("assets/walls.webp");
     const backgroundScale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
     roomOverview.addObject(new Image(backgroundImg, 0, 0, backgroundScale, "DO_NOTHING"));
 
-    roomOverview.addObject(new HImage(images.get("assets/old_tv.png"), images.get("assets/old_tv__outlined.png"), 350, 250, 0.4, "PLAYER_RUN"));
-    roomOverview.addObject(new HImage(images.get("assets/cake.png"), images.get("assets/cake__outlined.png"), 530, 500, 0.25, "DRAWING_SHOW"));
-    roomOverview.addObject(new HImage(images.get("assets/tea_mug.png"), images.get("assets/tea_mug__outlined.png"), 700, 400, 0.4, "VIDEO_TEATIME"));
-    roomOverview.addObject(new HImage(images.get("assets/letter.png"), images.get("assets/letter__outlined.png"), 1050, 400, 0.4, "NOTE_SHOW"));
+    roomOverview.addObject(new HImage(images.get("assets/old_tv.webp"), images.get("assets/old_tv__outlined.webp"), 350, 250, 0.4, "PLAYER_RUN"));
+    roomOverview.addObject(new HImage(images.get("assets/cake.webp"), images.get("assets/cake__outlined.webp"), 530, 500, 0.25, "DRAWING_SHOW"));
+    roomOverview.addObject(new HImage(images.get("assets/tea_mug.webp"), images.get("assets/tea_mug__outlined.webp"), 700, 400, 0.4, "VIDEO_TEATIME"));
+    roomOverview.addObject(new HImage(images.get("assets/letter.webp"), images.get("assets/letter__outlined.webp"), 1050, 400, 0.4, "NOTE_SHOW"));
     roomOverview.addObject(new (class extends Image {
       isMouseOver() {
         return false;
       }
-    })(images.get("assets/table.png"), 800, 300, 0.4, "DO_NOTHING"));
-    roomOverview.addObject(new HImage(images.get("assets/cd_player.png"), images.get("assets/cd_player__outlined.png"), 950, 320, 0.4, "VIDEO_PIANO"));
-    roomOverview.addObject(new HImage(images.get("assets/portrait.png"), images.get("assets/portrait__outlined.png"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
-    roomOverview.addObject(new HImage(images.get("assets/orange.png"), images.get("assets/orange__outlined.png"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
-    roomOverview.addObject(new Image(images.get("assets/mr.momo.png"), 600, 650, 0.4, "Momo: ..."));
-    roomOverview.addObject(new Image(images.get("assets/rug.png"), 1150, 430, 0.4, "DO_NOTHING"));
-    roomOverview.addObject(new Image(images.get("assets/r_u_ok.png"), 1400, 550, 0.4, "DO_NOTHING"));
-    roomOverview.addObject(new HImage(images.get("assets/dog_food.png"), images.get("assets/dog_food__outlined.png"), 1320, 550, 0.4, "CLOSEUP_DOG_FOOD"));
-    roomOverview.addObject(new HImage(images.get("assets/used_condom.png"), images.get("assets/used_condom__outlined.png"), 1400, 770, 0.4, "VIDEO_CONDOM"));
-    roomOverview.addObject(new Image(images.get("assets/zoomed_images/question_button.png"), 1520, 20, 0.12, "INFO_SHOW"));
+    })(images.get("assets/table.webp"), 800, 300, 0.4, "DO_NOTHING"));
+    roomOverview.addObject(new HImage(images.get("assets/cd_player.webp"), images.get("assets/cd_player__outlined.webp"), 950, 320, 0.4, "VIDEO_PIANO"));
+    roomOverview.addObject(new HImage(images.get("assets/portrait.webp"), images.get("assets/portrait__outlined.webp"), 1100, 50, 0.4, "CLOSEUP_PORTRAIT"));
+    roomOverview.addObject(new HImage(images.get("assets/orange.webp"), images.get("assets/orange__outlined.webp"), 200, 750, 0.4, "CLOSEUP_ORANGE"));
+    roomOverview.addObject(new Image(images.get("assets/mr.momo.webp"), 600, 650, 0.4, "Momo: ..."));
+    roomOverview.addObject(new Image(images.get("assets/rug.webp"), 1150, 430, 0.4, "DO_NOTHING"));
+    roomOverview.addObject(new Image(images.get("assets/r_u_ok.webp"), 1400, 550, 0.4, "DO_NOTHING"));
+    roomOverview.addObject(new HImage(images.get("assets/dog_food.webp"), images.get("assets/dog_food__outlined.webp"), 1320, 550, 0.4, "CLOSEUP_DOG_FOOD"));
+    roomOverview.addObject(new HImage(images.get("assets/used_condom.webp"), images.get("assets/used_condom__outlined.webp"), 1400, 770, 0.4, "VIDEO_CONDOM"));
+    roomOverview.addObject(new Image(images.get("assets/zoomed_images/question_button.webp"), 1520, 20, 0.12, "INFO_SHOW"));
 
     blurLayer = new (class extends SceneObject {
       draw(p5) {
@@ -128,14 +124,14 @@ new p5((p5) => {
     })(0, 0, sceneWidth, sceneHeight, "VIDEO_REMOVE");
 
     // POPUP IMAGES
-    birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.png", 0.9);
+    birthdayDrawing = createPopupImageObject("assets/zoomed_images/birthday.webp", 0.9);
 
-    note = createPopupImageObject("assets/zoomed_images/note.png", 0.6);
-    noteEnglish = createPopupImageObject("assets/zoomed_images/note_english.png", 0.6);
-    noteKorean = createPopupImageObject("assets/zoomed_images/note_korean.png", 0.6);
-    translate = new Image(images.get("assets/zoomed_images/translate_button.png"), 1300, 200, 0.17, "NOTE_TRANSLATE");
+    note = createPopupImageObject("assets/zoomed_images/note.webp", 0.6);
+    noteEnglish = createPopupImageObject("assets/zoomed_images/note_english.webp", 0.6);
+    noteKorean = createPopupImageObject("assets/zoomed_images/note_korean.webp", 0.6);
+    translate = new Image(images.get("assets/zoomed_images/translate_button.webp"), 1300, 200, 0.17, "NOTE_TRANSLATE");
 
-    const img = images.get("assets/zoomed_images/info.png");
+    const img = images.get("assets/zoomed_images/info.webp");
     const scale = 0.8 * sceneHeight / img.height;
     const x = (sceneWidth - scale * img.width) / 2;
     const y = (sceneHeight - scale * img.height) / 2;
@@ -155,18 +151,18 @@ new p5((p5) => {
     teaTime = createPopupVideoObject("assets/videos/tea_time.mp4");
 
     // POPUP PLAYER
-    frame = createPopupImageObject("assets/player/frame.png", 0.9, "DO_NOTHING");
+    frame = createPopupImageObject("assets/player/frame.webp", 0.9, "DO_NOTHING");
     playbackIndicator = new (class extends SceneObject{
       draw(p5) {
         drawPlayBackIndicator(p5);
       }
     })(frame.x + 80, frame.y + 80, 30, 30, "DO_NOTHING");
 
-    rewind = new Image(images.get("assets/player/rewind_button.png"), 580, 750, 0.2, "PLAYER_REWIND");
-    play = new Image(images.get("assets/player/play_button.png"), 680, 750, 0.2, "PLAYER_PLAY");
-    pause = new Image(images.get("assets/player/pause_button.png"), 780, 750, 0.2, "PLAYER_PAUSE");
-    stop = new Image(images.get("assets/player/stop_button.png"), 880, 750, 0.2, "PLAYER_STOP");
-    fastForward = new Image(images.get("assets/player/fast_forward_button.png"), 980, 750, 0.2, "PLAYER_FASTFORWARD");
+    rewind = new Image(images.get("assets/player/rewind_button.webp"), 580, 750, 0.2, "PLAYER_REWIND");
+    play = new Image(images.get("assets/player/play_button.webp"), 680, 750, 0.2, "PLAYER_PLAY");
+    pause = new Image(images.get("assets/player/pause_button.webp"), 780, 750, 0.2, "PLAYER_PAUSE");
+    stop = new Image(images.get("assets/player/stop_button.webp"), 880, 750, 0.2, "PLAYER_STOP");
+    fastForward = new Image(images.get("assets/player/fast_forward_button.webp"), 980, 750, 0.2, "PLAYER_FASTFORWARD");
     playbackSpeed = 0;
     timeSinceLastUpdate = 0;
 
@@ -194,26 +190,26 @@ new p5((p5) => {
     })(blueHands.x, blueHands.y, blueHands.width, blueHands.height, "DO_NOTHING");
 
     // CLOSEUP SCENES
-    orangeCloseup = createCloseupScene("assets/zoomed_images/orange_with_larva.png", "RETURN_ORANGE");
-    dogFoodCloseup = createCloseupScene("assets/zoomed_images/dog_food.png", "RETURN_DOG_FOOD");
+    orangeCloseup = createCloseupScene("assets/zoomed_images/orange_with_larva.webp", "RETURN_ORANGE");
+    dogFoodCloseup = createCloseupScene("assets/zoomed_images/dog_food.webp", "RETURN_DOG_FOOD");
 
-    portraitCloseup = createCloseupScene("assets/zoomed_images/wall_background.png", "RETURN_PORTRAIT");
-    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.png"), 500, 70, 0.4, "DO_NOTHING"));
+    portraitCloseup = createCloseupScene("assets/zoomed_images/wall_background.webp", "RETURN_PORTRAIT");
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/portrait_zoomed_empty_eyes.webp"), 500, 70, 0.4, "DO_NOTHING"));
 
-    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.png"), 713, 331, 0.06, "DO_NOTHING"), true);
-    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.png"), 708, 328, 0.06, "DO_NOTHING"), true);
-    portraitCloseup.addObject(new Iris(images.get("assets/zoomed_images/eye_brown_circle.png"), 730, 336, 0.025, "DO_NOTHING"), true);
-    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.png"), 798, 327, 0.06, "DO_NOTHING"), true);
-    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.png"), 793, 324, 0.06, "DO_NOTHING"), true);
-    portraitCloseup.addObject(new Iris(images.get("assets/zoomed_images/eye_brown_circle.png"), 814, 333, 0.025, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.webp"), 713, 331, 0.06, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.webp"), 708, 328, 0.06, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Iris(images.get("assets/zoomed_images/eye_brown_circle.webp"), 730, 336, 0.025, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_white_part.webp"), 798, 327, 0.06, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Image(images.get("assets/zoomed_images/eye_skin_outline.webp"), 793, 324, 0.06, "DO_NOTHING"), true);
+    portraitCloseup.addObject(new Iris(images.get("assets/zoomed_images/eye_brown_circle.webp"), 814, 333, 0.025, "DO_NOTHING"), true);
 
     // SOUNDS
-    fridge = sounds.get("assets/sounds/fridge.wav");
-    fridgeLower = sounds.get("assets/sounds/fridge_lower.wav");
-    eating = sounds.get("assets/sounds/eating.wav");
-    larva = sounds.get("assets/sounds/slimy.wav");
-    blow = sounds.get("assets/sounds/blow.wav");
-    paper = sounds.get("assets/sounds/paper.wav");
+    fridge = sounds.get("assets/sounds/fridge.m4a");
+    fridgeLower = sounds.get("assets/sounds/fridge_lower.m4a");
+    eating = sounds.get("assets/sounds/eating.m4a");
+    larva = sounds.get("assets/sounds/slimy.m4a");
+    blow = sounds.get("assets/sounds/blow.m4a");
+    paper = sounds.get("assets/sounds/paper.m4a");
 
     // LINKS
     heya = p5.createA("https://heya.world/", "", "_blank");
@@ -225,8 +221,8 @@ new p5((p5) => {
     antti.hide();
 
     // Insert start screen to main scene
-    intro = new Image(images.get("assets/zoomed_images/intro.png"), 490, 280, 0.4, "DO_NOTHING");
-    start = new Image(images.get("assets/player/play_button.png"), 760, 550, 0.2, "START");
+    intro = new Image(images.get("assets/zoomed_images/intro.webp"), 490, 280, 0.4, "DO_NOTHING");
+    start = new Image(images.get("assets/player/play_button.webp"), 760, 550, 0.2, "START");
 
     insertBlurLayer("DO_NOTHING");
     roomOverview.addObject(intro);
@@ -518,7 +514,7 @@ new p5((p5) => {
     const backgroundImg = images.get(path);
     const scale = calculateBackgroundScale(backgroundImg.width, backgroundImg.height);
     scene.addObject(new Image(backgroundImg, 0, 0, scale, "DO_NOTHING"));
-    scene.addObject(new Image(images.get("assets/zoomed_images/back_button.png"), 50, 50, 0.2, message));
+    scene.addObject(new Image(images.get("assets/zoomed_images/back_button.webp"), 50, 50, 0.2, message));
     return scene;
   }
 
