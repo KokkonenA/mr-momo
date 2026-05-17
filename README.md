@@ -2,7 +2,7 @@ Git lfs needs to be installed (git lfs install).
 
 When you add or remove assets, run assetListsGenerator.js to rewrite assetLists.json.
 
-For using the asset converter script in Windows:
+For using the asset converter script on Windows:
 powershell -ExecutionPolicy Bypass -File "path\to\assetsConverter.ps1"
 
 To run tests:
