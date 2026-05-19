@@ -19,3 +19,4 @@ Antti & Heya
 <br/>
 <img src="antti_and_eyes.png" alt="antti with eyes" style="width:200px;">
 <img src="heya_and_eyes.png" alt="heya with eyes" style="width:200px;">
+<img src="0 floor_plan.png" alt="sketch" style="width:404px;">
