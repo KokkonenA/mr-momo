@@ -205,6 +205,7 @@ new p5((p5) => {
 
     // SOUNDS
     fridge = sounds.get("assets/sounds/fridge.m4a");
+    fridge.setVolume(0);
     fridgeLower = sounds.get("assets/sounds/fridge_lower.m4a");
     eating = sounds.get("assets/sounds/eating.m4a");
     larva = sounds.get("assets/sounds/slimy.m4a");
@@ -258,7 +259,6 @@ new p5((p5) => {
         roomOverview.removeObject(start);
         roomOverview.removeObject(intro);
         roomOverview.removeObject(blurLayer);
-        fridge.setVolume(0);
         fridge.loop();
         fridge.setVolume(1, audioFadeDuration);
         break;
@@ -427,6 +427,10 @@ new p5((p5) => {
   }
 
   p5.windowResized = () => {
+    if (!canvas) {
+      return;
+    }
+    
     const [canvasX, canvasY, canvasWidth, canvasHeight] = calculateCanvasPositionAndSize();
     canvas.position(canvasX, canvasY);
     p5.resizeCanvas(canvasWidth, canvasHeight);
