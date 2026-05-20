@@ -1,3 +1,5 @@
+# powershell -ExecutionPolicy Bypass -File "path\to\assetsConverter.ps1"
+
 # Define the target folder dynamically
 $TargetFolder = Join-Path -Path $PSScriptRoot -ChildPath "assets"
 
@@ -7,11 +9,11 @@ Get-ChildItem -Path $TargetFolder -Recurse -Filter "*.png" -ErrorAction Silently
     magick $_.FullName -quality 92 $out
 }
 
-# 2. Re-encode 10k MP4s to Web-Optimized, Highly Efficient MP4s via CRF 23
+# 2. Re-encode 10k MP4s to Web-Optimized, Highly Efficient MP4s via CRF 23 (-g 25 for constant keyframes)
 # Get-ChildItem -Path $TargetFolder -Recurse -Filter "*.mp4" -ErrorAction SilentlyContinue | ForEach-Object {
 #     $out = Join-Path -Path $_.DirectoryName -ChildPath ($_.BaseName + "_web.mp4")
 #     # -crf 23 replaces hard bitrate ceilings with smart, quality-based compression
-#     ffmpeg -y -i $_.FullName -c:v libx264 -crf 23 -g 25 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k $out
+#     ffmpeg -y -i $_.FullName -c:v libx264 -crf 23 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k $out
 # }
 
 # 3. Convert WAV to High-Quality AAC (.m4a)
