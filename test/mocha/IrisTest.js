@@ -13,7 +13,7 @@ describe("Iris", () => {
       p5.width = 10;
       p5.height = 10;
       const img = new MockP5Image(1000, 500);
-      const iris = new Iris(img, 5, 5, 1, "object clicked");
+      const iris = new Iris(img, 5, 5, 1);
       iris.draw(p5);
       expect(p5.imageCalls.length).to.equal(1);
       const imageCall = p5.imageCalls[0];

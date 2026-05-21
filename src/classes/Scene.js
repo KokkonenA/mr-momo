@@ -11,9 +11,6 @@ export default class Scene {
   #drawMode; // 0 = partial draw, 1 = full draw with preselection, 2 = full draw without preselection
   #preSelectedObject;
 
-  /**
-   * The constructor
-   */
   constructor() {
     this.#objects = [];
     this.#objectsToAlwaysRedraw = [];
@@ -21,8 +18,9 @@ export default class Scene {
   }
 
   /**
-   * Inserts an object to scene
-   * If object is always redrawn, adds it to the objects to always redraw
+   * Inserts an object to scene.
+   * If object is always redrawn, adds it to the objects to always redraw.
+   * 
    * @param {SceneObject} object 
    * @param {boolean} isAlwaysRedrawn 
    */
@@ -37,6 +35,7 @@ export default class Scene {
 
   /**
    * Removes an object from the scene and the objects to redraw.
+   * 
    * @param {SceneObject} object 
    */
   removeObject(object) {
@@ -56,6 +55,7 @@ export default class Scene {
 
   /**
    * Updates the objects' position and size on canvas.
+   * 
    * @param {number} scale 
    */
   update(scale) {
@@ -65,6 +65,7 @@ export default class Scene {
 
   /**
    * Draws the scene.
+   * 
    * @param {p5} p5 
    */
   draw(p5) {
@@ -83,6 +84,7 @@ export default class Scene {
 
   /**
    * Finds the object that the mouse is on top of and preselects it.
+   * 
    * @param {number} x 
    * @param {number} y 
    */
@@ -118,14 +120,11 @@ export default class Scene {
       this.#preSelectedObject = null;
     }
   }
-  
+
   /**
-   * @returns the pre-selected object's on click message.
+   * Clicks the pre-selected object.
    */
   mouseClicked() {
-    if (this.#preSelectedObject) {
-      return this.#preSelectedObject.onClickMessage;
-    }
-    return "";
+    this.#preSelectedObject?.click();
   }
 }

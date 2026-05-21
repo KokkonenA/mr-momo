@@ -11,16 +11,15 @@ export default class HImage extends SceneObject {
   #isHighlighted;
 
   /**
-   * The constructor
+   * Constructor
    * @param {p5.Image} img 
    * @param {p5.Image} onHoverImg 
    * @param {number} sceneX 
    * @param {number} sceneY 
    * @param {number} scale 
-   * @param {string} onClickMessage 
    */
-  constructor(img, onHoverImg, sceneX, sceneY, scale, onClickMessage) {
-    super(sceneX, sceneY, scale*img.width, scale*img.height, onClickMessage);
+  constructor(img, onHoverImg, sceneX, sceneY, scale) {
+    super(sceneX, sceneY, scale*img.width, scale*img.height);
     this.#img = img;
     this.#onHoverImg = onHoverImg
     this.#isHighlighted = false;
@@ -39,8 +38,11 @@ export default class HImage extends SceneObject {
   mouseExited() {
     this.#isHighlighted = false;
   }
+  
   /**
    * Draws the image
+   * 
+   * @override
    * @param {p5} p5 
    */
   draw(p5) {

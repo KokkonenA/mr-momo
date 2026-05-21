@@ -8,9 +8,6 @@ class MockP5 {
   #mouseY;
   #imageCalls;
 
-  /**
-   * The constructor
-   */
   constructor() {
     this.#imageCalls = [];
   }
@@ -87,7 +84,6 @@ class MockP5MediaElement {
   #height;
 
   /**
-   * The constructor
    * @param {number} width 
    * @param {number} height 
    */

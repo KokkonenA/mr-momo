@@ -12,15 +12,13 @@ class Video extends SceneObject {
   #vid
 
   /**
-   * The constructor
    * @param {p5.MediaElement} vid 
    * @param {number} sceneX 
    * @param {number} sceneY 
-   * @param {number} scale 
-   * @param {string} onClickMessage 
+   * @param {number} scale
    */
-  constructor(vid, sceneX, sceneY, scale, onClickMessage) {
-    super(sceneX, sceneY, scale*videoWidth, scale*videoHeight, onClickMessage);
+  constructor(vid, sceneX, sceneY, scale) {
+    super(sceneX, sceneY, scale*videoWidth, scale*videoHeight);
     this.#vid = vid;
   }
 
@@ -58,6 +56,8 @@ class Video extends SceneObject {
 
   /**
    * Draws the current video frame.
+   * 
+   * @override
    * @param {p5} p5 
    */
   draw(p5) {

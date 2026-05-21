@@ -10,7 +10,7 @@ describe("HImage", () => {
       const p5 = new MockP5();
       const img = new MockP5Image(1000, 500);
       const onHoverImg = new MockP5Image(1000, 500);
-      const hImage = new HImage(img, onHoverImg, 1, 1, 1, "object clicked");
+      const hImage = new HImage(img, onHoverImg, 1, 1, 1);
 
       hImage.mouseEntered();
       hImage.draw(p5);
