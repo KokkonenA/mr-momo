@@ -9,7 +9,7 @@ describe("Image", () => {
     it("should call p5 image function with correct parameters.", (done) => {
       const p5 = new MockP5();
       const img = new MockP5Image(1000, 500);
-      const image = new Image(img, 1, 1, 1, "object clicked");
+      const image = new Image(img, 1, 1, 1);
       image.draw(p5);
       expect(p5.imageCalls.length).to.equal(1);
       const imageCall = p5.imageCalls[0];

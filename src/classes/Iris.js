@@ -6,6 +6,12 @@ import Image from "./Image.js";
  * Iris class.
  */
 export default class Iris extends Image {
+  /**
+   * Draws the iris based on the mouse position.
+   * 
+   * @override
+   * @param {p5} p5 
+   */
   draw(p5) {
     const factor = 1000;
     const dx = (p5.mouseX - p5.width / 2) / factor;

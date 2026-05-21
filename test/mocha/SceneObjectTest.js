@@ -7,7 +7,7 @@ describe("SceneObject", () => {
   let sceneObject;
 
   beforeEach(() => {
-    sceneObject = new SceneObject(1, 1, 1000, 500, "object clicked");
+    sceneObject = new SceneObject(1, 1, 1000, 500);
   });
 
   describe("update", () => {

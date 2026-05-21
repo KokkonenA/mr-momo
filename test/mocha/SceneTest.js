@@ -13,8 +13,8 @@ describe("Scene", () => {
 
   beforeEach(() => {
     scene = new Scene();
-    sceneObject1 = new SceneObject(1, 1, 1000, 500, "object 1 clicked");
-    sceneObject2 = new SceneObject(200, 200, 200, 200, "object 2 clicked");
+    sceneObject1 = new SceneObject(1, 1, 1000, 500);
+    sceneObject2 = new SceneObject(200, 200, 200, 200);
     scene.addObject(sceneObject1);
     scene.addObject(sceneObject2, true);
   });
@@ -39,7 +39,7 @@ describe("Scene", () => {
 
   describe("addObject", () => {
     it("should add an object to the scene.", (done) => {
-      const sceneObject3 = new SceneObject(250, 250, 200, 200, "object 3 clicked");
+      const sceneObject3 = new SceneObject(250, 250, 200, 200);
       scene.addObject(sceneObject3);
       scene.update(2);
 
@@ -105,7 +105,7 @@ describe("Scene", () => {
 
     it("should draw everything afer adding an object.", (done) => {
       let object3DrawCount = 0;
-      const sceneObject3 = new SceneObject(250, 250, 200, 200, "object 3 clicked");
+      const sceneObject3 = new SceneObject(250, 250, 200, 200);
       sceneObject3.draw = () => object3DrawCount++;
       scene.draw(p5);
       scene.addObject(sceneObject3);
@@ -127,7 +127,7 @@ describe("Scene", () => {
 
     it("should draw everything afer moving mouse on and off a highlightable image.", (done) => {
       let object3DrawCount = 0;
-      const sceneObject3 = new HImage(new MockP5Image(100, 100), new MockP5Image(100, 100), 250, 250, 1, "HImage clicked");
+      const sceneObject3 = new HImage(new MockP5Image(100, 100), new MockP5Image(100, 100), 250, 250, 1);
       sceneObject3.draw = () => object3DrawCount++;
       scene.addObject(sceneObject3);
       scene.draw(p5);
@@ -163,7 +163,7 @@ describe("Scene", () => {
 
   describe("preSelect", () => {
     it("should call mouseEntered of an HImage when mouse enters and mouseExited when mouse exits.", (done) => {
-      const sceneObject = new HImage(new MockP5Image(100, 100), new MockP5Image(100, 100), 250, 250, 1, "HImage clicked");
+      const sceneObject = new HImage(new MockP5Image(100, 100), new MockP5Image(100, 100), 250, 250, 1);
 
       let mouseEnteredCount = 0;
       let mouseExitedCount = 0;
@@ -180,12 +180,12 @@ describe("Scene", () => {
   })
 
   describe("mouseClicked", () => {
-    it("should return the onClickMessage of the topmost object after mouse has moved.", (done) => {
-      expect(scene.mouseClicked()).to.equal("")
+    it("should click the preselected object.", (done) => {
+      let clickMessage;
+      sceneObject1.click = () => { clickMessage = "object 1 clicked"; }
       scene.preSelect(100, 100);
-      expect(scene.mouseClicked()).to.equal("object 1 clicked");
-      scene.preSelect(300, 300);
-      expect(scene.mouseClicked()).to.equal("object 2 clicked");
+      scene.mouseClicked();
+      expect(clickMessage).to.equal("object 1 clicked");
       done();
     })
   })
