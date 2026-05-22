@@ -36,8 +36,8 @@ new p5((p5) => {
   let noteKorean;
   let currentNote; // The actively displayed note.
   let translateButton;
-  let info;
-  let intro;
+  let infoCard;
+  let introCard;
   let startButton;
 
   // Pop-up videos
@@ -46,7 +46,7 @@ new p5((p5) => {
   let pianoVideo;
 
   // Video player
-  let frame;
+  let playerFrame;
   let rewindButton;
   let playButton;
   let pauseButton;
@@ -59,16 +59,16 @@ new p5((p5) => {
   let timeSinceLastUpdate;
 
   // Sounds
-  let fridge;
-  let fridgeLower;
-  let eating;
-  let larva;
-  let blow;
-  let paper;
+  let fridgeAudio;
+  let fridgeLowerAudio;
+  let eatingAudio;
+  let larvaAudio;
+  let blowAudio;
+  let paperAudio;
 
   //Links
-  let heya
-  let antti
+  let heyaLink
+  let anttiLink
 
   p5.preload = () => {
     p5.loadJSON("assetLists.json", (assetLists) => {
@@ -149,7 +149,7 @@ new p5((p5) => {
       draw = (p5) => { p5.filter(p5.BLUR, 3); }
     }(0, 0, sceneWidth, sceneHeight);
 
-    // POPUP IMAGES
+    // POP-UP IMAGES
     birthdayDrawing = createPopupImage("assets/zoomed_images/birthday.webp", 0.9);
 
     note = createPopupImage("assets/zoomed_images/note.webp", 0.6);
@@ -165,29 +165,29 @@ new p5((p5) => {
     const x = (sceneWidth - scale * img.width) / 2;
     const y = (sceneHeight - scale * img.height) / 2;
 
-    info = new class extends Image {
+    infoCard = new class extends Image {
       update = (scale) => {
         super.update(scale);
-        heya.position(canvas.x + this.x + 0.09 * this.width, canvas.y + this.y + 0.74 * this.height);
-        heya.size(0.22 * this.width, 0.04 * this.height);
-        antti.position(canvas.x + this.x + 0.09 * this.width, canvas.y + this.y + 0.78 * this.height);
-        antti.size(0.35 * this.width, 0.04 * this.height);
+        heyaLink.position(canvas.x + this.x + 0.09 * this.width, canvas.y + this.y + 0.74 * this.height);
+        heyaLink.size(0.22 * this.width, 0.04 * this.height);
+        anttiLink.position(canvas.x + this.x + 0.09 * this.width, canvas.y + this.y + 0.78 * this.height);
+        anttiLink.size(0.35 * this.width, 0.04 * this.height);
       }
     }(img, x, y, scale);
 
-    // POPUP VIDEOS
+    // POP-UP VIDEOS
     condomVideo = createPopupVideo("assets/videos/condom.mp4");
     pianoVideo = createPopupVideo("assets/videos/olenyksin.mp4");
     teaVideo = createPopupVideo("assets/videos/tea_time.mp4");
 
-    // POPUP PLAYER
-    frame = createPopupImage("assets/player/frame.webp", 0.9);
+    // VIDEO PLAYER
+    playerFrame = createPopupImage("assets/player/frame.webp", 0.9);
 
     playbackIndicator = new class extends SceneObject {
       draw = (p5) => {
         drawPlaybackIndicator(p5, this.x, this.y, this.width, this.height, playbackSpeed);
       }
-    }(frame.x + 80, frame.y + 80, 30, 30);
+    }(playerFrame.x + 80, playerFrame.y + 80, 30, 30);
 
     rewindButton = new class extends Image {
       click = rewindBlueHandsVideo;
@@ -226,7 +226,7 @@ new p5((p5) => {
         }
         p5.image(this.vid, this.x, this.y, this.width, this.height);
       }
-    }(videos.get("assets/videos/Blue-Hands.mp4"), frame.x + 55, frame.y + 55, 0.59);
+    }(videos.get("assets/videos/Blue-Hands.mp4"), playerFrame.x + 55, playerFrame.y + 55, 0.59);
 
     blackBackground = new class extends SceneObject {
       draw = (p5) => {
@@ -249,35 +249,35 @@ new p5((p5) => {
     portraitCloseup.addObject(new Iris(images.get("assets/zoomed_images/eye_brown_circle.webp"), 814, 333, 0.025), true);
 
     // SOUNDS
-    fridge = sounds.get("assets/sounds/fridge.m4a");
-    fridge.setVolume(0);
-    fridgeLower = sounds.get("assets/sounds/fridge_lower.m4a");
-    eating = sounds.get("assets/sounds/eating.m4a");
-    larva = sounds.get("assets/sounds/slimy.m4a");
-    blow = sounds.get("assets/sounds/blow.m4a");
-    paper = sounds.get("assets/sounds/paper.m4a");
+    fridgeAudio = sounds.get("assets/sounds/fridge.m4a");
+    fridgeAudio.setVolume(0);
+    fridgeLowerAudio = sounds.get("assets/sounds/fridge_lower.m4a");
+    eatingAudio = sounds.get("assets/sounds/eating.m4a");
+    larvaAudio = sounds.get("assets/sounds/slimy.m4a");
+    blowAudio = sounds.get("assets/sounds/blow.m4a");
+    paperAudio = sounds.get("assets/sounds/paper.m4a");
 
     // LINKS
-    heya = p5.createA("https://heya.world/", "", "_blank");
+    heyaLink = p5.createA("https://heya.world/", "", "_blank");
     //heya.style('background', 'rgba(0,0,0,0.5)');
-    heya.hide();
+    heyaLink.hide();
 
-    antti = p5.createA("https://github.com/KokkonenA/mr-momo", "", "_blank");
+    anttiLink = p5.createA("https://github.com/KokkonenA/mr-momo", "", "_blank");
     //antti.style('background', 'rgba(0,0,0,0.5)');
-    antti.hide();
+    anttiLink.hide();
 
-    // Insert start screen to room overview.
-    intro = new Image(images.get("assets/zoomed_images/intro.webp"), 490, 280, 0.4);
+    // Insert intro card and start button to room overview.
+    introCard = new Image(images.get("assets/zoomed_images/intro.webp"), 490, 280, 0.4);
 
     startButton = new class extends Image {
       click = begin;
     }(images.get("assets/player/play_button.webp"), 760, 550, 0.2);
 
     insertBlurLayer();
-    roomOverview.addObject(intro);
+    roomOverview.addObject(introCard);
     roomOverview.addObject(startButton);
 
-    // Create canvas and starts the room overview scene.
+    // Create canvas and start room overview scene.
     const [canvasX, canvasY, canvasWidth, canvasHeight] = calculateCanvasPositionAndSize();
     canvas = p5.createCanvas(canvasWidth, canvasHeight);
     canvas.position(canvasX, canvasY);
@@ -309,23 +309,23 @@ new p5((p5) => {
   }
 
   /**
-   * Hides the intro message and starts the background sound.
+   * Hides intro card and starts fridge audio.
    */
   function begin() {
     roomOverview.removeObject(startButton);
-    roomOverview.removeObject(intro);
+    roomOverview.removeObject(introCard);
     roomOverview.removeObject(blurLayer);
-    fridge.loop();
-    fridge.setVolume(1, audioFadeDuration);
+    fridgeAudio.loop();
+    fridgeAudio.setVolume(1, audioFadeDuration);
   }
 
   /**
-   * Shows the birthday drawing.
+   * Shows birthday drawing.
    */
   function showBirthdayDrawing() {
     showPopupImage(birthdayDrawing, hideBirthdayDrawing);
-    fridge.setVolume(0);
-    blow.play();
+    fridgeAudio.setVolume(0);
+    blowAudio.play();
   }
 
   function hideBirthdayDrawing() {
@@ -333,19 +333,19 @@ new p5((p5) => {
   }
 
   /**
-   * Shows the note and the translate button.
+   * Shows note and translate button.
    */
   function showNote() {
     currentNote = note;
     showPopupImage(currentNote, hideNote);
     translateButton.update(p5.width / sceneWidth);
     roomOverview.addObject(translateButton);
-    fridge.setVolume(0);
-    paper.play();
+    fridgeAudio.setVolume(0);
+    paperAudio.play();
   }
 
   /**
-   * Hides the note and the translate button.
+   * Hides current note and translate button.
    */
   function hideNote() {
     roomOverview.removeObject(translateButton);
@@ -377,68 +377,68 @@ new p5((p5) => {
   }
 
   /**
-   * Shows info about the work.
+   * Shows info card.
    */
   function showInfo() {
-    showPopupImage(info, hideInfo);
-    heya.show();
-    antti.show();
-    fridge.setVolume(0);
+    showPopupImage(infoCard, hideInfo);
+    heyaLink.show();
+    anttiLink.show();
+    fridgeAudio.setVolume(0);
   }
 
   /**
-   * Hides the info about the work.
+   * Hides info card.
    */
   function hideInfo() {
-    heya.hide();
-    antti.hide();
-    hidePopupImage(info);
+    heyaLink.hide();
+    anttiLink.hide();
+    hidePopupImage(infoCard);
   }
 
   /**
-   * Shows the condom video.
+   * Shows condom video.
    */
   function showCondomVideo() {
     showPopupVideo(condomVideo, hideCondomVideo);
   }
 
   /**
-   * Hides the condom video.
+   * Hides condom video.
    */
   function hideCondomVideo() {
     hidePopupVideo(condomVideo);
   }
 
   /**
-   * Show the piano video.
+   * Show piano video.
    */
   function showPianoVideo() {
     showPopupVideo(pianoVideo, hidePianoVideo);
   }
 
   /**
-   * Hides the piano video.
+   * Hides piano video.
    */
   function hidePianoVideo() {
     hidePopupVideo(pianoVideo);
   }
 
   /**
-   * Shows the tea video.
+   * Shows tea video.
    */
   function showTeaVideo() {
     showPopupVideo(teaVideo, hideTeaVideo);
   }
 
   /**
-   * Hides the tea video.
+   * Hides tea video.
    */
   function hideTeaVideo() {
     hidePopupVideo(teaVideo);
   }
 
   /**
-   * Opens the video player.
+   * Opens video player.
    */
   function openVideoPlayer() {
     playbackSpeed = 0;
@@ -447,27 +447,27 @@ new p5((p5) => {
     roomOverview.addObject(blurLayer);
     blackBackground.update(p5.width / sceneWidth);
     roomOverview.addObject(blackBackground);
-    [blueHandsVideo, frame, playbackIndicator, rewindButton, playButton, pauseButton, stopButton, fastforwardButton].forEach(obj => {
+    [blueHandsVideo, playerFrame, playbackIndicator, rewindButton, playButton, pauseButton, stopButton, fastforwardButton].forEach(obj => {
       obj.update(p5.width / sceneWidth);
       roomOverview.addObject(obj, true);
     });
-    fridge.setVolume(0, audioFadeDuration);
+    fridgeAudio.setVolume(0, audioFadeDuration);
   }
 
   /**
-   * Closes the video player.
+   * Closes video player.
    */
   function closeVideoPlayer() {
     blueHandsVideo.vid.elt.onseeked = null;
     blueHandsVideo.pause();
-    [blackBackground, blurLayer, blueHandsVideo, frame, playbackIndicator, rewindButton, playButton, pauseButton, stopButton, fastforwardButton].forEach(obj => {
+    [blackBackground, blurLayer, blueHandsVideo, playerFrame, playbackIndicator, rewindButton, playButton, pauseButton, stopButton, fastforwardButton].forEach(obj => {
       roomOverview.removeObject(obj);
     });
-    fridge.setVolume(1, audioFadeDuration);
+    fridgeAudio.setVolume(1, audioFadeDuration);
   }
 
   /**
-   * Rewinds the Blue Hands video.
+   * Rewinds Blue Hands video.
    */
   function rewindBlueHandsVideo() {
     blueHandsVideo.pause();
@@ -479,7 +479,7 @@ new p5((p5) => {
   }
   
   /**
-   * Fast-forwards the Blue Hands video.
+   * Fast-forwards Blue Hands video.
    */
   function fastforwardBlueHandsVideo() {
     blueHandsVideo.pause();
@@ -491,7 +491,7 @@ new p5((p5) => {
   }
 
   /**
-   * Plays the Blue Hands video.
+   * Plays Blue Hands video.
    */
   function playBlueHandsVideo() {
     playbackSpeed = 1;
@@ -507,7 +507,7 @@ new p5((p5) => {
   }
 
   /**
-   * Pauses the Blue Hands video.
+   * Pauses Blue Hands video.
    */
   function pauseBlueHandsVideo() {
     playbackSpeed = 0;
@@ -515,7 +515,7 @@ new p5((p5) => {
   }
 
   /**
-   * Stops the Blue Hands video.
+   * Stops Blue Hands video.
    */
   function stopBlueHandsVideo() {
     playbackSpeed = 0;
@@ -523,59 +523,69 @@ new p5((p5) => {
   }
 
   /**
-   * Switches to the dog food close-up.
+   * Switches to e dog food close-up.
    */
   function switchToDogFoodCloseUp() {
-    fridge.setVolume(0, audioFadeDuration);
-    eating.loop();
+    fridgeAudio.setVolume(0, audioFadeDuration);
+    eatingAudio.loop();
     startScene(dogFoodCloseup);
   }
 
   /**
-   * Returns from the dog food close-up to the room overview.
+   * Returns from dog food close-up to room overview.
    */
   function returnFromDogFoodCloseup() {
-    eating.stop();
-    fridge.setVolume(1, audioFadeDuration);
+    eatingAudio.stop();
+    fridgeAudio.setVolume(1, audioFadeDuration);
     startScene(roomOverview);
   }
 
   /**
-   * Switches to the orange close-up.
+   * Switches to orange close-up.
    */
   function switchToOrangeCloseup() {
-    fridge.setVolume(0, audioFadeDuration);
-    larva.loop();
+    fridgeAudio.setVolume(0, audioFadeDuration);
+    larvaAudio.loop();
     startScene(orangeCloseup);
   }
 
   /**
-   * Returns from the orange close-up to the room overview.
+   * Returns from orange close-up to room overview.
    */
   function returnFromOrangeCloseup() {
-    larva.stop();
-    fridge.setVolume(1, audioFadeDuration);
+    larvaAudio.stop();
+    fridgeAudio.setVolume(1, audioFadeDuration);
     startScene(roomOverview);
   }
 
   /**
-   * Switches to the portrait close-up.
+   * Switches to portrait close-up.
    */
   function switchToPortraitCloseup() {
-    fridge.setVolume(0);
-    fridgeLower.loop();
+    fridgeAudio.setVolume(0);
+    fridgeLowerAudio.loop();
     startScene(portraitCloseup);
   }
 
   /**
-   * Return from the portrait close-up to the room overview. 
+   * Return from portrait close-up to room overview. 
    */
   function returnFromPortraitCloseup() {
-    fridgeLower.stop();
-    fridge.setVolume(1);
+    fridgeLowerAudio.stop();
+    fridgeAudio.setVolume(1);
     startScene(roomOverview);
   }
 
+  /**
+   * Draws playback indicator.
+   * 
+   * @param {p5} p5 
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} width 
+   * @param {number} height 
+   * @param {number} playbackSpeed 
+   */
   function drawPlaybackIndicator(p5, x, y, width, height, playbackSpeed) {
     p5.fill(255);
 
@@ -600,11 +610,29 @@ new p5((p5) => {
     }
   }
 
+  /**
+   * Draws pause icon.
+   * 
+   * @param {p5} p5 
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} width 
+   * @param {number} height 
+   */
   function drawPauseIcon(p5, x, y, width, height) {
     p5.rect(x, y, width / 3, height);
     p5.rect(x + width * 2 / 3, y, width / 3, height);
   }
 
+  /**
+   * Draws fast-forward icon.
+   * @param {p5} p5 
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} width 
+   * @param {number} height 
+   * @param {number} count 
+   */
   function drawFastforwardIcon(p5, x, y, width, height, count) {
     const step = 1.2 * width;
 
@@ -621,6 +649,15 @@ new p5((p5) => {
     }
   }
 
+  /**
+   * Draws rewind icon.
+   * @param {p5} p5 
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} width 
+   * @param {number} height 
+   * @param {number} count 
+   */
   function drawRewindIcon(p5, x, y, width, height, count) {
     const step = 1.2 * width;
 
@@ -638,11 +675,11 @@ new p5((p5) => {
   }
 
   /**
-   * Calculates the canvas size and position
-   * The canvas should be centered and fill as much of the window as possible
+   * Calculates canvas size and position
+   * Cnvas should be centered and fill as much of the window as possible
    * while maintaing the aspect ratio.
    * 
-   * @returns the canvas size and position.
+   * @returns canvas size and position.
    */
   function calculateCanvasPositionAndSize() {
     const windowToSceneWidthRatio = p5.windowWidth / sceneWidth;
@@ -682,11 +719,11 @@ new p5((p5) => {
   }
 
   /**
-   * Creates a popup image object
+   * Creates a pop-up image object
    * 
    * @param {string} path 
    * @param {number} imageToSceneHeightRatio
-   * @returns the popup image object
+   * @returns the pop-up image object
    */
   function createPopupImage(path, imageToSceneHeightRatio) {
     const img = images.get(path);
@@ -697,10 +734,10 @@ new p5((p5) => {
   }
 
   /**
-   * Creates a popup video object
+   * Creates a pop-up video object
    * 
    * @param {string} path 
-   * @returns the popup video object
+   * @returns the pop-up video object
    */
   function createPopupVideo(path) {
     const vid = videos.get(path);
@@ -731,7 +768,7 @@ new p5((p5) => {
   }
 
   /**
-   * Inserts the blur layer to the room overview.
+   * Inserts blur layer to room overview.
    */
   function insertBlurLayer() {
     blurLayer.update(p5.width / sceneWidth);
@@ -759,7 +796,7 @@ new p5((p5) => {
   function hidePopupImage(img) {
     roomOverview.removeObject(img);
     roomOverview.removeObject(blurLayer);
-    fridge.setVolume(1);
+    fridgeAudio.setVolume(1);
   }
 
   /**
@@ -769,7 +806,7 @@ new p5((p5) => {
    * @param {Function} onHide
    */
   function showPopupVideo(video, onHide) {
-    fridge.setVolume(0, audioFadeDuration);
+    fridgeAudio.setVolume(0, audioFadeDuration);
     blurLayer.click = onHide;
     insertBlurLayer();
     video.update(p5.width / sceneWidth);
@@ -783,7 +820,7 @@ new p5((p5) => {
    * @param {Video} video
    */
   function hidePopupVideo(video) {
-    fridge.setVolume(1, audioFadeDuration);
+    fridgeAudio.setVolume(1, audioFadeDuration);
     video.stop();
     roomOverview.removeObject(video);
     roomOverview.removeObject(blurLayer);
